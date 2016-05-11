@@ -9,6 +9,10 @@
 * [Firebase Object Methods](## Firebase Object Methods)
 * [Firebase Array Methods](## Firebase Array Methods)
 
+### Contact Me
+
+Please update this document and make [pull requests](https://github.com/tdkehoe/Firebase-Tutorial) or send me an e-mail at kehoe@casafuturatech.com.
+
 ## A Short History of Websites
 
 Firebase is a NoSQL cloud database service. Storing your data in the cloud has become popular for a variety of reasons. To explain the advantages of Firebase, allow me to walk through my twenty years of building websites. In the 1990s we built static websites by hand-coding HTML. The World Wide Web (WWW) enabled users to look up information but websites weren't interactive. The browser sent an _HTTP request_ to the server, which served an HTML file to the browser, and the browser rendered the HTML code for the user to see. Then the user clicked a link, which sent another HTTP request to the server for another webpage, and so on.
@@ -219,7 +223,7 @@ $scope.movie.$loaded().then(function() {
 });
 ```
 
-![Record vs. Object](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_record_object.png)
+![Record vs. Object](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_record_object.png)
 
 The record and the movie object are identical except that the movie object has a `$$conf` property.
 
