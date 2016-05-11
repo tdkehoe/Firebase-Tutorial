@@ -1,11 +1,12 @@
 # Firebase Project: Make the CRUDiest Movies Database
 
-This tutorial is divided into several files because the Atom editor can be overwhelmed by long files. The files are:
+This chapter provides an overview of Firebase's array and objects methods. The Firebase auth methods are in another chapter. Other chapters are a tutorial for building a project.
 
-1. Firebase Principles (this file)
-2. Setting Up Firebase
+The order of chapters is
 
-5. Firebase Auth
+1. [Firebase Principles](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Principles.md) (this chapter)
+2. [Firebase Project: Make the CRUDiest Movies Database](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_CRUD.md)
+3. [Firebase Auth: Add Login to Your Project](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Authorization.md)
 
 ## Firebase Principles Table of Contents
 
@@ -14,7 +15,9 @@ This tutorial is divided into several files because the Atom editor can be overw
 * [Firebase Arrays vs. Objects](## Firebase Arrays vs. Objects)
 * [Firebase Methods](## Firebase Methods)
 
+### Contact Me
 
+Please update this document and make [pull requests](https://github.com/tdkehoe/Firebase-Tutorial) or send me an e-mail at kehoe@casafuturatech.com.
 
 ## A Short History of Websites
 

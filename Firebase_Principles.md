@@ -1,5 +1,30 @@
 # Firebase Principles
 
+This chapter provides an overview of Firebase's array and objects methods. The Firebase auth methods are in another chapter. Other chapters are a tutorial for building a project.
+
+This document is written for the AngularFire methods, i.e., for Angular users. The project chapters of this documentation also use Bootstrap. I try to explain everything for beginners but the code will make more sense to users who know Angular and Bootstrap.
+
+Firebase also supports:
+
+* Ember
+* React
+* Backbone
+* Ionic
+* iOS
+* Android
+
+Plus there are unofficial REST wrappers for
+
+* Python
+* PHP
+* Ruby
+
+The order of chapters is
+
+1. [Firebase Principles](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Principles.md) (this chapter)
+2. [Firebase Project: Make the CRUDiest Movies Database](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_CRUD.md)
+3. [Firebase Auth: Add Login to Your Project](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Authorization.md)
+
 ## Table of Contents
 
 * [A Short History of Websites](## A Short History of Websites)
@@ -45,9 +70,15 @@ With Firebase, front-end developers can focus on the UI/UX without thinking abou
 
 To reiterate the reasons to use Firebase:
 
-* You don't need to run a server. Servers take time to set up, and then can crash or are shut down by your host for maintenance. A Node/Express/MongoDB server adds no value to your website, i.e., it doesn't do anything that you can't do in a front-end framework such as AngularJS (e.g., routing).
 * Data binding synchronizes your local arrays and objects to the remote arrays and objects. You don't have to write HTTP requests or database queries. Data updates in your app without your users having to click anything.
+* Data binding can be used to make collaborative apps, i.e., multiple users can use the same app at the same time and each user's data instantly updates to the other users.
 * Firebase handles authorization and authentication for you, including OAuth2, e-mail & password login, and routing authorization.
+* No backend server. Servers take time to set up, and then can crash or are shut down by your host for maintenance. A Node/Express/MongoDB server adds no value to your website, i.e., it doesn't do anything that you can't do in a front-end framework such as AngularJS (e.g., routing).
+* NoSQL means not having to write schema to set up database tables or translate HTTP requests from objects and arrays into SQL queries.
+* Firebase is fast. I built two versions of the same app, in the [MEAN stack](https://crudiest-movies.firebaseapp.com/#/movies) and in [Firebase](https://crudiest-firebase.firebaseapp.com/#/movies). Open each and you'll see that the Firebase version loads the movies array faster. Add some movies and see if you notice a difference in speed.
+* Firebase is [free for limited accounts](https://www.firebase.com/pricing.html).
+
+If you know how to use Firebase, you can develop single-page apps (SPAs) faster and with less code than an SQL or MongoDB backend requires. That said, in learning Firebase I've often gotten stuck for hours or days on what should have been simple. The [AngularFire documentation](https://www.firebase.com/docs/web/libraries/angular/) is good but not as complete as I would like. I started making notes so that I wouldn't forget stuff. The notes grew to be this document. The next section should save you days in learning Firebase!
 
 ## The Most Confusing Parts of Firebase
 
@@ -63,9 +94,13 @@ To remove an object from an array in JavaScript you use `splice()`. In Firebase 
 
 If you use JavaScript methods such as `push()` and `splice()` you won't get Firebase objects with keys, and Firebase methods won't work. Look for the equivalent Firebase method, e.g., `$add` instead of `push()`, and `$remove` instead of `splice()`. Don't mix JavaScript methods with Firebase methods.
 
+This document only covers AngularFire methods. There's another set of "vanilla" Firebase methods that are independent of frameworks.
+
 ### Firebase Objects vs. JavaScript (JSON) Objects
 
-Firebase objects are different from JavaScript objects. Let's make an array of cruddy movies. Each movie will be an object in the array. Each movie will have an array of comments, and each comment is an object. We'll start with JavaScript Object Notation (JSON):
+Firebase objects are similar but not identical to JavaScript objects. (Both are completely different from SQL tables.)
+
+Let's make an array of cruddy movies. Each movie will be an object in the array. Each movie will have an array of comments, and each comment is an object. We'll start with JavaScript Object Notation (JSON):
 
 ```js
 [
@@ -198,6 +233,8 @@ This may be the most confusing area of Firebase. Let me count the ways...
 3. It's easy to mistakenly mix JavaScript dot notation with Firebase child notation, and get the error message "...is not a function." For example, ``movies($routeParams.id).child('comments').$remove(comment)`` won't work because `movies` is dot notation. You don't see a dot, but somewhere in the steps to create that array and put it on the `$scope` there was a dot.
 4. I'll repeat the last point because it's so easy to make a mistake. When you write JavaScript you get used to chaining objects and methods with dot notation you'll write several steps that work as expected, because you don't have a Firebase method in the chain. Then in the next step you try to use a Firebase method and it doesn't work, because several steps earlier you used dot notation.
 
+> There's an alternative to child notation. You can set up a controller's Firebase reference to a subdirectory. I don't see how this would work in practice as the URL includes keys and indexes to specific objects, when child notation can have variables for the objects.
+
 ### Objects vs. Records
 
 Three Firebase array methods can take the _record_ as an argument. These methods are:
@@ -276,6 +313,96 @@ The object version of `$save()` saves the object it's chained to. The array vers
 
 This section presents the "boilerplate" for setting up your app to use Firebase.
 
+### Open a Firebase Account
+
+If you haven't already, [sign up for a free Firebase account](https://www.firebase.com/) and create an app.
+
+### Install Firebase Tools
+
+Follow the instructions to install ```firebase-tools``` from your command line (CLI):
+
+```
+npm install -g firebase-tools
+```
+
+This installs ```firebase-tools``` globally so you don't have to do this for every project.
+
+> The Firebase tools seem to be missing from the [Installation & Setup](https://www.firebase.com/docs/web/guide/setup.html) guide. Has this step been dropped?
+
+### Create a firebase.json Object
+
+Like Node's `package.json`, Firebase has a similar file. Install in your project's root directory (not in the `public` directory) with:
+
+```
+npm install firebase --save
+```
+
+Your `firebase.json` file should look something like this:
+
+```js
+{
+  "firebase": "my-firebase",
+  "public": "public",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
+}
+```
+
+Deploy your app from your project root directory, i.e., from ```CRUDiest-Movies-Firebase```:
+
+```
+firebase init
+```
+
+### Upload Your Files
+
+When you've written files you can upload them to Firebase with:
+
+```
+firebase deploy
+```
+
+### Firebase CDN or Local Installation
+
+In your `index.html` file you'll have to put the Firebase CDN into the `<head>` section. It should go below the Angular CDN. Here's a typical Angular-Bootstrap-Firebase `<head>` section:
+
+```html
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Firebase CRUD app with AngularJS, Bootstrap, and asynchronous typeahead.">
+  <title>CRUDiest Movies Firebase</title>
+
+  <!-- AngularJS -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js"></script>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-823r0923ry238r7y2r8" crossorigin="anonymous">
+  <!-- UI Bootstrap-->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.2/ui-bootstrap-tpls.min.js"></script>
+
+  <!-- Firebase -->
+  <script type="text/javascript" src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+  <!-- AngularFire -->
+  <script type="text/javascript" src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+```
+
+You can find the latest versions of Firebase and AngularFire at:
+
+* Firebase: https://www.firebase.com/docs/web/changelog.html
+* AngularFire: https://www.firebase.com/docs/web/libraries/angular/changelog.html
+
+Alternatively, you can install Firebase as a local application dependency, using Bower. This is harder to update but is nice if you have to code somewhere without Internet access. See the [documentation](https://www.firebase.com/docs/web/guide/setup.html) for instructions (I've never run Firebase locally).
+
 ### Inject firebase Dependency To Angular Module
 
 Inject `firebase` into your Angular module:
@@ -284,14 +411,18 @@ Inject `firebase` into your Angular module:
 var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'firebase']);
 ```
 
-### new Firebase Constructor Function
+### Creating a Firebase Reference
 
-In each controller we connect to Firebase with the `new` operator and the Firebase constructor function:
+In each controller we create a Firebase _reference_. You can call it anything you want but the norm is `ref`.
+
+The Firebase reference is an object created with the `new` operator and the Firebase constructor function:
 
 ```js
-// Connect to Firebase
+// Create Firebase reference
 var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
 ```
+
+The Firebase reference doesn't create a connection to the remote Firebase nor does it download data.
 
 This is the easiest part of Firebase. The syntax never changes and is done once in each controller, near the top.
 
@@ -762,25 +893,7 @@ $scope.comments = $firebaseArray(ref.child($routeParams.id).child('movieComments
 
 ### $getRecord(key)
 
-[$getRecord(key)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-getrecordkey) returns the record associated with an object in an array. Records and objects aren't the same thing:
-
-```js
-var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
-
-$scope.movies = $firebaseArray(ref); // get array of movies
-
-$scope.movies.$loaded().then(function() { // when the array is loaded
-  $scope.movie = $firebaseObject(ref.child($routeParams.id)); // get the movie object
-  var record = $scope.movies.$getRecord($scope.movie.$id); // get the record for the movie object
-  console.log(record);
-  console.log($scope.movie);
-  console.log(record === $scope.movie); // false, the record object and the movie object are different
-});
-```
-
-![Saved message](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_record_object.png)
-
-The record and the object are almost identical except that the object includes a `$$conf` object. I googled "Firebase $$conf" but it couldn't find anything. The record appears to be the object minus Firebase metadata. There should be a Firebase method to return the record from an object, e.g., `movie.$record` (similar to `movie.$id`) but there isn't.
+[$getRecord(key)](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-getrecordkey) returns the record associated with an object in an array. As explained above, records and objects are different. The _record_ is the keys and values of an object. A Firebase _object_ is the record plus metadata such as the key.
 
 ### $indexFor(key)
 
