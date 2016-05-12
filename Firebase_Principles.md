@@ -40,9 +40,11 @@ Please update this document and make [pull requests](https://github.com/tdkehoe/
 
 ## A Short History of Websites
 
-Firebase is a NoSQL cloud database service. Storing your data in the cloud has become popular for a variety of reasons. To explain the advantages of Firebase, allow me to walk through my twenty years of building websites. In the 1990s we built static websites by hand-coding HTML. The World Wide Web (WWW) enabled users to look up information but websites weren't interactive. The browser sent an _HTTP request_ to the server, which served an HTML file to the browser, and the browser rendered the HTML code for the user to see. Then the user clicked a link, which sent another HTTP request to the server for another webpage, and so on.
+To explain the advantages of Firebase, allow me to walk through my twenty years of building websites. In the 1990s we built _static_ websites by hand-coding HTML. World Wide Web (WWW) users  could look up information but websites weren't interactive. The browser sent an _HTTP request_ to the server, which served an HTML file to the browser, and the browser displayed the HTML code for the user to see. Then the user clicked a link, which sent another HTTP request to the server for another webpage, and so on.
 
-In 1999 I wrote the first documentation for using a new language called Personal Home Page (PHP) with a new database called MySQL. My documentation became the most popular and highest-rated download from the website DevShed.com. Being able to connect a database to your HTML enabled developers to make interactive websites, e.g., a dating website where users could make profiles. Soon the WWW was dominated by websites where users put stuff into databases, e.g., MySpace.com and Facebook.com. We wrote static HTML webpages with inserted PHP code that got data to fill in spaces on the webpage, such as a user's name or picture. The browser sent an HTTP request to the server, which ran PHP, Java, or another programming language to translate the HTTP requests into SQL queries. The data filled in the spaces of a static webpage with dynamic content, then served it to the browser.
+In 1999 I wrote the first documentation for using a new language called Personal Home Page (PHP) with a new(ish) database called MySQL. My documentation became the most popular and highest-rated download from DevShed.com. Connecting a database to your HTML made websites _interactive_, i.e., users could write or upload stuff that other users could then search or read,  e.g., a dating website where users could make profiles and search other members' profiles.
+
+In interactive websites, the browser sent an HTTP request to the server, as usual. The HTML pages had blocks of PHP code that accessed the database to fill in the blocks with data such as text or images. The server then rendered the page into HTML and served it to the browser.
 
 The next step was _dynamic websites_, in which a database retrieved parts of a website and assembled the parts into webpages. No longer did webmasters have to write HTML. Instead we used _content management systems_ (CMS) such as WordPress. A blogger could set up a complex website by plugging in modules, with little or no coding knowledge. With Ruby on Rails (RoR) developers could spin up a website in hours instead of weeks, plugging in modules for almost anything.
 
@@ -50,13 +52,15 @@ While dynamic websites were a boon to webmasters, they're slow. When a browser s
 
 Dynamic website users click and wait while a lot of stuff happens on the server, before their page loads. Users bounce if a website is slow or requires too many clicks and page reloads. Webmasters pay top dollar for the fastest hosting services, and their websites are still slow.
 
-Vast numbers of software engineers work at companies with SQL back ends, coding in PHP, C, Java, or Python. With SQL a database administrator must set up the _schema_ or structure of the database. The arrays and objects that software developers create must be translated into tables of columns and rows.
+Dynamic websites are great if your website can fit into a content management system. But if you need to do stuff beyond what WordPress or Magento is capable of, you'll have to hire developers. A lot of them, each with specialized skills such as in SQL administration. With SQL a database administrator must set up the _schema_ or structure of the database. The arrays and objects that software developers create must be translated into tables of columns and rows. All this is written in PHP, C, Java, or Python. Such websites are slow to build, slow to run, with a lot to go wrong. (Think of the Obamacare website.)
 
-The next step was JavaScript. JavaScript is the only language that runs in the browser. Initially JavaScript did only minor tasks on websites but then frameworks such as Angular were developed. Initially the browser sends an HTTP request to the server, then the server sends not a rendered webpage but an application that runs on the user's computer, in the browser. The user clicks on buttons and the app does stuff, such as opening a calendar, without going back to the server. The user interface or user experience (UI/UX) is fast, practically instantaneous.
+The next step was JavaScript. JavaScript is the only language that runs in the browser. Initially JavaScript did only minor tasks on websites but then frameworks such as Angular were developed. Initially the browser sends an HTTP request to the server, then the server sends not a webpage but an application that runs on the user's computer, in the browser. The user clicks on buttons and the app does stuff, such as opening a calendar, without going back to the server. The user interface or user experience (UI/UX) is fast, practically instantaneous.
 
 JavaScript web apps still need data. An app can open a calendar, but to open a calendar of your AirBnB reservations the app has to send an HTTP request to the server to access the database and send back data. This is faster than a client-server website because only small amounts of data are requested (instead of entire webpages), and the webpages (now called _views_) don't have to be rendered each time they change, as only the parts that change are updated.
 
-With JavaScript web apps the _back end_ servers do little. The servers just translate HTTP requests into SQL queries and send data in HTTP responses. _NoSQL databases_ eliminate the translation into SQL queries. NoSQL databases store arrays and objects, connecting seamlessly to programming languages, especially JavaScript and JavaScript Object Notation (JSON). NoSQL databases generally don't require schema. A NoSQL server can be spun up in a few hours, and after that there's little or nothing to do on the back end.
+With JavaScript web apps the _back end_ servers do little. The servers just translate HTTP requests into SQL queries and send data in HTTP responses.
+
+_NoSQL databases_ eliminate the translation into SQL queries. NoSQL databases store arrays and objects, connecting seamlessly to programming languages, especially JavaScript and JavaScript Object Notation (JSON). NoSQL databases generally don't require schema. A NoSQL server can be spun up in a few hours, and after that there's little or nothing to do on the back end.
 
 ## What Is Firebase?
 
@@ -116,6 +120,32 @@ You can't chain a Firebase method to child notation, e.g., `...child('comments')
 It's easy to mistakenly mix JavaScript dot notation with Firebase child notation, and get the error message "...is not a function." For example, ``movies($routeParams.id).child('comments').$remove(comment)`` won't work because `movies` is dot notation. You don't see a dot, but somewhere in the steps to create that array and put it on the `$scope` there was a dot.
 
 I'll repeat the last point because it's easy to make a mistake. When you write JavaScript you get used to chaining objects and methods with dot notation. You'll write several steps that work as expected, because you don't have a Firebase method in the chain. Then in the next step you try to use a Firebase method and it doesn't work, because several steps earlier you used dot notation.
+
+### What Are the Synchronizer Things Called?
+
+These things are really important in your controller:
+
+```js
+// Access all movies in array
+$scope.movies = $firebaseArray(ref);
+
+// Set up single movie object
+$scope.movie = $firebaseObject(ref.child($routeParams.id));
+
+// Set up comments array
+$scope.comments = $firebaseArray(ref.child($routeParams.id).child('movieComments'));
+
+// Set up single comment
+$scope.comment = $firebaseObject(ref.child($routeParams.id).child('comments').child(commentID));
+```
+
+But what are they called? They synchronize local arrays and objects with remote arrays and objects. Can we have a contest to name them? How about `synchrorays`, `synchrojects`, and (collectively) `synchrolizers`?
+
+### One Synchrolizer or Many Synchorays and Synchrojects?
+
+IMHO, it's best practice to write a synchrolizer for every array or object that the controller uses. If you only write a synchroray for the top level array you'd have to use dot notation to access the nested objects and arrays, and Firebase methods don't work with dot notation (they only work with child notation).
+
+But I suspect that other Firebase developers have other opinions.
 
 ### Firebase Objects vs. JavaScript (JSON) Objects
 
@@ -232,13 +262,13 @@ The _object_ includes a `$$conf` object.
 
 The _record_ is the keys and values of the object, i.e., the regular ol' JavaScript object without metadata.
 
-If you get the error message "Invalid record; could determine key for [object Object]", after you wonder whether that was supposed to say "_couldn't_ determine key", this error message means that you used an object when the method is expecting a record. Translated into English, the error message means, "Invalid record; the argument for this method appears to be an object not a record. Use $getRecord(key) to get an object's record."
+If you get the error message "Invalid record; could determine key for [object Object]", after you wonder whether that was supposed to say "_couldn't_ determine key", this error message means that you used an object when the method was expecting a record. Translated into English, the error message means, "Invalid record; the argument for this method appears to be an object not a record. Use $getRecord(key) to get an object's record."
 
 Firebase doesn't have a `$record` return method, e.g., `movie.$record` would return the movie object without the `$$conf` metadata. That would be similar to the `$id` return method, e.g., `movie.$id` returns the movie object's key. The only way to get an object's record is to use `$getRecord(key)` on the array.
 
 ### Async Operations
 
-Database queries are always asynchronous. If you have code to execute after a Firebase method always put the code in a promise. For example, after a user deletes a movie from our array of cruddy movies, we return the user to the home page. Synchronously we would write this:
+Database queries are asynchronous. If you have code to execute after a Firebase method always put the code in a promise. For example, after a user deletes a movie from our array of cruddy movies, we return the user to the home page. Synchronously we would write this:
 
 ```js
 $scope.deleteMovie = function() {
@@ -247,7 +277,7 @@ $scope.deleteMovie = function() {
 };
 ```
 
-The user would be returned to the home page, see the deleted movie in the array of movies, and then moments later the movie would disappear from the array. That would be weird.
+The user would be returned to the home page, see the deleted movie in the array of movies, and then  later the movie would disappear from the array. That would be weird.
 
 Asynchronously we would write:
 
@@ -265,16 +295,13 @@ The user is moved to the home page after the movie is removed from the array.
 
 Always execute your code in promises. You shouldn't experience async problems. If you suspect async conditions, e.g., logging a value returns `null`, then use the `$loaded()` method (below) for debugging.
 
-> The [Firebase documentation](https://www.firebase.com/docs/web/libraries/angular/guide/intro-to-angularfire.html) recommends also, in the view, display your data with [Angular's JSON filter](https://docs.angularjs.org/api/ng/filter/json): `<pre>{{ data | json }}</pre>
-`. I don't understand why this would help. Firebase data is already in JSON format. Angular's documentation says that the filter is mostly for debugging.
-
 ### Array Methods and Object Methods With the Same Names
 
 Some Firebase array methods and object methods have the same names but do different things. In particular, keep an eye on `$remove()` and `$save()`.
 
 The object version of `$remove()` removes an object from an array, if it's chained to an object. But if it's chained to an array (because you thought you were using the array version) it removes the entire array!
 
-The object version of `$save()` saves the object it's chained to. The array version saves an object's _record_ but doesn't objects. The saved record then updates the object so the object gets saved, if you set all this up correctly. More on this later.
+The object version of `$save()` saves the object it's chained to. The array version saves an object's _record_ but doesn't save objects. More on this later.
 
 ### Arrays Don't Work Well With Concurrent Users
 
@@ -283,205 +310,6 @@ If you're building an app that multiple users will be using simultaneously, with
 ### Firebase Limitations
 
 Firebase has [limitations](https://www.firebase.com/docs/web/guide/understanding-data.html) on big data, including 32 layers of nesting child nodes and files no bigger then 10 MB.
-
-## Setting Up Your Firebase App
-
-This section presents the "boilerplate" for setting up your app to use Firebase.
-
-### Open a Firebase Account
-
-If you haven't already, [sign up for a free Firebase account](https://www.firebase.com/) and create an app. Follow the instructions for installing stuff on your command line (CLI). The next subsections are just the check that you followed the online instructions, i.e., if there's a discrepancy rely on the official Firebase instructions.
-
-#### Install Firebase Tools
-
-Follow the instructions to install ```firebase-tools``` from your command line (CLI):
-
-```
-npm install -g firebase-tools
-```
-
-This installs ```firebase-tools``` globally so you don't have to do this for every project.
-
-> The Firebase tools seem to be missing from the [Installation & Setup](https://www.firebase.com/docs/web/libraries/angular/guide/intro-to-angularfire.html) guide. Has this step been dropped?
-
-#### Create a firebase.json Object
-
-Like Node's `package.json`, Firebase has a similar file. Install in your project's root directory (not in the `public` directory) with:
-
-```
-npm install firebase --save
-```
-
-Your `firebase.json` file should look something like this:
-
-```js
-{
-  "firebase": "my-firebase",
-  "public": "public",
-  "ignore": [
-    "firebase.json",
-    "**/.*",
-    "**/node_modules/**"
-  ]
-}
-```
-
-Deploy your app from your project root directory, i.e., from ```CRUDiest-Movies-Firebase```:
-
-```
-firebase init
-```
-
-#### Upload Your Files
-
-When you've written files you can upload them to Firebase with:
-
-```
-firebase deploy
-```
-
-### Firebase CDN or Local Installation
-
-In your `index.html` file you'll have to put the Firebase CDN into the `<head>` section. It should go below the Angular CDN. Here's a typical Angular-Bootstrap-Firebase `<head>` section:
-
-```html
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Firebase CRUD app with AngularJS, Bootstrap, and asynchronous typeahead.">
-  <title>CRUDiest Movies Firebase</title>
-
-  <!-- AngularJS -->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js"></script>
-
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-823r0923ry238r7y2r8" crossorigin="anonymous">
-  <!-- UI Bootstrap-->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.2/ui-bootstrap-tpls.min.js"></script>
-
-  <!-- Firebase -->
-  <script type="text/javascript" src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
-  <!-- AngularFire -->
-  <script type="text/javascript" src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
-
-  <link rel="stylesheet" href="css/style.css">
-
-</head>
-```
-
-You can find the latest versions of Firebase and AngularFire at:
-
-* Firebase: https://www.firebase.com/docs/web/changelog.html
-* AngularFire: https://www.firebase.com/docs/web/libraries/angular/changelog.html
-
-Alternatively, you can install Firebase as a local application dependency, using Bower. This is harder to update but is nice if you have to code somewhere without Internet access. See the [documentation](https://www.firebase.com/docs/web/guide/setup.html) for instructions (I've never run Firebase locally).
-
-### Inject firebase Dependency To Angular Module
-
-Inject `firebase` into your Angular module:
-
-```js
-var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'firebase']);
-```
-
-### Creating a Firebase Reference
-
-In each controller we create a Firebase _reference_. You can call it anything you want but the norm is `ref`.
-
-The Firebase reference is an object created with the `new` operator and the Firebase constructor function:
-
-```js
-// Create Firebase reference
-var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
-```
-
-The Firebase reference doesn't create a connection to the remote Firebase nor does it download data.
-
-This is the easiest part of Firebase. The syntax never changes and is done once in each controller, near the top.
-
-### $firebaseArray To Access the Entire Database
-
-If your controller will be working with an array, inject the service `$firebaseArray` into the controller:
-
-```js
-app.controller('MyCtrl', ['$scope', '$firebaseArray', function($scope, $firebaseArray) {
-
-});
-```
-
-Then reference the array and put it on the `$scope`. The top level of Firebase is always an array so if we want access to all the movies in our database we use:
-
-```js
-$scope.movies = $firebaseArray(ref);
-```
-
-> What are these things called? Array access links?
-
-Now the entire database is available on the `$scope`.
-
-### $firebaseObject to Access Objects
-
-If your controller will be working with objects, inject the service `$firebaseObject` into the controller:
-
-```js
-app.controller('MyCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseArray) {
-
-});
-```
-
-You can inject both the `$firebaseArray` service and the `$firebaseObject` service into a controller.
-
-Then put the object on the `$scope` using Firebase child notation:
-
-```js
-$scope.movie = $firebaseObject(ref.child($routeParams.id));
-```
-
-> What are these things called? Object access links?
-
-`ref` is the entire Firebase array, which we just on the `$scope` as `$scope.movies`. Now we're selecting one movie from the array and calling it `$scope.movie`. In Firebase child notation we select an object from an array by using the key as the argument to `.child()`. Here I'm taking the key from the URL, where we passed it from another view.
-
-> If you really want to screw up your app, put an object on the `$scope` using `$firebaseObject` and Firebase child notation and then access the same object using `$firebaseArray` and dot notation. You'll have two objects in your `$scope` that you think are the same object. On top of that one object will have keys and the other won't, so Firebase methods will sometimes work and sometimes say "...is not a function".
-
-### Nested Firebase Array
-
-To access a nested array, we don't use dot notation with the full array, e.g., `$scope.movies.movie.comments`. We set up another `$firebaseArray` and use Firebase child notation:
-
-```js
-$scope.comments = $firebaseArray(ref.child($routeParams.id).child('comments'));
-```
-
-### Nested Firebase Object
-
-To access a nested object set up another `$firebaseObject` and use Firebase child notation:
-
-```js
-$scope.comment = $firebaseObject(ref.child($routeParams.id).child('comments').child(commentID));
-```
-
-`commentID` is passed in from `comment.$id` or similar.
-
-### More Than One Array or Object in a Controller
-
-If your controller works with more than one array and/or object, make access links to each array and/or code. To repeat for the fifteenth time, don't set up an access link to a high-level array or object and then use dot notation to access nested arrays and objects.
-
-```js
-// Access all movies in array
-$scope.movies = $firebaseArray(ref);
-
-// Set up single movie object
-$scope.movie = $firebaseObject(ref.child($routeParams.id));
-
-// Set up comments array
-$scope.comments = $firebaseArray(ref.child($routeParams.id).child('movieComments'));
-
-// Set up single comment
-$scope.comment = $firebaseObject(ref.child($routeParams.id).child('comments').child(commentID));
-```
-
-> What are these called? Array and object accessors?
 
 ## Firebase Object Methods
 

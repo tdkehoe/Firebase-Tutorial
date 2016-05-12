@@ -10,118 +10,136 @@ The order of chapters is
 
 ## Firebase Principles Table of Contents
 
-* [A Short History of Websites](## A Short History of Websites)
-* [What Is Firebase?](## What Is Firebase?)
-* [Firebase Arrays vs. Objects](## Firebase Arrays vs. Objects)
-* [Firebase Methods](## Firebase Methods)
+* [Setting Up Your Firebase App](## Setting Up Your Firebase App)
+
 
 ### Contact Me
 
 Please update this document and make [pull requests](https://github.com/tdkehoe/Firebase-Tutorial) or send me an e-mail at kehoe@casafuturatech.com.
 
-## A Short History of Websites
+## Setting Up Your Firebase App
 
-Firebase is a NoSQL cloud database service. Storing your data in the cloud has become popular for a variety of reasons. To explain the advantages of Firebase, allow me to walk through my twenty years of building websites. In the 1990s we built static websites by hand-coding HTML. The World Wide Web (WWW) enabled users to look up information but websites weren't interactive. The browser sent an _HTTP request_ to the server, which served an HTML file to the browser, and the browser rendered the HTML code for the user to see. Then the user clicked a link, which sent another HTTP request to the server for another webpage, and so on.
+This section presents the "boilerplate" for setting up your app to use Firebase.
 
-In 1999 I wrote the first documentation for using a new language called Personal Home Page (PHP) with a new database called MySQL. My documentation became the most popular and highest-rated download from the website DevShed.com. Being able to (relatively) easily connect a database to your HTML enabled customers to do things such as make dating website profiles. Soon the WWW was dominated by websites where users stored stuff in databases, e.g., MySpace.com and Facebook.com. We wrote static HTML webpages but inserted PHP code to get data to fill in spaces on the webpage, such as a user's name or picture. The browser sent an HTTP request to the server, which ran PHP, Java, or another programming language to translate the HTTP requests into SQL queries. The data filled in the spaces of a static webpage with dynamic content, then served it to the browser.
+### Open a Firebase Account
 
-The next step was _dynamic websites_, in which a database retrieved parts of a website and assembled the parts into webpages. No longer did webmasters have to write HTML. Instead we used _content management systems_ (CMS) such as WordPress. A blogger could set up a complex website by plugging in modules, with little or no coding knowledge. With Ruby on Rails (RoR) developers could spin up a website in hours instead of weeks, plugging in modules for almost anything. The browser sent an HTTP request to the server, which hit the database perhaps hundreds of times to assemble the webpage, then rendered the webpage and served it to the browser. The user clicked on a button or a link, another HTTP request went to the server, the server hits the database perhaps hundreds more times, etc.
+If you haven't already, [sign up for a free Firebase account](https://www.firebase.com/) and create an app. Follow the instructions for installing stuff on your command line (CLI). The next subsections are just to check that you followed the online instructions, i.e., if there's a discrepancy rely on the official Firebase instructions.
 
-Dynamic websites are slow. Users click and wait while a lot of stuff happens on the server, before their page loads. Webmasters have to design websites to minimize clicks or users will bounce, and then pay top dollar for the fastest hosting services, and their websites are still slow.
+#### Install Firebase Tools
 
-Vast numbers of software engineers work at companies with SQL back ends, coding in PHP, C, Java, or Python. With SQL a database administrator must set up the _schema_ or structure of the database. The arrays and objects that software developers create must be translated into tables of columns and rows. Like most professions, learning the work isn't easy, but once you learn it you can expect to do the same stuff every day for the next twenty years.
+Follow the instructions to install ```firebase-tools``` from your command line (CLI):
 
-The next step was JavaScript. JavaScript is the only language that runs in the browser. Initially JavaScript did only minor tasks on websites but then frameworks such as Angular were developed. Initially the browser sends an HTTP request to the server, but the server sends not a rendered webpage but an application that runs on the user's computer, in the browser. The user clicks on buttons and the app does stuff, such as opening a calendar, without going back to the server. The user interface or user experience (UI/UX) is fast, practically instantaneous.
-
-JavaScript web apps still need data. An app can open a calendar, but to open a calendar of your AirBnB reservations that app has to send an HTTP request to the server to access the database and send back data. This is faster than a client-server website because only small amounts of data are requested (instead of entire webpages), and the webpages (now called _views_) don't have to be rendered each time they change, as only the parts that change are updated.
-
-With JavaScript web apps the _back end_ servers do little. The servers just translate HTTP requests into SQL queries and send data in HTTP responses. _NoSQL databases_ eliminate the translation into SQL queries. NoSQL databases store arrays of objects, connecting seamlessly to programming languages, especially JavaScript and JavaScript Object Notation (JSON). A NoSQL server can be spun up in a few hours, and after that there's little or nothing to do on the back end.
-
-## What Is Firebase?
-
-Firebase is a NoSQL cloud database. You write your front-end app in Angular, React, or another framework. You use the ```$firebaseArray``` and ```$firebaseObject``` _services_ in your controllers to _bind_ your local arrays and objects to arrays and objects in the remote database. Your local arrays and objects stay synchronized to the remote database without HTTP requests or database queries.
-
-When data changes in Firebase the app updates, and vice versa. In contrast, with a client-server structure the app only updates when the browser sends an HTTP request to the server, usually when the user clicks something. If you order a pizza and the driver's GPS is constantly sending updates, you don't want to have to click every five seconds to get new data. You want the app to show the driver getting closer to you without you having to click anything.
-
-A third service, ```$firebaseAuth```, creates an _auth object_ to log in a user, authorize which views the user can access, what data the user can read or write, etc.
-
-With Firebase, front-end developers can focus on the UI/UX without thinking about the back end. Compare the [CRUDiest Movies Database](https://crudiest-firebase.firebaseapp.com/#/movies) to the [Internet Movies Database](http://www.imdb.com/) (IMDb). The IMDb feels like it was written a long time ago in a galaxy far, far away. In contrast, the Firebase app feels like it's a native app, i.e., as if the movies are on your computer.
-
-To reiterate the reasons to use Firebase:
-
-* You don't need to run a server. Servers take time to set up, and then can crash or are shut down by your host for maintenance. A Node/Express/MongoDB server adds no value to your website, i.e., it doesn't do anything that you can't do in a front-end framework such as AngularJS (e.g., routing).
-* Data binding synchronizes your local arrays and objects to the remote arrays and objects. You don't have to write HTTP requests or database queries. Your users don't have to click to see updated data.
-* Firebase handles authorization and authentication for you, including OAuth2, e-mail & password login, and routing authorization.
-
-
-
-
-
-
-
-## Firebase Arrays vs. Objects, and Firebase Methods
-
-Firebase is a NoSQL database. It stores an arrays and objects.
-
-
-
-Firebase uses its own methods. You can use JavaScript methods with Firebase but mixing JavaScript methods and Firebase methods is a bad idea. For example, to add an object to array in JavaScript you use ```push()```. In Firebase you use
-
-
-
-
-
-Firebase methods do different things depending on whether the method is chained to a ```$firebaseArray``` or to a ```$firebaseObject```. When you work with nested arrays and objects you may chain a Firebase method
-
-
-Our database will be an array of movie objects.
-
-Our ```INDEX/NEW``` view (the home page) will display all the movies in out database. This is an array of objects so we'll inject the service ```$firebaseArray``` into ```HomeController.js```.
-
-```js
-app.controller('HomeController', ['$scope', '$firebaseArray', function($scope, $firebaseArray) {
-  console.log("Home controller.");
-
-}]);
+```
+npm install -g firebase-tools
 ```
 
-Our ```SHOW/EDIT``` view will display one movie. This is an object so we'll inject the service ```$firebaseObject``` into the ```ShowController.js```.
+This installs ```firebase-tools``` globally so you don't have to do this for every project.
 
-```js
-app.controller('ShowController', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
-  console.log("Show controller.");
+#### Create a firebase.json Object
 
-}]);
+Like Node's `package.json`, Firebase has a similar file. Install in your project's root directory (not in the `public` directory) with:
+
+```
+npm install firebase --save
 ```
 
-
-## Firebase .child() Notation
-
-Firebase uses ```.child()``` notation instead of dot notation because Firebase objects are different from JavaScript objects.
-
-![Firebase object](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_firebase_object.png)
-
-Let's write that as a JSON object:
+Your `firebase.json` file should look something like this:
 
 ```js
 {
-  $id: "-KGSpDSJEtvCHNeXWriS",
-  {
-    movieTitle: "Plan 9 from Outer Space",
-    movieDirector: "Edward D. Wood, Jr.",
-    moviePlot: "Aliens resurrect dead humans as zombies and vampires to stop humanity from creating the Solaranite (a sort of sun-driven bomb).",
-    movieYear: "1959"
-  }
+  "firebase": "my-firebase",
+  "public": "public",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
 }
 ```
 
-A Firebase object consists of two properties: the key and another, nested object. The nested object contains our properties. This nested object format makes JavaScript dot notation difficult (if not impossible) to use.
+Deploy your app from your project root directory, i.e., from ```CRUDiest-Movies-Firebase```:
 
-You can make JavaScript arrays and objects and use JavaScript methods such as ```push()``` and ```splice()``` and store the results in your Firebase database. If you do this you won't be able to use Firebase methods such as ```$save()``` and ```$remove()```.
+```
+firebase init
+```
 
-Firebase ```.child()``` notation has different syntax for arrays and objects. To select a property of an object use ```.child('propertyName')```, where ```propertyName``` is the name of the property you want.
+#### Upload Your Files
 
-Selecting an object from an array is trickier. The format is ```.child(key)```. In the above example we used ```.child($routeParams.id)``` where we had the object key in the URL, which had come from ```movie.$id```. Alternatively we could have used the Firebase method ```$keyAt(recordOrIndex)``` but I haven't gotten this to work.
+When you've written files you can upload them to Firebase with:
+
+```
+firebase deploy
+```
+
+### Firebase CDN or Local Installation
+
+In your `index.html` file put the Firebase CDN into the `<head>` section. It should go below the Angular CDN:
+
+```html
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- makes Bootstrap work with Internet Explorer -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- makes Bootstrap responseive -->
+  <meta name="description" content="Firebase CRUD app with AngularJS, Bootstrap, and asynchronous typeahead."> <!-- This will display in Google search -->
+  <title>CRUDiest Movies Firebase</title>
+
+  <!-- AngularJS -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js"></script>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-823r0923ry238r7y2r8" crossorigin="anonymous">
+  <!-- UI Bootstrap-->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.2/ui-bootstrap-tpls.min.js"></script>
+
+  <!-- Firebase -->
+  <script type="text/javascript" src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+  <!-- AngularFire -->
+  <script type="text/javascript" src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css"> <!-- Link to the stylesheet -->
+
+</head>
+```
+
+Don't copy these CDNS. The Bootstrap CSS CDN above won't work because the hash was me typing random letters and numbers. Go to the [Bootstrap website](http://getbootstrap.com/) and download your own CDN.
+
+Then get the latest versions of the other CDNs. Don't get Angular 2.x, stay with Angular 1.x. You can find the latest versions at:
+
+* Angular: https://angularjs.org/
+* Bootstrap CSS: http://getbootstrap.com/
+* UI Bootstrap: https://angular-ui.github.io/bootstrap/
+* Firebase: https://www.firebase.com/docs/web/changelog.html
+* AngularFire: https://www.firebase.com/docs/web/libraries/angular/changelog.html
+
+Alternatively, you can install Firebase as a local application dependency, using Bower. This is harder to update but is nice if you have to code somewhere without Internet access. See the [documentation](https://www.firebase.com/docs/web/guide/setup.html) for instructions (I've never run Firebase locally).
+
+### Inject firebase Dependency To Angular Module
+
+Inject `firebase` into your Angular module:
+
+```js
+var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'firebase']);
+```
+
+### Creating a Firebase Reference
+
+In each controller we create a Firebase _reference_. You can call it anything you want but the norm is `ref`.
+
+The Firebase reference is an object created with the `new` operator and the Firebase constructor function:
+
+```js
+// Create Firebase reference
+var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
+```
+
+The Firebase reference doesn't create a connection to the remote Firebase nor does it download data.
+
+This is the easiest part of Firebase. The syntax never changes and is done once in each controller, near the top.
+
+
+
+
 
 
 
