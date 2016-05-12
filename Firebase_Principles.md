@@ -70,10 +70,15 @@ With Firebase, front-end developers can focus on the UI/UX without thinking abou
 
 To reiterate the reasons to use Firebase:
 
+#### Things That Can Only Be Done With Firebase
 * Data binding synchronizes your local arrays and objects to the remote arrays and objects. You don't have to write HTTP requests or database queries. Data updates in your app without your users having to click anything.
-* Data binding can be used to make collaborative apps, i.e., multiple users can use the same app at the same time and each user's data instantly updates to the other users.
+* Data binding can be used to make collaborative apps, i.e., multiple users can use the same app at the same time and each user's data instantly updates to the other users. (This is why I learned Firebase. Ask me how in the future when you go to websites there will be other people there.)
+
+#### Things That Are Easier With Firebase But Can Be Done Without Firebase
 * Firebase handles authorization and authentication for you, including OAuth2, e-mail & password login, and routing authorization.
 * No backend server. Servers take time to set up, and then can crash or are shut down by your host for maintenance. A Node/Express/MongoDB server adds no value to your website, i.e., it doesn't do anything that you can't do in a front-end framework such as AngularJS (e.g., routing).
+
+#### Things That Are Good But Not Unique To Firebase
 * NoSQL means not having to write schema to set up database tables or translate HTTP requests from objects and arrays into SQL queries.
 * Firebase is fast. I built two versions of the same app, in the [MEAN stack](https://crudiest-movies.firebaseapp.com/#/movies) and in [Firebase](https://crudiest-firebase.firebaseapp.com/#/movies). Open each and you'll see that the Firebase version loads the movies array faster. Add some movies and see if you notice a difference in speed.
 * Firebase is [free for limited accounts](https://www.firebase.com/pricing.html).
@@ -301,6 +306,9 @@ The user is moved to the home page after the movie is removed from the array.
 
 Always execute your code in promises. You shouldn't experience async problems. If you suspect async conditions, e.g., logging a value returns `null`, then use the `$loaded()` method (below) for debugging.
 
+> The [Firebase documentation](https://www.firebase.com/docs/web/libraries/angular/guide/intro-to-angularfire.html) recommends also, in the view, display your data with [Angular's JSON filter](https://docs.angularjs.org/api/ng/filter/json): `<pre>{{ data | json }}</pre>
+`. I don't understand why this would help. Firebase data is already in JSON format. Angular's documentation says that the filter is mostly for debugging.
+
 ### Array Methods and Object Methods With the Same Names
 
 Some Firebase array methods and object methods have the same names but do different things. In particular, keep an eye on `$remove()` and `$save()`.
@@ -309,15 +317,23 @@ The object version of `$remove()` removes an object from an array, if it's chain
 
 The object version of `$save()` saves the object it's chained to. The array version saves an object's _record_ but doesn't objects. The saved record then updates the object so the object gets saved, if you set all this up correctly. More on this later.
 
+### Arrays Don't Work Well With Multiple Users
+
+If you're building an app that multiple users will be using simultaneously, with each user's data sharing instantly to the other users, avoid using arrays for data that will be concurrently edited. As users simultaneously add elements to or drop elements from an array the indices can get messed up. The Firebase team has some [advice on avoiding problems with concurrent editing of arrays](https://www.firebase.com/blog/2014-04-28-best-practices-arrays-in-firebase.html), such as using `$save()` instead of `$remove()` and using keys instead of indices.
+
+### Firebase Limitations
+
+Firebase has [limitations](https://www.firebase.com/docs/web/guide/understanding-data.html) on big data, including 32 layers of nesting child nodes and files no bigger then 10 MB.
+
 ## Setting Up Your Firebase App
 
 This section presents the "boilerplate" for setting up your app to use Firebase.
 
 ### Open a Firebase Account
 
-If you haven't already, [sign up for a free Firebase account](https://www.firebase.com/) and create an app.
+If you haven't already, [sign up for a free Firebase account](https://www.firebase.com/) and create an app. Follow the instructions for installing stuff on your command line (CLI). The next subsections are just the check that you followed the online instructions, i.e., if there's a discrepancy rely on the official Firebase instructions.
 
-### Install Firebase Tools
+#### Install Firebase Tools
 
 Follow the instructions to install ```firebase-tools``` from your command line (CLI):
 
@@ -327,9 +343,9 @@ npm install -g firebase-tools
 
 This installs ```firebase-tools``` globally so you don't have to do this for every project.
 
-> The Firebase tools seem to be missing from the [Installation & Setup](https://www.firebase.com/docs/web/guide/setup.html) guide. Has this step been dropped?
+> The Firebase tools seem to be missing from the [Installation & Setup](https://www.firebase.com/docs/web/libraries/angular/guide/intro-to-angularfire.html) guide. Has this step been dropped?
 
-### Create a firebase.json Object
+#### Create a firebase.json Object
 
 Like Node's `package.json`, Firebase has a similar file. Install in your project's root directory (not in the `public` directory) with:
 
@@ -357,7 +373,7 @@ Deploy your app from your project root directory, i.e., from ```CRUDiest-Movies-
 firebase init
 ```
 
-### Upload Your Files
+#### Upload Your Files
 
 When you've written files you can upload them to Firebase with:
 
@@ -513,19 +529,20 @@ $scope.comment = $firebaseObject(ref.child($routeParams.id).child('comments').ch
 Firebase has ten methods that can be chained to a `$firebaseObject`:
 
 The methods I use:
-* `$save()`
-* `$remove()`
-* `$watch(callback, context)`
-* `$id`
+* `$save()` (a mutator method)
+* `$remove()` (a mutator method)
+* `$watch(callback, context)` (a mutator method)
+* `$id` (a return method)
 
 The method I use for debugging but not in production:
-* `$loaded()`
+* `$loaded()` (a mutator method)
 
 The methods I've never used:
-* `$unwatch()`
-* `$bindTo(scope, varName)`
-* `$ref()`
-* `$destroy()`
+* `$bindTo(scope, varName)` (a mutator method)
+* `$destroy()` (a mutator method)
+* `$ref()` (a return method)
+* `$value` (a return method)
+* `$priority` (a return method)
 
 You'll notice that all Firebase methods start with `$`. Also note that most `$firebaseObject` methods don't take an argument.
 
@@ -688,7 +705,29 @@ I have no idea what any of that means and I've never used `$ref()`.
 
 ## Firebase Array Methods
 
-Firebase also has methods for arrays. Some of the array methods have the same names as the object methods but do different things.
+Firebase has ten methods that can be chained to a `$firebaseArray`. Some of the array methods have the same names as the object methods but do different things.
+
+Note that most array methods have arguments. The arguments are usually records, indices, or keys. Because these can be difficult to obtain I usually prefer the object version of these methods, which don't use arguments.
+
+The method I use:
+* `$add(newData)` (a mutator method, no equivalent object method)
+
+The method I use for debugging but not in production:
+* `$loaded()` (a mutator method)
+
+The methods that I usually don't use because I prefer the object version:
+* `$save(recordOrIndex)` (a mutator method)
+* `$remove(recordOrIndex)` (a mutator method)
+* `$keyAt(recordOrIndex)` (a return method)
+* `$watch(callback[, context])` (a mutator method)
+
+The methods that I usually don't use:
+* `$getRecord(key)` (a return method, no equivalent object method)
+* `$indexFor(key)` (a return method, no equivalent object method)
+
+The methods I've never used:
+* `$destroy()` (a mutator method)
+* `$ref()` (a return method)
 
 ### $add(newData)
 
