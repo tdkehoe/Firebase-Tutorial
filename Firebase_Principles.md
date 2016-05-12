@@ -44,34 +44,34 @@ Firebase is a NoSQL cloud database service. Storing your data in the cloud has b
 
 In 1999 I wrote the first documentation for using a new language called Personal Home Page (PHP) with a new database called MySQL. My documentation became the most popular and highest-rated download from the website DevShed.com. Being able to connect a database to your HTML enabled developers to make interactive websites, e.g., a dating website where users could make profiles. Soon the WWW was dominated by websites where users put stuff into databases, e.g., MySpace.com and Facebook.com. We wrote static HTML webpages with inserted PHP code that got data to fill in spaces on the webpage, such as a user's name or picture. The browser sent an HTTP request to the server, which ran PHP, Java, or another programming language to translate the HTTP requests into SQL queries. The data filled in the spaces of a static webpage with dynamic content, then served it to the browser.
 
-The next step was _dynamic websites_, in which a database retrieved parts of a website and assembled the parts into webpages. No longer did webmasters have to write HTML. Instead we used _content management systems_ (CMS) such as WordPress. A blogger could set up a complex website by plugging in modules, with little or no coding knowledge. With Ruby on Rails (RoR) developers could spin up a website in hours instead of weeks, plugging in modules for almost anything. The browser sent an HTTP request to the server, which hit the database perhaps hundreds of times to assemble the webpage, then rendered the webpage and served it to the browser. The user clicked on a button or a link, another HTTP request went to the server, the server hit the database hundreds more times, etc.
+The next step was _dynamic websites_, in which a database retrieved parts of a website and assembled the parts into webpages. No longer did webmasters have to write HTML. Instead we used _content management systems_ (CMS) such as WordPress. A blogger could set up a complex website by plugging in modules, with little or no coding knowledge. With Ruby on Rails (RoR) developers could spin up a website in hours instead of weeks, plugging in modules for almost anything.
 
-Dynamic websites are slow. Users click and wait while a lot of stuff happens on the server, before their page loads. Users bounce if a website is slow or requires too many clicks and page reloads. Webmasters pay top dollar for the fastest hosting services, and their websites are still slow.
+While dynamic websites were a boon to webmasters, they're slow. When a browser sends an HTTP request to the server, the server hits the database perhaps hundreds of times to assemble the webpage, then renders the webpage and serves it to the browser. The user clicks on a button or a link, another HTTP request goes to the server, the server hits the database hundreds more times, etc.
 
-Vast numbers of software engineers work at companies with SQL back ends, coding in PHP, C, Java, or Python. With SQL a database administrator must set up the _schema_ or structure of the database. The arrays and objects that software developers create must be translated into tables of columns and rows. Like most professions, learning the work isn't easy, but once you learn it you can expect to do the same stuff every day for the next twenty years.
+Dynamic website users click and wait while a lot of stuff happens on the server, before their page loads. Users bounce if a website is slow or requires too many clicks and page reloads. Webmasters pay top dollar for the fastest hosting services, and their websites are still slow.
 
-The next step was JavaScript. JavaScript is the only language that runs in the browser. Initially JavaScript did only minor tasks on websites but then frameworks such as Angular were developed. Initially the browser sends an HTTP request to the server, but the server sends not a rendered webpage but an application that runs on the user's computer, in the browser. The user clicks on buttons and the app does stuff, such as opening a calendar, without going back to the server. The user interface or user experience (UI/UX) is fast, practically instantaneous.
+Vast numbers of software engineers work at companies with SQL back ends, coding in PHP, C, Java, or Python. With SQL a database administrator must set up the _schema_ or structure of the database. The arrays and objects that software developers create must be translated into tables of columns and rows.
+
+The next step was JavaScript. JavaScript is the only language that runs in the browser. Initially JavaScript did only minor tasks on websites but then frameworks such as Angular were developed. Initially the browser sends an HTTP request to the server, then the server sends not a rendered webpage but an application that runs on the user's computer, in the browser. The user clicks on buttons and the app does stuff, such as opening a calendar, without going back to the server. The user interface or user experience (UI/UX) is fast, practically instantaneous.
 
 JavaScript web apps still need data. An app can open a calendar, but to open a calendar of your AirBnB reservations the app has to send an HTTP request to the server to access the database and send back data. This is faster than a client-server website because only small amounts of data are requested (instead of entire webpages), and the webpages (now called _views_) don't have to be rendered each time they change, as only the parts that change are updated.
 
-With JavaScript web apps the _back end_ servers do little. The servers just translate HTTP requests into SQL queries and send data in HTTP responses. _NoSQL databases_ eliminate the translation into SQL queries. NoSQL databases store arrays of objects, connecting seamlessly to programming languages, especially JavaScript and JavaScript Object Notation (JSON). NoSQL databases generally don't require schema. A NoSQL server can be spun up in a few hours, and after that there's little or nothing to do on the back end.
+With JavaScript web apps the _back end_ servers do little. The servers just translate HTTP requests into SQL queries and send data in HTTP responses. _NoSQL databases_ eliminate the translation into SQL queries. NoSQL databases store arrays and objects, connecting seamlessly to programming languages, especially JavaScript and JavaScript Object Notation (JSON). NoSQL databases generally don't require schema. A NoSQL server can be spun up in a few hours, and after that there's little or nothing to do on the back end.
 
 ## What Is Firebase?
 
 Firebase is a NoSQL cloud database. You write your front-end app in Angular, React, or another framework. You use the `$firebaseArray` and `$firebaseObject` _services_ in your controllers to _bind_ your local arrays and objects to arrays and objects in the remote database. Your local arrays and objects stay synchronized to the remote database without HTTP requests or database queries. You don't need to write schema on the back end, the remote arrays and objects mirror your local arrays and objects.
 
-When data changes in Firebase the app updates, and vice versa. In contrast, with a client-server structure the app only updates when the browser sends an HTTP request to the server, usually when the user clicks something. If you order a pizza and the driver's GPS is constantly sending updates, you don't want to have to click every time you want to see where the driver is. You want the app to show the driver getting closer to you without you having to click anything.
+When data changes in Firebase the app updates, and vice versa. In contrast, with a client-server structure the app only updates when the browser sends an HTTP request to the server, usually when the user clicks something. If you order a pizza and the driver's GPS is constantly sending updates, you don't want to have to click every time you want to see where your pizza is. You want the app to show your pizza getting closer to you without you having to click anything.
 
-I also made a [MEAN stack movies database](https://crudiest-movies.firebaseapp.com/#/movies) using Node, Express, and MongoDB on the back end. If multiple users are using the apps at the same time, the Firebase users see new movies added or data edited by other users appear magically, with the user doing nothing. In contrast, in the MEAN stack movies database new data from other users only appears if the user refreshes the browser.
+I also made a [MEAN stack movies database](https://crudiest-movies.firebaseapp.com/#/movies) using Node, Express, and MongoDB on the back end. If multiple users are using the apps at the same time, the MEAN stack users see new data from other users only if the user refreshes the browser. In contrast, the Firebase users see new movies added or data edited by other users appear magically, with the user doing nothing.  
 
 A third service, `$firebaseAuth`, creates an _auth object_ to log in a user, authorize which views the user can access, what data the user can read or write, etc.
 
-With Firebase, front-end developers can focus on the UI/UX without thinking about the back end. Compare the [CRUDiest Movies Firebase](https://crudiest-firebase.firebaseapp.com/#/movies) to the [Internet Movies Database](http://www.imdb.com/) (IMDb). The IMDb feels like it was written a long time ago in a galaxy far, far away. In contrast, the Firebase app feels like it's a native app accessing a database on your computer.
-
-To reiterate the reasons to use Firebase:
+With Firebase, front-end developers can focus on the UI/UX without thinking about the back end. Compare the [CRUDiest Movies Firebase](https://crudiest-firebase.firebaseapp.com/#/movies) to the [Internet Movies Database](http://www.imdb.com/) (IMDb). The IMDb feels like it was written a long time ago in a galaxy far, far away. In contrast, the Firebase app feels like it's a native app accessing data on your computer.
 
 #### Things That Can Only Be Done With Firebase
-* Data binding synchronizes your local arrays and objects to the remote arrays and objects. You don't have to write HTTP requests or database queries. Data updates in your app without your users having to click anything.
+* Data binding synchronizes your local arrays and objects to remote arrays and objects. You don't have to write HTTP requests or database queries. Data updates in your app without your users having to click anything.
 * Data binding can be used to make collaborative apps, i.e., multiple users can use the same app at the same time and each user's data instantly updates to the other users. (This is why I learned Firebase. Ask me how in the future when you go to websites there will be other people there.)
 
 #### Things That Are Easier With Firebase But Can Be Done Without Firebase
@@ -83,7 +83,7 @@ To reiterate the reasons to use Firebase:
 * Firebase is fast. I built two versions of the same app, in the [MEAN stack](https://crudiest-movies.firebaseapp.com/#/movies) and in [Firebase](https://crudiest-firebase.firebaseapp.com/#/movies). Open each and you'll see that the Firebase version loads the movies array faster. Add some movies and see if you notice a difference in speed.
 * Firebase is [free for limited accounts](https://www.firebase.com/pricing.html).
 
-If you know how to use Firebase, you can develop single-page apps (SPAs) faster and with less code than an SQL or MongoDB backend requires. That said, in learning Firebase I've often gotten stuck for hours or days on what should have been simple. The [AngularFire documentation](https://www.firebase.com/docs/web/libraries/angular/) is good but not as complete as I would like. I started making notes so that I wouldn't forget stuff. The notes grew to be this document. The next section should save you days in learning Firebase!
+If you know how to use Firebase, you can develop single-page apps (SPAs) faster and with less code than with an SQL or MongoDB backend. That said, in learning Firebase I've often gotten stuck for hours or days on what should have been simple. I started making notes so that I wouldn't forget stuff. The notes grew into this document. The next section should save you days in learning Firebase!
 
 ## The Most Confusing Parts of Firebase
 
@@ -91,7 +91,7 @@ This section lists the most confusing parts of Firebase. This section is only ab
 
 ### Firebase Methods vs. JavaScript Methods
 
-Firebase is a superset of JavaScript. You could write your app in JavsScript and bind your arrays and objects to Firebase, as if Firebase were a back end database like MongoDB. But you'd be missing much of Firebase's advantages. Firebase is a superset of JavaScript, with its own methods and special objects. Firebase methods start with `$` and the special objects start with `$$`.
+Firebase is a superset of JavaScript. You could write your app in JavsScript and bind your arrays and objects to Firebase, as if Firebase were a backend database like MongoDB. But you'd be missing much of Firebase's advantages. Firebase has its own methods. Firebase methods start with `$`.
 
 For example, to add an object to array in JavaScript you use `push()`. In Firebase you use `$add()`.
 
@@ -99,7 +99,24 @@ To remove an object from an array in JavaScript you use `splice()`. In Firebase 
 
 If you use JavaScript methods such as `push()` and `splice()` you won't get Firebase objects with keys, and Firebase methods won't work. Look for the equivalent Firebase method, e.g., `$add` instead of `push()`, and `$remove` instead of `splice()`. Don't mix JavaScript methods with Firebase methods.
 
-This document only covers AngularFire methods. There's another set of "vanilla" Firebase methods that are independent of frameworks.
+This document only covers AngularFire methods. There's another set of "vanilla" Firebase methods that are independent of the frameworks.
+
+### Firebase Child Notation vs. JavaScript Dot Notation
+
+We can't use JavaScript dot notation with Firebase methods. Instead we use _Firebase child notation_:
+
+```js
+$firebaseArray(ref.child($routeParams.id).child('comments'));
+```
+
+This may be the most confusing area of Firebase. Let me count the ways...
+
+1. The arguments for a child array and a child object are different. A child array is selected by the name of its property, in quotes, as the argument, e.g., `.child('comments')`. That's easy enough. But selecting a child object from an array uses the object's key as the argument. But you wouldn't want to hardcode the key, e.g., `.child('-KGSpDSJEtvCHNeXWriS')`. You need to represent the key as a variable using the `$id` method, e.g., `.child(movie.$id)`.
+2. You don't chain a Firebase method to the child notation, e.g., `...child('comments').$remove()`. Instead you create a `$firebaseArray` or `$firebaseObject` with the child notation, set that on the `$scope`, and chain the Firebase method to the array or object on the `$scope`.
+3. It's easy to mistakenly mix JavaScript dot notation with Firebase child notation, and get the error message "...is not a function." For example, ``movies($routeParams.id).child('comments').$remove(comment)`` won't work because `movies` is dot notation. You don't see a dot, but somewhere in the steps to create that array and put it on the `$scope` there was a dot.
+4. I'll repeat the last point because it's so easy to make a mistake. When you write JavaScript you get used to chaining objects and methods with dot notation you'll write several steps that work as expected, because you don't have a Firebase method in the chain. Then in the next step you try to use a Firebase method and it doesn't work, because several steps earlier you used dot notation.
+
+> There's an alternative to child notation. You can set up a controller's Firebase reference to a subdirectory. I don't see how this would work in practice as the URL includes keys and indexes to specific objects, when child notation can have variables for the objects.
 
 ### Firebase Objects vs. JavaScript (JSON) Objects
 
@@ -147,18 +164,18 @@ Now we'll look at the Firebase object:
     year: "1959",
     comments: [
       {
-        $$conf: Object,
         $id: "-KGSpDSJEtvCH23ert654",
-        $priority: null,
-        commentText: 'I was just thinking about this movie.',
-        commentAuthor: 'Ludwig Wittgenstein'
+        {
+          commentText: 'I was just thinking about this movie.',
+          commentAuthor: 'Ludwig Wittgenstein'
+        }
       },
       {
-        $$conf: Object,
         $id: "-KGSpDSJEtvCwer34he0",
-        $priority: null,
-        commentText: 'I love Vampira!',
-        commentAuthor: 'Bertrand Russell'
+        {
+          commentText: 'I love Vampira!',
+          commentAuthor: 'Bertrand Russell'
+        }
       }
     ]
   },
@@ -179,66 +196,9 @@ Firebase adds three metadata properties to objects:
 * `$id` is the object's key.
 * `$priority` specifies the order in which directives apply to a DOM element.
 
-Note that only objects have these three metadata properties. Arrays don't have them. Primitives (booleans, strings, numbers) don't have them.
+Only objects have these three metadata properties. Arrays don't have them. Primitives (booleans, strings, numbers) don't have them.
 
-To add confusion, in the Firebase Dashboard displays objects like this:
-
-```js
-[
-  {
-    $id: "-KGSpDSJEtvCHNeXWriS",
-    {
-      title: "Plan 9 from Outer Space",
-      director: "Edward D. Wood, Jr.",
-      plot: "Aliens resurrect dead humans as zombies and vampires to stop humanity from creating the Solaranite (a sort of sun-driven bomb).",
-      year: "1959",
-      comments: [
-        {
-          $id: "-KGSpDSJEtvCH23ert654",
-          {
-            commentText: 'I was just thinking about this movie.',
-            commentAuthor: 'Ludwig Wittgenstein'
-          }
-        },
-        {
-          $id: "-KGSpDSJEtvCwer34he0",
-          {
-            commentText: 'I love Vampira!',
-            commentAuthor: 'Bertrand Russell'
-          }
-        }
-      ]
-    }
-  },
-  {
-    $id: "-KGSpDSJEtefwef434e21",
-    {
-      title: "Battlefield Earth",
-      actors: "Tom Cruise",
-      ...
-    }
-  }
-]
-```
-
-If that were how Firebase data were structured then dot notation wouldn't work, e.g., `movie.title`. Not that you should use dot notation with Firebase...
-
-### Firebase Child Notation vs. JavaScript Dot Notation
-
-We can't use JavaScript dot notation with Firebase methods. Instead we use _Firebase child notation_:
-
-```js
-$firebaseArray(ref.child($routeParams.id).child('comments'));
-```
-
-This may be the most confusing area of Firebase. Let me count the ways...
-
-1. The arguments for a child array and a child object are different. A child array is selected by the name of its property, in quotes, as the argument, e.g., `.child('comments')`. That's easy enough. But selecting a child object from an array uses the object's key as the argument. But you wouldn't want to hardcode the key, e.g., `.child('-KGSpDSJEtvCHNeXWriS')`. You need to represent the key as a variable using the `$id` method, e.g., `.child(movie.$id)`.
-2. You don't chain a Firebase method to the child notation, e.g., `...child('comments').$remove()`. Instead you create a `$firebaseArray` or `$firebaseObject` with the child notation, set that on the `$scope`, and chain the Firebase method to the array or object on the `$scope`.
-3. It's easy to mistakenly mix JavaScript dot notation with Firebase child notation, and get the error message "...is not a function." For example, ``movies($routeParams.id).child('comments').$remove(comment)`` won't work because `movies` is dot notation. You don't see a dot, but somewhere in the steps to create that array and put it on the `$scope` there was a dot.
-4. I'll repeat the last point because it's so easy to make a mistake. When you write JavaScript you get used to chaining objects and methods with dot notation you'll write several steps that work as expected, because you don't have a Firebase method in the chain. Then in the next step you try to use a Firebase method and it doesn't work, because several steps earlier you used dot notation.
-
-> There's an alternative to child notation. You can set up a controller's Firebase reference to a subdirectory. I don't see how this would work in practice as the URL includes keys and indexes to specific objects, when child notation can have variables for the objects.
+Note that the comments objects are wrapped in another object, with the key as a property. The Firebase Dashboard presents all objects like this.
 
 ### Objects vs. Records
 
