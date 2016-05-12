@@ -109,14 +109,13 @@ We can't use JavaScript dot notation with Firebase methods. Instead we use _Fire
 $firebaseArray(ref.child($routeParams.id).child('comments'));
 ```
 
-This may be the most confusing area of Firebase. Let me count the ways...
+The arguments for a child array and a child object are different. A child array is selected by the name of its property, in quotes, e.g., `.child('comments')`. That's easy enough. Selecting a child object from an array uses the object's key as the argument. But you wouldn't want to hardcode the key, e.g., `.child('-KGSpDSJEtvCHNeXWriS')`. You need to represent the key as a variable using the `$id` method, e.g., `.child(movie.$id)`.
 
-1. The arguments for a child array and a child object are different. A child array is selected by the name of its property, in quotes, as the argument, e.g., `.child('comments')`. That's easy enough. But selecting a child object from an array uses the object's key as the argument. But you wouldn't want to hardcode the key, e.g., `.child('-KGSpDSJEtvCHNeXWriS')`. You need to represent the key as a variable using the `$id` method, e.g., `.child(movie.$id)`.
-2. You don't chain a Firebase method to the child notation, e.g., `...child('comments').$remove()`. Instead you create a `$firebaseArray` or `$firebaseObject` with the child notation, set that on the `$scope`, and chain the Firebase method to the array or object on the `$scope`.
-3. It's easy to mistakenly mix JavaScript dot notation with Firebase child notation, and get the error message "...is not a function." For example, ``movies($routeParams.id).child('comments').$remove(comment)`` won't work because `movies` is dot notation. You don't see a dot, but somewhere in the steps to create that array and put it on the `$scope` there was a dot.
-4. I'll repeat the last point because it's so easy to make a mistake. When you write JavaScript you get used to chaining objects and methods with dot notation you'll write several steps that work as expected, because you don't have a Firebase method in the chain. Then in the next step you try to use a Firebase method and it doesn't work, because several steps earlier you used dot notation.
+You can't chain a Firebase method to child notation, e.g., `...child('comments').$remove()`. Instead you create a `$firebaseArray` or `$firebaseObject` with the child notation, set that on the `$scope`, and chain the Firebase method to the array or object on the `$scope`:
 
-> There's an alternative to child notation. You can set up a controller's Firebase reference to a subdirectory. I don't see how this would work in practice as the URL includes keys and indexes to specific objects, when child notation can have variables for the objects.
+It's easy to mistakenly mix JavaScript dot notation with Firebase child notation, and get the error message "...is not a function." For example, ``movies($routeParams.id).child('comments').$remove(comment)`` won't work because `movies` is dot notation. You don't see a dot, but somewhere in the steps to create that array and put it on the `$scope` there was a dot.
+
+I'll repeat the last point because it's easy to make a mistake. When you write JavaScript you get used to chaining objects and methods with dot notation. You'll write several steps that work as expected, because you don't have a Firebase method in the chain. Then in the next step you try to use a Firebase method and it doesn't work, because several steps earlier you used dot notation.
 
 ### Firebase Objects vs. JavaScript (JSON) Objects
 
