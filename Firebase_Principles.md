@@ -317,9 +317,9 @@ The object version of `$remove()` removes an object from an array, if it's chain
 
 The object version of `$save()` saves the object it's chained to. The array version saves an object's _record_ but doesn't objects. The saved record then updates the object so the object gets saved, if you set all this up correctly. More on this later.
 
-### Arrays Don't Work Well With Multiple Users
+### Arrays Don't Work Well With Concurrent Users
 
-If you're building an app that multiple users will be using simultaneously, with each user's data sharing instantly to the other users, avoid using arrays for data that will be concurrently edited. As users simultaneously add elements to or drop elements from an array the indices can get messed up. The Firebase team has some [advice on avoiding problems with concurrent editing of arrays](https://www.firebase.com/blog/2014-04-28-best-practices-arrays-in-firebase.html), such as using `$save()` instead of `$remove()` and using keys instead of indices.
+If you're building an app that multiple users will be using simultaneously, with each user's data sharing instantly to the other users, as users simultaneously add elements to or drop elements from an array the indices can get messed up. The Firebase array methods `$add()`, `$remove`, and `$save` are concurrency safe. The JavaScript methods `push()` and `splice()` aren't. The Firebase team also suggest using keys instead of indices.
 
 ### Firebase Limitations
 
