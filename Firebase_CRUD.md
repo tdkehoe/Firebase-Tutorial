@@ -10,8 +10,13 @@ The order of chapters is
 
 ## Firebase Principles Table of Contents
 
-* [Setting Up Your Firebase App](## Setting Up Your Firebase App)
-
+* [Set Up Your Directory Structure](## Set Up Your Directory Structure)
+* [Open A Firebase Account](## Open A Firebase Account)
+* [Set Up `index.html`](## Set Up `index.html`)
+* [Set Up Angular](## Set Up Angular)
+* [Add a Movie With UI Bootstrap Typeahead](## Add a Movie With UI Bootstrap Typeahead)
+* [Display Movies in Index View (Homepage)](## Display Movies in Index View (Homepage))
+* [View Movie Title in SHOW/EDIT](## View Movie Title in SHOW/EDIT)
 
 ### Contact Me
 
@@ -21,11 +26,7 @@ Please update this document and make [pull requests](https://github.com/tdkehoe/
 
 Every coding bootcamp student makes a movies database. I picture a hiring manager going through a stack of resumes, clicking on project after project, spending no more than seconds on each. If you make a unique, innovative project that takes time and effort to understand, the hiring manager will move on. I figure that the best way to impress a hiring manager is with a web app he or she can quickly understand and be impressed by, e.g., a well-executed movies database.
 
-## Setting Up Your Firebase App
-
-This section presents the "boilerplate" for setting up your app to use Firebase.
-
-### Directory Structure
+## Set Up Your Directory Structure
 
 Set up this directory structure:
 
@@ -94,7 +95,7 @@ cd ..
 tree
 ```
 
-### Open a Firebase Account
+## Open a Firebase Account
 
 If you haven't already, [sign up for a free Firebase account](https://www.firebase.com/).
 
@@ -153,7 +154,7 @@ Change `myAccount` to your GitHub account name.
 
 Check that your files uploaded to your GitHub repository.
 
-## index.html
+## Set Up `index.html`
 
 Open the file `index.html` in your text editor. If you're using Atom, type `html` followed by the `TAB` key to autofill a snippet.
 
@@ -238,45 +239,11 @@ Update the version numbers:
 4. Firebase: https://www.firebase.com/docs/web/changelog.html
 5. AngularFire: https://www.firebase.com/docs/web/libraries/angular/changelog.html
 
-Every Monday morning I go through my [checklist of software updates](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/Update_Checklist.md).
+Every Monday morning I go through my [checklist of software updates](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Update_Checklist.md).
 
 Alternatively you can [download Angular](https://angularjs.org/) and the other libraries and link to them locally. That's more reliable as you can use your app without an Internet connection. The CDN is easier to install and update. To update it you just change the version number.
 
-### Inject `firebase` Dependency To Angular Module
-
-Inject `firebase` into your Angular module:
-
-```js
-var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'firebase']);
-```
-
-### Creating a Firebase Reference
-
-In each controller we create a Firebase _reference_. You can call it anything you want but the norm is `ref`.
-
-The Firebase reference is an object created with the `new` operator and the Firebase constructor function (_object-oriented programming_  or OOP):
-
-```js
-// Create Firebase reference
-var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
-```
-
-Replace `crudiest-firebase` with the name of your app. Be sure to use the "Dashboard" URL that ends in `firebaseio.com`, not the "URL" URL that ends in `firebaseapp.com`.
-
-The Firebase reference doesn't create a connection to the remote Firebase nor does it download data.
-
-This is the easiest part of Firebase. The syntax never changes and is done once in each controller, near the top.
-
-## Connect the Firebase Reference To the `$scope`
-
-Now connect the new Firebase object to the `$scope` so that the data is available locally. In `HomeController.js` use `$firebaseArray` and call the array `movies` (plural):
-
-```js
-var ref = new Firebase("https://my-angularfire-app.firebaseio.com/");
-$scope.movies = $firebaseArray(ref);
-```
-
-## Bootstrap and Angular
+### Bootstrap and Angular
 
 Bootstrap starts with a container in `index.html`:
 
@@ -309,7 +276,7 @@ Let's a backlink so that clicking on the title takes the user back to the home p
 <a ng-href="/#/movies"><h1>CRUDiest Movies Database</h1></a>
 ```
 
-## Finish index.html
+### Finish index.html
 
 Your `index.html` should now look like:
 
@@ -358,7 +325,7 @@ Your `index.html` should now look like:
 
 Open your browser to the URL that Firebase provided to you. It prints after you run `firebase deploy`. You should see your `<h1>` header:
 
-![Image of header](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb-header.png?raw=true)
+![Image of header](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb-header.png?raw=true)
 
 Save to GitHuB and deploy to Firebase
 
@@ -370,15 +337,39 @@ git push origin master
 firebase deploy
 ```
 
-## app.js
+## Set Up Angular
 
-In your file `app.js` inject the dependencies for the router and for Firebase:
+Begin by injecting `firebase` into your `app.js` Angular module, along with your router:
 
 ```js
 var app = angular.module("CRUDiestMoviesFirebase", ['ngRoute', 'firebase']);
 ```
 
+### Creating a Firebase Reference
 
+In each controller we create a Firebase _reference_. You can call it anything you want but the norm is `ref`.
+
+The Firebase reference is an object created with the `new` operator and the Firebase constructor function (_object-oriented programming_  or OOP):
+
+```js
+// Create Firebase reference
+var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
+```
+
+Replace `crudiest-firebase` with the name of your app. Be sure to use the "Dashboard" URL that ends in `firebaseio.com`, not the "URL" URL that ends in `firebaseapp.com`.
+
+The Firebase reference doesn't create a connection to the remote Firebase nor does it download data.
+
+This is the easiest part of Firebase. The syntax never changes and is done once in each controller, near the top.
+
+### Connect the Firebase Reference To the `$scope`
+
+Now connect the new Firebase object to the `$scope` so that the data is available locally. In `HomeController.js` use `$firebaseArray` and call the array `movies` (plural):
+
+```js
+var ref = new Firebase("https://my-angularfire-app.firebaseio.com/");
+$scope.movies = $firebaseArray(ref);
+```
 
 ## Angular Routes
 
@@ -408,14 +399,6 @@ The first line adds or configures the `$routeProvider` function to the `app` obj
 The `.otherwise` route redirects any other requests to the home page.
 
 The order of the routes matters. The `/movies/:id` route has to be at the bottom because it catches other routes.
-
-> The dynamic URLs (with the ID numbers) are something Node does easily that's hard to do with Apache.
-
-## Set Up Views
-
-In `index.html`, put `<ng-view />` in the `<body>` below the `<h1>` element:
-
-This is the Angular directive (it starts with `ng-`) for displaying a view.
 
 ## Add a Movie With UI Bootstrap Typeahead
 
@@ -464,11 +447,11 @@ Add the dependencies `ui.bootstrap` and `ui.bootstrap.typeahead` to `app.js`:
 var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'ui.bootstrap.typeahead']);
 ```
 
-## Typeahead Plugin
+### Typeahead Plugin
 
 Go to [UI Bootstrap](https://angular-ui.github.io/bootstrap/) and scroll down to the bottom. The last plugin is `Typeahead`. You'll see there are five type of typeahead plugins:
 
-![Five typeaheads](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/typeahead_five_options.png)
+![Five typeaheads](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/typeahead_five_options.png)
 
 * Four of the plugins -- `Static arrays`, `ngModelOptions support`, `Custom templates for results`, and `Custom popup templates for typeahead's dropdown` -- look up in an array of values in your controller. This is ideal when you have a limited number of options, e.g., the fifty states. The four choice format the values differently for the user, including one that adds a state flag downloaded live from Wikipedia.
 * The `Asynchronous results` plugin goes to any database on the Internet with an API. We'll use this to connect to the Internet Movie Database (IMDB).
@@ -479,7 +462,7 @@ Add this code to `home.html`.
 <form class="form-horizontal">
   <input type="text"
   class="form-control addMovie"
-  ng-model="movie.movieTitle"
+  ng-model="movie.title"
   uib-typeahead="address for address in getLocation($viewValue)"
   typeahead-loading="loadingLocations"
   typeahead-no-results="noResults"
@@ -512,41 +495,43 @@ In `HomeController.js` we'll add two handlers for the typeahead:
 
 ```js
 $scope.getLocation = function(val) {
-  return $http.get('//www.omdbapi.com/?s=' + val)
-  .then(function(response){
-    return response.data.Search.map(function(item){
+  return $http.get('//www.omdbapi.com/?s=' + val) // send an HTTP request to the OMDb
+  .then(function(response){ // then execute a promise
+    return response.data.Search.map(function(item){ // when OMDb can't find a movie to match the search string an error is logged "TypeError: Cannot read property 'map' of undefined". This error can be ignored, when the OMDb finds a movie then no error is logged.
       return item.Title;
     });
+  }, function(error) {
+    console.log(error);
   });
 };
 
 $scope.onSelect = function ($item) {
-  $scope.loading = true;
-  $scope.movie.movieTitle = null; // needed to prevent previous query from autofilling search form
+  $scope.loading = true; // switch on the glyphicon to indicate that the data is loading
+  $scope.movie.title = null; // needed to prevent previous query from autofilling search form
   console.log("Selected!");
   return $http.get('//www.omdbapi.com/?t=' + $item)
   .then(function(response){
     var movie = {
-      movieActors: response.data.Actors,
-      movieAwards: response.data.Awards,
-      movieComments: [],
-      movieCountry: response.data.Country,
-      movieDirector: response.data.Director,
-      movieGenre: response.data.Genre,
-      movieLanguage: response.data.Language,
-      movieLikes: 0,
-      movieMetascore: response.data.Metascore,
-      moviePlot: response.data.Plot,
-      moviePoster: response.data.Poster,
-      movieRated: response.data.Rated,
-      movieRuntime: response.data.Runtime,
-      movieTitle: response.data.Title,
-      movieWriter: response.data.Writer,
-      movieYear: response.data.Year,
-      movieImdbID: response.data.imdbID,
-      movieImdbRating: response.data.imdbRating,
-      movieImdbVotes: response.data.imdbVotes,
-      movieDateAdded: Date.now()
+      actors: response.data.Actors,
+      awards: response.data.Awards,
+      comments: [],
+      country: response.data.Country,
+      director: response.data.Director,
+      genre: response.data.Genre,
+      language: response.data.Language,
+      likes: 0,
+      metascore: response.data.Metascore,
+      plot: response.data.Plot,
+      poster: response.data.Poster,
+      rated: response.data.Rated,
+      runtime: response.data.Runtime,
+      title: response.data.Title,
+      writer: response.data.Writer,
+      year: response.data.Year,
+      imdbID: response.data.imdbID,
+      imdbRating: response.data.imdbRating,
+      imdbVotes: response.data.imdbVotes,
+      dateAdded: Date.now()
     };
     $scope.movies.$add(movie).then(function() {
       $scope.order = '$id' // reset orderBy so that new movie appears in upper left
@@ -556,15 +541,15 @@ $scope.onSelect = function ($item) {
 };
 ```
 
-The `getLocation()` handler queries the OMDb for the movie and returns a drop-down menu of ten movies for the user to choose from.
+The `getLocation()` handler queries the OMDb for the movie and returns a drop-down menu of ten movies for the user to choose from. Note: you'll see an error message logged in the console "TypeError: Cannot read property 'map' of undefined" for every keystroke in which OMDb can't find a matching movie title word. This error message can be ignored.
 
 When the user selects a movie from the list `onSelect()` fires and adds the movie to our database. The `$scope.loading` variable switches on to show the `refresh` glyphicon. The next line prevents the previous query from autofilling the search form.
 
 We create a movie object using data from the OMDb, plus a few fields of our own:
 
-* `movieComments` is an empty array, ready for users to add comments.
-* `movieLikes` is initialized at zero, ready for users to like or dislike a movie.
-* `movieDateAdded` takes the current time and date.
+* `comments` is an empty array, ready for users to add comments.
+* `likes` is initialized at zero, ready for users to like or dislike a movie.
+* `dateAdded` takes the current time and date.
 
 We run the AngularFire method [$add()](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-addnewdata) to add the movie object to our movies array. This is similar to the JavaScript method `push()`.
 
@@ -572,11 +557,11 @@ After the movie object is added to the movies array a promise is executed. We re
 
 Deploy to Firebase and see if it works.
 
-![Typeahead](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_typeahead.png)
+![Typeahead](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_typeahead.png)
 
 Select a movie, then go to your Firebase Dashboard and the movie should be there.
 
-![Typeahead](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_data.png)
+![Typeahead](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_data.png)
 
 Save your work to your GitHub repository:
 
@@ -586,19 +571,19 @@ git commit -m "UI Bootstrap typeahead working."
 git push origin master
 ```
 
-## Display Movies
+## Display Movies in Index View (Homepage)
 
 Now we'll display our movies in `home.html`:
 
 ```html
 <div ng-repeat="movie in movies | orderBy : order : reverse" class="movieIndex">
-  <a ng-href="/#/movies/{{movie.$id}}"><img class="largeMoviePoster" ng-src="{{movie.moviePoster}}" alt="{{movie.movieTitle}}"></a>
+  <a ng-href="/#/movies/{{movie.$id}}"><img class="largeposter" ng-src="{{movie.poster}}" alt="{{movie.title}}"></a>
 </div>
 ```
 
 This will display all the movie objects in our movies array, ordered by reverse date added. The `img` displays the movie poster, and when the user clicks on the poster the route changes to the `SHOW` page.
 
-![Typeahead](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_poster.png)
+![Typeahead](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_poster.png)
 
 ### Style Movie Posters
 
@@ -632,7 +617,7 @@ Let's add a form for showing and editing the movie title:
     <div class="form-group">
       <label for="editTitle" class="col-lg-2 control-label">Title: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editTitle" ng-model="movie.movieTitle" ng-change="change()" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editTitle" ng-model="movie.title" ng-change="change()" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
     </div>
 
@@ -675,15 +660,13 @@ app.controller('ShowController', ['$scope', '$firebaseObject', '$routeParams', f
 
 Now when you deploy and refresh your browser the movie title should appear in the form.
 
-![Typeahead](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_plan9.png)
+![Typeahead](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_plan9.png)
 
 Note the UI Bootstrap _tooltip_ in the form that informs users "You can type in this field".
 
-
-
 ## Edit Movie Title
 
-You can type in the movie title form but if you refresh the browser the change wasn't saved. In the `show.html` we have `ng-model="movie.movieTitle"` so edits in the view should bind to the `$scope`. But to get three-way data binding to Firebase we have to use the `$save` Firebase method.
+You can type in the movie title form but if you refresh the browser the change wasn't saved. In the `show.html` we have `ng-model="movie.title"` so edits in the view should bind to the `$scope`. But to get three-way data binding to Firebase we have to use the `$save` Firebase method.
 
 In `show.html` we also have `ng-change="change('title')"`. When the user makes a change in the form, the handler `$scope.change()` runs in the controller. We're passing through the movie object property `'title'`.
 
@@ -708,7 +691,7 @@ Three-way data binding is neat but you may have noticed a user interface/user ex
     <div class="form-group">
       <label for="editTitle" class="col-lg-2 control-label">Title: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editTitle" ng-model="movie.movieTitle" ng-change="change()" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editTitle" ng-model="movie.title" ng-change="change()" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <div ng-show="watch.titleSave; watch.titleChange" class="saved">Saved!</div>
@@ -732,12 +715,12 @@ Near the bottom of `ShowController.js` make a function using the Firebase method
 
 ```js
 // Watch movie object title property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieTitle')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('title')).$watch(function() {
   $scope.watch.titleSave = true; // Show message
 });
 ```
 
-The Firebase method `$watch` registers an event listener any time there is a change to the data, firing its callback function. We've attached `$watch` to a grandchild of the movies array. The child selects a movie by its `$id` key, and then the grandchild selects the `movieTitle` property from the movie object.
+The Firebase method `$watch` registers an event listener any time there is a change to the data, firing its callback function. We've attached `$watch` to a grandchild of the movies array. The child selects a movie by its `$id` key, and then the grandchild selects the `title` property from the movie object.
 
 The callback function switches the variable `$scope.watch.titleSave` to show the message.
 
@@ -794,7 +777,7 @@ app.controller('ShowController', ['$scope', '$firebaseObject', '$routeParams', f
   };
 
   // Watch movie object title property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieTitle')).$watch(function() {
+  $firebaseObject(ref.child($routeParams.id).child('title')).$watch(function() {
     $scope.watch.titleSave = true; // Show message
   });
 
@@ -828,7 +811,7 @@ This waits 9.9 seconds and then switches off the message.
 It's unnecessary but we can add a timer to the Firebase `$watch` as well:
 
 ```js
-$firebaseObject(ref.child($routeParams.id).child('movieTitle')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('title')).$watch(function() {
   $scope.watch.titleSave = true; // Show message
   $timeout(function() {
     $scope.watch.titleSave = false; // Hide message
@@ -889,7 +872,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editPoster" class="col-lg-2 control-label">Poster: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editPoster" ng-model="movie.moviePoster" ng-change="change('poster')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editPoster" ng-model="movie.poster" ng-change="change('poster')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.posterSave && watch.posterChange" class="saved">Saved!</p>
@@ -899,7 +882,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editPlot" class="col-lg-2 control-label">Plot: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editPlot" ng-model="movie.moviePlot" ng-change="change('plot')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editPlot" ng-model="movie.plot" ng-change="change('plot')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.plotSave && watch.plotChange" class="saved">Saved!</p>
@@ -919,7 +902,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editDirector" class="col-lg-2 control-label">Director: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editDirector" ng-model="movie.movieDirector" ng-change="change('director')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editDirector" ng-model="movie.director" ng-change="change('director')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.directorSave && watch.directorChange" class="saved">Saved!</p>
@@ -929,7 +912,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editWriter" class="col-lg-2 control-label">Writer: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editWriter" ng-model="movie.movieWriter" ng-change="change('writer')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editWriter" ng-model="movie.writer" ng-change="change('writer')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.writerSave && watch.writerChange" class="saved">Saved!</p>
@@ -939,7 +922,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editActors" class="col-lg-2 control-label">Actors: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editActors" ng-model="movie.movieActors" ng-change="change('actors')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editActors" ng-model="movie.actors" ng-change="change('actors')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.actorsSave && watch.actorsChange" class="saved">Saved!</p>
@@ -949,7 +932,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editYear" class="col-lg-2 control-label">Year: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editYear" ng-model="movie.movieYear" ng-change="change('year')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editYear" ng-model="movie.year" ng-change="change('year')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.yearSave && watch.yearChange" class="saved">Saved!</p>
@@ -959,7 +942,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editCountry" class="col-lg-2 control-label">Country: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editCountry" ng-model="movie.movieCountry" ng-change="change('country')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editCountry" ng-model="movie.country" ng-change="change('country')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.countrySave && watch.countryChange" class="saved">Saved!</p>
@@ -969,7 +952,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editLanguage" class="col-lg-2 control-label">Language: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editLanguage" ng-model="movie.movieLanguage" ng-change="change('language')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editLanguage" ng-model="movie.language" ng-change="change('language')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.languageSave && watch.languageChange" class="saved">Saved!</p>
@@ -979,7 +962,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editGenre" class="col-lg-2 control-label">Genre: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editGenre" ng-model="movie.movieGenre" ng-change="change('genre')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editGenre" ng-model="movie.genre" ng-change="change('genre')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.genreSave && watch.genreChange" class="saved">Saved!</p>
@@ -989,7 +972,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editRated" class="col-lg-2 control-label">Rated: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editRated" ng-model="movie.movieRated" ng-change="change('rated')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editRated" ng-model="movie.rated" ng-change="change('rated')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.ratedSave && watch.ratedChange" class="saved">Saved!</p>
@@ -999,7 +982,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editAwards" class="col-lg-2 control-label">Awards: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editAwards" ng-model="movie.movieAwards" ng-change="change('awards')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editAwards" ng-model="movie.awards" ng-change="change('awards')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.awardsSave && watch.awardsChange" class="saved">Saved!</p>
@@ -1009,7 +992,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editIMDBRating" class="col-lg-2 control-label">IMDB Rating: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editIMDBRating" ng-model="movie.movieImdbRating" ng-change="change('imdbRating')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editIMDBRating" ng-model="movie.imdbRating" ng-change="change('imdbRating')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.imdbRatingSave && watch.imdbRatingChange" class="saved">Saved!</p>
@@ -1019,7 +1002,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editIMDBVotes" class="col-lg-2 control-label">IMDB Votes: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editIMDBVotes" ng-model="movie.movieImdbVotes" ng-change="change('imdbVotes')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editIMDBVotes" ng-model="movie.imdbVotes" ng-change="change('imdbVotes')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.imdbVotesSave && watch.imdbVotesChange" class="saved">Saved!</p>
@@ -1029,7 +1012,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 <div class="form-group">
   <label for="editMetascore" class="col-lg-2 control-label">Metascore: </label>
   <div class="col-lg-8">
-    <input type="text" class="form-control" name="editMetascore" ng-model="movie.movieMetascore" ng-change="change('metascore')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+    <input type="text" class="form-control" name="editMetascore" ng-model="movie.metascore" ng-change="change('metascore')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
   </div>
   <div class="col-lg-2">
     <p ng-show="watch.metascoreSave && watch.metascoreChange" class="saved">Saved!</p>
@@ -1037,7 +1020,7 @@ In `show.html` within the `<form>` add the rest of the fields:
 </div>
 ```
 
-![All fields added to SHOW/EDIT view](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_all_fields.png)
+![All fields added to SHOW/EDIT view](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_all_fields.png)
 
 In `ShowController.js` we could write a `$scope.change()` handler for each field. Or we could refactor the code to pass the property from the view:
 
@@ -1058,7 +1041,7 @@ We can't write a single function to handle all the Firebase `$watch` properties 
 
 ```js
 // Watch movie object poster property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('moviePoster')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('poster')).$watch(function() {
   $scope.watch.posterSave = true; // Show message
   $timeout(function() {
     $scope.watch.posterSave = false; // Hide message
@@ -1066,7 +1049,7 @@ $firebaseObject(ref.child($routeParams.id).child('moviePoster')).$watch(function
 });
 
 // Watch movie object plot property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('moviePlot')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('plot')).$watch(function() {
   $scope.watch.plotSave = true; // Show message
   $timeout(function() {
     $scope.watch.plotSave = false; // Hide message
@@ -1082,7 +1065,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieTrivia')).$watch(function
 });
 
 // Watch movie object director property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieDirector')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('director')).$watch(function() {
   $scope.watch.directorSave = true; // Show message
   $timeout(function() {
     $scope.watch.directorSave = false; // Hide message
@@ -1090,7 +1073,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieDirector')).$watch(functi
 });
 
 // Watch movie object writer property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieWriter')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('writer')).$watch(function() {
   $scope.watch.writerSave = true; // Show message
   $timeout(function() {
     $scope.watch.writerSave = false; // Hide message
@@ -1098,7 +1081,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieWriter')).$watch(function
 });
 
 // Watch movie object actors property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieActors')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('actors')).$watch(function() {
   $scope.watch.actorsSave = true; // Show message
   $timeout(function() {
     $scope.watch.actorsSave = false; // Hide message
@@ -1106,7 +1089,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieActors')).$watch(function
 });
 
 // Watch movie object year property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieYear')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('year')).$watch(function() {
   $scope.watch.yearSave = true; // Show message
   $timeout(function() {
     $scope.watch.yearSave = false; // Hide message
@@ -1114,7 +1097,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieYear')).$watch(function()
 });
 
 // Watch movie object country property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieCountry')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('country')).$watch(function() {
   $scope.watch.countrySave = true; // Show message
   $timeout(function() {
     $scope.watch.countrySave = false; // Hide message
@@ -1122,7 +1105,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieCountry')).$watch(functio
 });
 
 // Watch movie object language property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieLanguage')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('language')).$watch(function() {
   $scope.watch.languageSave = true; // Show message
   $timeout(function() {
     $scope.watch.languageSave = false; // Hide message
@@ -1130,7 +1113,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieLanguage')).$watch(functi
 });
 
 // Watch movie object genre property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieGenre')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('genre')).$watch(function() {
   $scope.watch.genreSave = true; // Show message
   $timeout(function() {
     $scope.watch.genreSave = false; // Hide message
@@ -1138,7 +1121,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieGenre')).$watch(function(
 });
 
 // Watch movie object rated property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieRated')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('rated')).$watch(function() {
   $scope.watch.ratedSave = true; // Show message
   $timeout(function() {
     $scope.watch.ratedSave = false; // Hide message
@@ -1146,7 +1129,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieRated')).$watch(function(
 });
 
 // Watch movie object awards property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieAwards')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('awards')).$watch(function() {
   $scope.watch.awardsSave = true; // Show message
   $timeout(function() {
     $scope.watch.awardsSave = false; // Hide message
@@ -1154,7 +1137,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieAwards')).$watch(function
 });
 
 // Watch movie object IMDB rating property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieIMDBRating')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('imdbRating')).$watch(function() {
   $scope.watch.imdbRatingSave = true; // Show message
   $timeout(function() {
     $scope.watch.imdbRatingSave = false; // Hide message
@@ -1162,7 +1145,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieIMDBRating')).$watch(func
 });
 
 // Watch movie object IMDB votes property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieIMDBVotes')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('imdbVotes')).$watch(function() {
   $scope.watch.imdbVotesSave = true; // Show message
   $timeout(function() {
     $scope.watch.imdbVotesSave = false; // Hide message
@@ -1170,7 +1153,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieIMDBVotes')).$watch(funct
 });
 
 // Watch movie object metascore property, show "Saved!" message
-$firebaseObject(ref.child($routeParams.id).child('movieMetascore')).$watch(function() {
+$firebaseObject(ref.child($routeParams.id).child('metascore')).$watch(function() {
   $scope.watch.metascoreSave = true; // Show message
   $timeout(function() {
     $scope.watch.metascoreSave = false; // Hide message
@@ -1262,7 +1245,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editTitle" class="col-lg-2 control-label">Title: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editTitle" ng-model="movie.movieTitle" ng-change="change('title')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editTitle" ng-model="movie.title" ng-change="change('title')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <div ng-show="watch.titleChange && watch.titleSave" class="saved">Saved!</div>
@@ -1272,7 +1255,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editPoster" class="col-lg-2 control-label">Poster: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editPoster" ng-model="movie.moviePoster" ng-change="change('poster')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editPoster" ng-model="movie.poster" ng-change="change('poster')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.posterSave && watch.posterChange" class="saved">Saved!</p>
@@ -1282,7 +1265,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editPlot" class="col-lg-2 control-label">Plot: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editPlot" ng-model="movie.moviePlot" ng-change="change('plot')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editPlot" ng-model="movie.plot" ng-change="change('plot')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.plotSave && watch.plotChange" class="saved">Saved!</p>
@@ -1302,7 +1285,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editDirector" class="col-lg-2 control-label">Director: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editDirector" ng-model="movie.movieDirector" ng-change="change('director')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editDirector" ng-model="movie.director" ng-change="change('director')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.directorSave && watch.directorChange" class="saved">Saved!</p>
@@ -1312,7 +1295,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editWriter" class="col-lg-2 control-label">Writer: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editWriter" ng-model="movie.movieWriter" ng-change="change('writer')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editWriter" ng-model="movie.writer" ng-change="change('writer')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.writerSave && watch.writerChange" class="saved">Saved!</p>
@@ -1322,7 +1305,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editActors" class="col-lg-2 control-label">Actors: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editActors" ng-model="movie.movieActors" ng-change="change('actors')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editActors" ng-model="movie.actors" ng-change="change('actors')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.actorsSave && watch.actorsChange" class="saved">Saved!</p>
@@ -1332,7 +1315,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editYear" class="col-lg-2 control-label">Year: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editYear" ng-model="movie.movieYear" ng-change="change('year')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editYear" ng-model="movie.year" ng-change="change('year')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.yearSave && watch.yearChange" class="saved">Saved!</p>
@@ -1342,7 +1325,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editCountry" class="col-lg-2 control-label">Country: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editCountry" ng-model="movie.movieCountry" ng-change="change('country')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editCountry" ng-model="movie.country" ng-change="change('country')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.countrySave && watch.countryChange" class="saved">Saved!</p>
@@ -1352,7 +1335,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editLanguage" class="col-lg-2 control-label">Language: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editLanguage" ng-model="movie.movieLanguage" ng-change="change('language')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editLanguage" ng-model="movie.language" ng-change="change('language')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.languageSave && watch.languageChange" class="saved">Saved!</p>
@@ -1362,7 +1345,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editGenre" class="col-lg-2 control-label">Genre: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editGenre" ng-model="movie.movieGenre" ng-change="change('genre')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editGenre" ng-model="movie.genre" ng-change="change('genre')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.genreSave && watch.genreChange" class="saved">Saved!</p>
@@ -1372,7 +1355,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editRated" class="col-lg-2 control-label">Rated: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editRated" ng-model="movie.movieRated" ng-change="change('rated')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editRated" ng-model="movie.rated" ng-change="change('rated')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.ratedSave && watch.ratedChange" class="saved">Saved!</p>
@@ -1382,7 +1365,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editAwards" class="col-lg-2 control-label">Awards: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editAwards" ng-model="movie.movieAwards" ng-change="change('awards')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editAwards" ng-model="movie.awards" ng-change="change('awards')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.awardsSave && watch.awardsChange" class="saved">Saved!</p>
@@ -1392,7 +1375,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editIMDBRating" class="col-lg-2 control-label">IMDB Rating: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editIMDBRating" ng-model="movie.movieImdbRating" ng-change="change('imdbRating')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editIMDBRating" ng-model="movie.imdbRating" ng-change="change('imdbRating')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.imdbRatingSave && watch.imdbRatingChange" class="saved">Saved!</p>
@@ -1402,7 +1385,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editIMDBVotes" class="col-lg-2 control-label">IMDB Votes: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editIMDBVotes" ng-model="movie.movieImdbVotes" ng-change="change('imdbVotes')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editIMDBVotes" ng-model="movie.imdbVotes" ng-change="change('imdbVotes')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.imdbVotesSave && watch.imdbVotesChange" class="saved">Saved!</p>
@@ -1412,7 +1395,7 @@ The `show.html` template should look like this now:
     <div class="form-group">
       <label for="editMetascore" class="col-lg-2 control-label">Metascore: </label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" name="editMetascore" ng-model="movie.movieMetascore" ng-change="change('metascore')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        <input type="text" class="form-control" name="editMetascore" ng-model="movie.metascore" ng-change="change('metascore')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
       </div>
       <div class="col-lg-2">
         <p ng-show="watch.metascoreSave && watch.metascoreChange" class="saved">Saved!</p>
@@ -1490,7 +1473,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   };
 
   // Watch movie object title property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieTitle')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('title')).$watch(function(event) {
     $scope.watch.titleSave = true; // Show message
     $timeout(function() {
       $scope.watch.titleSave = false; // Hide message
@@ -1498,7 +1481,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object poster property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('moviePoster')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('poster')).$watch(function(event) {
     $scope.watch.posterSave = true; // Show message
     $timeout(function() {
       $scope.watch.posterSave = false; // Hide message
@@ -1506,7 +1489,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object plot property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('moviePlot')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('plot')).$watch(function(event) {
     $scope.watch.plotSave = true; // Show message
     $timeout(function() {
       $scope.watch.plotSave = false; // Hide message
@@ -1522,7 +1505,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object director property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieDirector')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('director')).$watch(function(event) {
     $scope.watch.directorSave = true; // Show message
     $timeout(function() {
       $scope.watch.directorSave = false; // Hide message
@@ -1530,7 +1513,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object writer property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieWriter')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('writer')).$watch(function(event) {
     $scope.watch.writerSave = true; // Show message
     $timeout(function() {
       $scope.watch.writerSave = false; // Hide message
@@ -1538,7 +1521,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object actors property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieActors')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('actors')).$watch(function(event) {
     $scope.watch.actorsSave = true; // Show message
     $timeout(function() {
       $scope.watch.actorsSave = false; // Hide message
@@ -1546,7 +1529,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object year property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieYear')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('year')).$watch(function(event) {
     $scope.watch.yearSave = true; // Show message
     $timeout(function() {
       $scope.watch.yearSave = false; // Hide message
@@ -1554,7 +1537,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object country property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieCountry')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('country')).$watch(function(event) {
     $scope.watch.countrySave = true; // Show message
     $timeout(function() {
       $scope.watch.countrySave = false; // Hide message
@@ -1562,7 +1545,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object language property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieLanguage')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('language')).$watch(function(event) {
     $scope.watch.languageSave = true; // Show message
     $timeout(function() {
       $scope.watch.languageSave = false; // Hide message
@@ -1570,7 +1553,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object genre property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieGenre')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('genre')).$watch(function(event) {
     $scope.watch.genreSave = true; // Show message
     $timeout(function() {
       $scope.watch.genreSave = false; // Hide message
@@ -1578,7 +1561,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object rated property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieRated')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('rated')).$watch(function(event) {
     $scope.watch.ratedSave = true; // Show message
     $timeout(function() {
       $scope.watch.ratedSave = false; // Hide message
@@ -1586,7 +1569,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object awards property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieAwards')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('awards')).$watch(function(event) {
     $scope.watch.awardsSave = true; // Show message
     $timeout(function() {
       $scope.watch.awardsSave = false; // Hide message
@@ -1594,7 +1577,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object IMDB rating property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieIMDBRating')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('imdbRating')).$watch(function(event) {
     $scope.watch.imdbRatingSave = true; // Show message
     $timeout(function() {
       $scope.watch.imdbRatingSave = false; // Hide message
@@ -1602,7 +1585,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object IMDB votes property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieIMDBVotes')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('imdbVotes')).$watch(function(event) {
     $scope.watch.imdbVotesSave = true; // Show message
     $timeout(function() {
       $scope.watch.imdbVotesSave = false; // Hide message
@@ -1610,7 +1593,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
   });
 
   // Watch movie object metascore property, show "Saved!" message
-  $firebaseObject(ref.child($routeParams.id).child('movieMetascore')).$watch(function(event) {
+  $firebaseObject(ref.child($routeParams.id).child('metascore')).$watch(function(event) {
     $scope.watch.metascoreSave = true; // Show message
     $timeout(function() {
       $scope.watch.metascoreSave = false; // Hide message
@@ -1652,7 +1635,7 @@ h1 {
 }
 ```
 
-![Terminator font](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_terminator.png)
+![Terminator font](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_terminator.png)
 
 In `home.html`, let's wrap the `Add a Movie` search form in a Bootstrap 12-column `div`:
 
@@ -1661,7 +1644,7 @@ In `home.html`, let's wrap the `Add a Movie` search form in a Bootstrap 12-colum
   <form class="form-horizontal">
     <input type="text"
     class="form-control addMovie"
-    ng-model="movie.movieTitle"
+    ng-model="movie.title"
     uib-typeahead="address for address in getLocation($viewValue)"
     typeahead-loading="loadingLocations"
     typeahead-no-results="noResults"
@@ -1698,14 +1681,14 @@ The `glyphicon-search` icon needs help:
 The movie posters are too big and are slightly different sizes. Let's fix this:
 
 ```css
-.largeMoviePoster {
+.largeposter {
   width: 16.3%;
   height: 285px;
   padding-top: 3px;
 }
 ```
 
-![Large movie view](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_largeMovie.png)
+![Large movie view](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_largeMovie.png)
 
 ## Responsive Views
 
@@ -1715,25 +1698,25 @@ Six movies in a row looks good on my 15" laptop screen, but what if users have s
 <!-- Responsive views -->
 <div class="row visible-xs-block">
   <div ng-repeat="movie in movies | orderBy : order : reverse" class="movieIndex">
-    <a ng-href="/#/movies/{{movie.$id}}"><img class="extraSmallMoviePoster" ng-src="{{movie.moviePoster}}" alt="{{movie.movieTitle}}"></a>
+    <a ng-href="/#/movies/{{movie.$id}}"><img class="extraSmallposter" ng-src="{{movie.poster}}" alt="{{movie.title}}"></a>
   </div>
 </div>
 
 <div class="row visible-sm-block">
   <div ng-repeat="movie in movies | orderBy : order : reverse" class="movieIndex">
-    <a ng-href="/#/movies/{{movie.$id}}"><img class="smallMoviePoster" ng-src="{{movie.moviePoster}}" alt="{{movie.movieTitle}}"></a>
+    <a ng-href="/#/movies/{{movie.$id}}"><img class="smallposter" ng-src="{{movie.poster}}" alt="{{movie.title}}"></a>
   </div>
 </div>
 
 <div class="row visible-md-block">
   <div ng-repeat="movie in movies | orderBy : order : reverse" class="movieIndex">
-    <a ng-href="/#/movies/{{movie.$id}}"><img class="mediumMoviePoster" ng-src="{{movie.moviePoster}}" alt="{{movie.movieTitle}}"></a>
+    <a ng-href="/#/movies/{{movie.$id}}"><img class="mediumposter" ng-src="{{movie.poster}}" alt="{{movie.title}}"></a>
   </div>
 </div>
 
 <div class="row visible-lg-block">
   <div ng-repeat="movie in movies | orderBy : order : reverse" class="movieIndex">
-    <a ng-href="/#/movies/{{movie.$id}}"><img class="largeMoviePoster" ng-src="{{movie.moviePoster}}" alt="{{movie.movieTitle}}"></a>
+    <a ng-href="/#/movies/{{movie.$id}}"><img class="largeposter" ng-src="{{movie.poster}}" alt="{{movie.title}}"></a>
   </div>
 </div>
 ```
@@ -1741,21 +1724,21 @@ Six movies in a row looks good on my 15" laptop screen, but what if users have s
 Then in `styles.css` we'll set five movies in a row on medium screens, four movies in a row on small screens, and two movies in a row oin mobile devices:
 
 ```css
-.extraSmallMoviePoster {
+.extraSmallposter {
   width: 49%;
 }
 
-.smallMoviePoster {
+.smallposter {
   width: 24.5%;
   height: 276px;
 }
 
-.mediumMoviePoster {
+.mediumposter {
   width: 19.5%;
   height: 282px;
 }
 
-.largeMoviePoster {
+.largeposter {
   width: 16.3%;
   height: 285px;
   padding-top: 3px;
@@ -1785,49 +1768,49 @@ Perhaps users would like some options for ordering the movies? Let's give users 
 <!-- orderBy buttons row, mobile screens -->
 <div class="row visible-xs-block">
   <div class="col-xs-12">
-    <button type="button" class="btn btn-primary btn-block" ng-click="order = 'movieDateAdded'; reverse = true">Order By Recently Added</button>
+    <button type="button" class="btn btn-primary btn-block" ng-click="order = 'dateAdded'; reverse = true">Order By Recently Added</button>
   </div>
   <div class="col-xs-12">
-    <button type="button" class="btn btn-primary btn-block" ng-click="order = 'movieDateAdded'; reverse = false">Order By First Added</button>
+    <button type="button" class="btn btn-primary btn-block" ng-click="order = 'dateAdded'; reverse = false">Order By First Added</button>
   </div>
   <div class="col-xs-12">
-    <button type="button" class="btn btn-warning btn-block" ng-click="order = 'movieImdbRating'; reverse = false">Order By Worst First</button>
+    <button type="button" class="btn btn-warning btn-block" ng-click="order = 'imdbRating'; reverse = false">Order By Worst First</button>
   </div>
   <div class="col-xs-12">
-    <button type="button" class="btn btn-warning btn-block" ng-click="order = 'movieImdbRating'; reverse = true">Order By Best First</button>
+    <button type="button" class="btn btn-warning btn-block" ng-click="order = 'imdbRating'; reverse = true">Order By Best First</button>
   </div>
   <div class="col-xs-12">
-    <button type="button" class="btn btn-success btn-block" ng-click="order = 'movieYear'; reverse = true">Order By Newest</button>
+    <button type="button" class="btn btn-success btn-block" ng-click="order = 'year'; reverse = true">Order By Newest</button>
   </div>
   <div class="col-xs-12">
-    <button type="button" class="btn btn-success btn-block" ng-click="order = 'movieYear'; reverse = false">Order By Oldest</button>
+    <button type="button" class="btn btn-success btn-block" ng-click="order = 'year'; reverse = false">Order By Oldest</button>
   </div>
 </div>
 
 <!-- orderBy buttons row, small, medium, and large screens -->
 <div class="row visible-sm-block visible-md-block visible-lg-block">
   <div class="col-sm-2">
-    <button type="button" class="btn btn-primary btn-block" ng-click="order = 'movieDateAdded'; reverse = true">Recent</button>
+    <button type="button" class="btn btn-primary btn-block" ng-click="order = 'dateAdded'; reverse = true">Recent</button>
   </div>
   <div class="col-sm-2">
-    <button type="button" class="btn btn-primary btn-block" ng-click="order = 'movieDateAdded'; reverse = false">First</button>
+    <button type="button" class="btn btn-primary btn-block" ng-click="order = 'dateAdded'; reverse = false">First</button>
   </div>
   <div class="col-sm-2">
-    <button type="button" class="btn btn-warning btn-block" ng-click="order = 'movieImdbRating'; reverse = false">Worst</button>
+    <button type="button" class="btn btn-warning btn-block" ng-click="order = 'imdbRating'; reverse = false">Worst</button>
   </div>
   <div class="col-sm-2">
-    <button type="button" class="btn btn-warning btn-block" ng-click="order = 'movieImdbRating'; reverse = true">Best</button>
+    <button type="button" class="btn btn-warning btn-block" ng-click="order = 'imdbRating'; reverse = true">Best</button>
   </div>
   <div class="col-sm-2">
-    <button type="button" class="btn btn-success btn-block" ng-click="order = 'movieYear'; reverse = true">Newest</button>
+    <button type="button" class="btn btn-success btn-block" ng-click="order = 'year'; reverse = true">Newest</button>
   </div>
   <div class="col-sm-2">
-    <button type="button" class="btn btn-success btn-block" ng-click="order = 'movieYear'; reverse = false">Oldest</button>
+    <button type="button" class="btn btn-success btn-block" ng-click="order = 'year'; reverse = false">Oldest</button>
   </div>
 </div>
 ```
 
-![Order by buttons](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_order_by.png)
+![Order by buttons](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_order_by.png)
 
 On mobile devices the labels row is hidden. The buttons are full-width and have more verbose labels.
 
@@ -1842,7 +1825,7 @@ The colors are standard Bootstrap:
 * `warning` is yellow-orange.
 * `danger` is red.
 
-The `ng-click` sets what the buttons do when clicked. Note that none run a handler in the controller. Each button sets two variables, `order` and `reverse`. There are three options for `order`: `movieDateAdded`, `movieImdbRating`, or `movieYear`. We could use `$id` instead of `movieDateAdded` but the latter is more reliable.
+The `ng-click` sets what the buttons do when clicked. Note that none run a handler in the controller. Each button sets two variables, `order` and `reverse`. There are three options for `order`: `dateAdded`, `imdbRating`, or `year`. We could use `$id` instead of `dateAdded` but the latter is more reliable.
 
 ## Tech Notes and Resume
 
@@ -1856,7 +1839,7 @@ I'm looking for a job so I want to tell hiring managers about this project, and 
     <form class="form-horizontal">
       <input type="text"
       class="form-control addMovie"
-      ng-model="movie.movieTitle"
+      ng-model="movie.title"
       uib-typeahead="address for address in getLocation($viewValue)"
       typeahead-loading="loadingLocations"
       typeahead-no-results="noResults"
@@ -1884,7 +1867,7 @@ I'm looking for a job so I want to tell hiring managers about this project, and 
 </div>
 ```
 
-![Tech notes and resume](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_tech_resume.png)
+![Tech notes and resume](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_tech_resume.png)
 
 ### Tech Notes
 
@@ -1900,13 +1883,13 @@ The `Tech Notes` button switches the variable `techNotes` on or off. Let's make 
   <p class="text-justify">Users can order the movies by date added, rating, and year. The "Order By" buttons have ng-click set up with two values, <i>order</i> and <i>reverse</i>. These values are passed to the $scope and then to ng-repeat.  Adding a new movie resets the order back to date added so that the new movie always appears in the upper left position.</p>
   <p class="text-justify">The app is responsive. The number of movies displayed per row changes from five in the large view, to four in the medium view, three in the small view, and then two on mobile devices.</p>
 
-  <p class="text-justify">The <a ng-href="https://github.com/tdkehoe/CRUDiest-Firebase">repository</a> is on GitHub. I also a wrote tutorial to make the <a ng-href="https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/Firebase.md">CRUDiest Movies Firebase</a></p>
+  <p class="text-justify">The <a ng-href="https://github.com/tdkehoe/CRUDiest-Firebase">repository</a> is on GitHub. I also a wrote tutorial to make the <a ng-href="https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase.md">CRUDiest Movies Firebase</a></p>
 </div>
 ```
 
 The `Tech Notes` are styled with a Bootstrap well, and the text is justified with Bootstrap.
 
-![Tech notes well](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_tech_notes.png)
+![Tech notes well](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_tech_notes.png)
 
 ### Download Resume
 
@@ -1935,12 +1918,12 @@ I don't like the underline when you hover over the button. Let's get rid of it, 
 Users may not know that they can click movie posters to go to the `SHOW/EDIT` page. Let's highlight each movie in blue on mouse hover, in `styles.css`:
 
 ```css
-.extraSmallMoviePoster:hover, .smallMoviePoster:hover, .mediumMoviePoster:hover, .largeMoviePoster:hover {
+.extraSmallposter:hover, .smallposter:hover, .mediumposter:hover, .largeposter:hover {
   outline: 5px solid blue;
 }
 ```
 
-We're using the _group selector_ or comma to apply this style to more than one class. The colon makes these _pseudo-classes_, e.g., `.largeMoviePoster` is a class and `.largeMoviePoster:hover` is a pseudo-class.
+We're using the _group selector_ or comma to apply this style to more than one class. The colon makes these _pseudo-classes_, e.g., `.largeposter` is a class and `.largeposter:hover` is a pseudo-class.
 
 ## Likes
 
@@ -1949,7 +1932,7 @@ The `INDEX/NEW` home page is finished, except for authorization/authentication. 
 ```html
 <div class="row">
   <div class="likes col-xs-6 col-sm-6 col-md-6 col-lg-6">
-    <span>{{movie.movieLikes}}</span>
+    <span>{{movie.likes}}</span>
   </div>
   <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
     <form ng-submit="upLike()">
@@ -1977,14 +1960,14 @@ The buttons look fine but the number is small and in the upper left corner of it
 }
 ```
 
-![Likes](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_likes.png)
+![Likes](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_likes.png)
 
 Let's add the handler in `ShowController.js`:
 
 ```js
 // Likes section
 $scope.upLike = function() {
-  $scope.movie.movieLikes += 1;
+  $scope.movie.likes += 1;
   $scope.movie.$save().then(function() {
     console.log("Upliked!");
   }, function(error) {
@@ -1994,7 +1977,7 @@ $scope.upLike = function() {
 };
 
 $scope.downLike = function() {
-  $scope.movie.movieLikes -= 1;
+  $scope.movie.likes -= 1;
   $scope.movie.$save().then(function() {
     console.log("Downliked!");
   }, function(error) {
@@ -2004,7 +1987,7 @@ $scope.downLike = function() {
 };
 ```
 
-Both handlers affect the property `movieLikes` on the movie object. `$scope.upLike()` uses the `+=` _assignment operator_ to increment the variable by one. `$scope.downLike()` uses the less common `-=` to decrement by one.
+Both handlers affect the property `likes` on the movie object. `$scope.upLike()` uses the `+=` _assignment operator_ to increment the variable by one. `$scope.downLike()` uses the less common `-=` to decrement by one.
 
 Both handlers then use the Firebase method [$save](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebaseobject-save) to fire three-way data binding.
 
@@ -2021,7 +2004,7 @@ In `show.html` we'll add a comments row with three groups of elements:
 <div class="row">
   <div class="col-sm-12 col-md-12 col-lg-12">
     <span ng-click="showComments = !showComments" class="showComments" data-toggle="tooltip" data-placement="top" title="Click to show or hide comments.">
-      <ng-pluralize count="movie.movieComments.length"
+      <ng-pluralize count="movie.comments.length"
       when="{'0': '',
       'one': '1 Comment',
       'other': '{} Comments',
@@ -2029,7 +2012,7 @@ In `show.html` we'll add a comments row with three groups of elements:
     </ng-pluralize><br />
   </span>
 
-  <div ng-hide="showComments" ng-repeat="comment in movie.movieComments">
+  <div ng-hide="showComments" ng-repeat="comment in movie.comments">
     <div class="row comment img-rounded">
       <div class="col-sm-8 col-md-8 col-lg-8">
         <span class="commentText">{{comment.commentText}}</span>
@@ -2083,10 +2066,10 @@ $scope.newComment = function(comment) { // full record is passed from the view
     commentAuthor: comment.commentAuthor,
     commentDate: Date.now(),
   };
-  $scope.movie.movieComments = $scope.movie.movieComments || [];
+  $scope.movie.comments = $scope.movie.comments || [];
   $scope.comment.commentText = null; // needed to prevent autofilling fields
   $scope.comment.commentAuthor = null; // needed to prevent autofilling fields
-  $firebaseArray(ref.child($routeParams.id).child('movieComments')).$add(commentWithDate).then(function() {
+  $firebaseArray(ref.child($routeParams.id).child('comments')).$add(commentWithDate).then(function() {
     console.log("Comment added!");
   }, function(error) {
     console.log("Error, comment not added.");
@@ -2099,7 +2082,7 @@ The first line passes the comment in from the view.
 
 Next, we take the comment and add a date timestamp.
 
-Next, we check if there is a `movieComments` array. If not we create an empty array.
+Next, we check if there is a `comments` array. If not we create an empty array.
 
 Next we have two lines that prevent autofilling the comments forms with the previous comment and author.
 
@@ -2116,16 +2099,16 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
 
 Then we drill down into the array of movies to select one movie: `$firebaseArray(ref.child($routeParams.id)`
 
-Then we drill down into the comments array: `$firebaseArray(ref.child($routeParams.id).child('movieComments'))`
+Then we drill down into the comments array: `$firebaseArray(ref.child($routeParams.id).child('comments'))`
 
-Then we add our comment to the array: `$firebaseArray(ref.child($routeParams.id).child('movieComments')).$add(commentWithDate)`
+Then we add our comment to the array: `$firebaseArray(ref.child($routeParams.id).child('comments')).$add(commentWithDate)`
 
-Finally we have a promise that's executed when the comment is added to the array: `$firebaseArray(ref.child($routeParams.id).child('movieComments')).$add(commentWithDate).then(function() { });`
+Finally we have a promise that's executed when the comment is added to the array: `$firebaseArray(ref.child($routeParams.id).child('comments')).$add(commentWithDate).then(function() { });`
 
 We could add new comments with JavaScript methods instead of Firebase methods:
 
 ```js
-$scope.movie.movieComments.push(commentObject);
+$scope.movie.comments.push(commentObject);
 ```
 
 If we use JavaScript methods Firebase won't assign keys to the objects in the array. If we use the Firebase method `$add` then our objects have keys.
@@ -2137,7 +2120,7 @@ The handler `$scope.deleteComment()` is trickier than other handlers because it'
 This is the comments display section of `show.html`:
 
 ```html
-<div ng-hide="showComments" ng-repeat="comment in movie.movieComments">
+<div ng-hide="showComments" ng-repeat="comment in movie.comments">
   <div class="row comment img-rounded">
     <div class="col-sm-8 col-md-8 col-lg-8">
       <span class="commentText">{{comment.commentText}}</span>
@@ -2148,7 +2131,7 @@ This is the comments display section of `show.html`:
     </div>
     <div class="col-sm-4 col-md-4 col-lg-4">
       <form>
-        <button ng-click="movie.movieComments.$remove(comment)" class="btn btn-danger btn-sm">Delete Comment</button>
+        <button ng-click="movie.comments.$remove(comment)" class="btn btn-danger btn-sm">Delete Comment</button>
       </form>
     </div>
   </div>
@@ -2158,13 +2141,13 @@ This is the comments display section of `show.html`:
 The comments display because Angular is OK with dot notation:
 
 ```html
-ng-repeat="comment in movie.movieComments"
+ng-repeat="comment in movie.comments"
 ```
 
 But the button does nothing because Firebase methods can't be attached to dot notation:
 
 ```html
-ng-click="movie.movieComments.$remove(comment)"
+ng-click="movie.comments.$remove(comment)"
 ```
 
 What we need is this:
@@ -2191,13 +2174,13 @@ What we need is this:
 How do we make a `$scope.comments` array to hold our movie's comments? Our movie's comments are here:
 
 ```js
-$scope.movie.movieComments
+$scope.movie.comments
 ```
 
 but this doesn't work:
 
 ```js
-$scope.comments = $scope.movie.movieComments
+$scope.comments = $scope.movie.comments
 ```
 
 because it creates an array that Firebase methods can't attach to. (Because the array was created with dot notation.)
@@ -2205,13 +2188,13 @@ because it creates an array that Firebase methods can't attach to. (Because the 
 Here's how we do it, in `ShowController.js`:
 
 ```js
-$scope.comments = $firebaseArray(ref.child($routeParams.id).child('movieComments'));
+$scope.comments = $firebaseArray(ref.child($routeParams.id).child('comments'));
 ```
 
 Now the button works. If you use `$firebaseObject` instead of `$firebaseArray`:
 
 ```js
-$scope.comments = $firebaseObject(ref.child($routeParams.id).child('movieComments'));
+$scope.comments = $firebaseObject(ref.child($routeParams.id).child('comments'));
 ```
 
 the button deletes all comments, because `$remove()` removes the entire object or array that it's attached to. When we use `$firebaseArray` then a different method is used. It's confusing that the two methods have the same name. The `$firebaseArray` method `$remove(recordOrIndex)` removes one object from an array.
