@@ -1,6 +1,6 @@
 # Firebase Project: Make the CRUDiest Movies Database
 
-This chapter provides an overview of Firebase's array and objects methods. The Firebase auth methods are in another chapter. Other chapters are a tutorial for building a project.
+In this chapter you'll build a project using Firebase. Specifically, we'll use the AngularFire bindings with Angular and Bootstrap.
 
 The order of chapters is
 
@@ -17,215 +17,42 @@ The order of chapters is
 
 Please update this document and make [pull requests](https://github.com/tdkehoe/Firebase-Tutorial) or send me an e-mail at kehoe@casafuturatech.com.
 
+### Why Another Movies Database?
+
+Every coding bootcamp student makes a movies database. I picture a hiring manager going through a stack of resumes, clicking on project after project, spending no more than seconds on each. If you make a unique, innovative project that takes time and effort to understand, the hiring manager will move on. I figure that the best way to impress a hiring manager is with a web app he or she can quickly understand and be impressed by, e.g., a well-executed movies database.
+
 ## Setting Up Your Firebase App
 
 This section presents the "boilerplate" for setting up your app to use Firebase.
 
-### Open a Firebase Account
-
-If you haven't already, [sign up for a free Firebase account](https://www.firebase.com/) and create an app. Follow the instructions for installing stuff on your command line (CLI). The next subsections are just to check that you followed the online instructions, i.e., if there's a discrepancy rely on the official Firebase instructions.
-
-#### Install Firebase Tools
-
-Follow the instructions to install ```firebase-tools``` from your command line (CLI):
-
-```
-npm install -g firebase-tools
-```
-
-This installs ```firebase-tools``` globally so you don't have to do this for every project.
-
-#### Create a firebase.json Object
-
-Like Node's `package.json`, Firebase has a similar file. Install in your project's root directory (not in the `public` directory) with:
-
-```
-npm install firebase --save
-```
-
-Your `firebase.json` file should look something like this:
-
-```js
-{
-  "firebase": "my-firebase",
-  "public": "public",
-  "ignore": [
-    "firebase.json",
-    "**/.*",
-    "**/node_modules/**"
-  ]
-}
-```
-
-Deploy your app from your project root directory, i.e., from ```CRUDiest-Movies-Firebase```:
-
-```
-firebase init
-```
-
-#### Upload Your Files
-
-When you've written files you can upload them to Firebase with:
-
-```
-firebase deploy
-```
-
-### Firebase CDN or Local Installation
-
-In your `index.html` file put the Firebase CDN into the `<head>` section. It should go below the Angular CDN:
-
-```html
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- makes Bootstrap work with Internet Explorer -->
-  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- makes Bootstrap responseive -->
-  <meta name="description" content="Firebase CRUD app with AngularJS, Bootstrap, and asynchronous typeahead."> <!-- This will display in Google search -->
-  <title>CRUDiest Movies Firebase</title>
-
-  <!-- AngularJS -->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js"></script>
-
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-823r0923ry238r7y2r8" crossorigin="anonymous">
-  <!-- UI Bootstrap-->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.2/ui-bootstrap-tpls.min.js"></script>
-
-  <!-- Firebase -->
-  <script type="text/javascript" src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
-  <!-- AngularFire -->
-  <script type="text/javascript" src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
-
-  <link rel="stylesheet" href="css/style.css"> <!-- Link to the stylesheet -->
-
-</head>
-```
-
-Don't copy these CDNS. The Bootstrap CSS CDN above won't work because the hash was me typing random letters and numbers. Go to the [Bootstrap website](http://getbootstrap.com/) and download your own CDN.
-
-Then get the latest versions of the other CDNs. Don't get Angular 2.x, stay with Angular 1.x. You can find the latest versions at:
-
-* Angular: https://angularjs.org/
-* Bootstrap CSS: http://getbootstrap.com/
-* UI Bootstrap: https://angular-ui.github.io/bootstrap/
-* Firebase: https://www.firebase.com/docs/web/changelog.html
-* AngularFire: https://www.firebase.com/docs/web/libraries/angular/changelog.html
-
-Alternatively, you can install Firebase as a local application dependency, using Bower. This is harder to update but is nice if you have to code somewhere without Internet access. See the [documentation](https://www.firebase.com/docs/web/guide/setup.html) for instructions (I've never run Firebase locally).
-
-### Inject firebase Dependency To Angular Module
-
-Inject `firebase` into your Angular module:
-
-```js
-var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'firebase']);
-```
-
-### Creating a Firebase Reference
-
-In each controller we create a Firebase _reference_. You can call it anything you want but the norm is `ref`.
-
-The Firebase reference is an object created with the `new` operator and the Firebase constructor function:
-
-```js
-// Create Firebase reference
-var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
-```
-
-The Firebase reference doesn't create a connection to the remote Firebase nor does it download data.
-
-This is the easiest part of Firebase. The syntax never changes and is done once in each controller, near the top.
-
-
-
-
-
-
-
-
-## New Firebase Object
-
-In each controller we create a new Firebase object. This is an example of _object-oriented programming_ (OOP).
-
-```js
-var ref = new Firebase("https://my-angularfire-app.firebaseio.com/");
-```
-
-Replace ```my-angularfire-app``` with the name of your app. Be sure to use the "Dashboard" URL that ends in ```firebaseio.com```, not the "URL" URL that ends in ```firebaseapp.com```.
-
-Don't confuse the new Firebase object with ```$firebaseObject```. The latter connects to an object in your remote Firebase database. The former is the interface between your local Angular app and the remote Firebase database.
-
-The argument for the new Firebase is the URL of your Firebase database. This is not the same as the URL we used to view our Firebase front end.
-
-* The database access URL ends in ```firebaseIO.com```.
-* The front end access URL ends in ```firebaseapp.com```.
-
-You call the new Firebase object or array anything you want. The typical name is ```ref```.
-
-After we create the new Firebase object or array we bind it to the ```$scope```. This makes the remote data available locally, as if the remote data were local.
-
-## Connect New Firebase Object To the $scope.
-
-Now connect the new Firebase object to the ```$scope``` so that the data is available locally. In ```HomeController.js``` use ```$firebaseArray``` and call the array ```movies``` (plural):
-
-```js
-var ref = new Firebase("https://my-angularfire-app.firebaseio.com/");
-$scope.movies = $firebaseArray(ref);
-```
-
-In ```ShowController.js``` use ```$firebaseObject``` and call the object ```movie``` (singular):
-
-```js
-var ref = new Firebase("https://my-angularfire-app.firebaseio.com/");
-$scope.movie = $firebaseObject(ref);
-```
-
-> We could alternatively use $firebaseArray to get the full array of movies, then select a single movie object with the Firebase method [$getRecord](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-getrecordkey):
-
-```js
-var ref = new Firebase("https://my-angularfire-app.firebaseio.com/");
-$scope.movies = $firebaseArray(ref);
-$scope.movie = $scope.movies.$getRecord($routeParams.id);
-```
-
-> This works and might make sense if we had a page that worked with both the full array of movies and single movie objects. Presumably using ```$firebaseObject``` will be faster but I haven't noticed a difference with the small databases I've worked with.
-
-
-
-
-
-
-## And Why Another Movies Database?
-
-Every coding bootcamp student makes a movies database for their mid-term project. For my graduation project at Galvanize I made an advanced web platform that enabled users to interact with each other while running JavaScript apps collaboratively. Jaws dropped when I presented my project at graduation. No one had ever seen anything like it, and they recognized that they were seeing the future of the web.
-
-Hiring managers were less impressed. The website does nothing if no one else is on it. My description with phrases like "collaborative realtime JavaScript apps" meant nothing to them. I pictured a hiring manager going through a stack of resumes, clicking on project after project, spending no more than seconds on each. I decided to make another movies database. Hiring managers have seen hundreds of movie databases, they know what to expect, and can be quickly impressed by a well-executed movies database.
-
-## Directory Structure
+### Directory Structure
 
 Set up this directory structure:
 
 ```
-└── CRUDiest-Movies-Firebase
-├── .gitignore
-└── public
-├── app.js
-├── css
-│   ├── fonts
-│   └── style.css
-├── index.html
-├── javascript
-│   ├── controllers
-│   │   ├── HomeController.js
-│   │   └── ShowController.js
-│   ├── routes
-│   │   └── routes.js
-│   ├── services
-│   └── templates
-│       ├── home.html
-│       └── show.html
-├── resume
+── CRUDiest-Movies-Firebase
+    ├── README.md
+    ├── firebase.json
+    └── public
+        ├── app.js
+        ├── css
+        │   ├── fonts
+        │   └── style.css
+        ├── index.html
+        ├── javascript
+        │   ├── controllers
+        │   │   ├── HomeController.js
+        │   │   └── ShowController.js
+        │   ├── routes
+        │   │   └── routes.js
+        │   ├── services
+        │   └── templates
+        │       ├── home.html
+        │       └── show.html
+        ├── resume
+        └── scripts
+            └── angular-ui
+                └── ui-bootstrap-tpls-1.2.5.min.js
 ```
 
 These commands should create these directories and files:
@@ -267,25 +94,39 @@ cd ..
 tree
 ```
 
-## Open a Firebase Account
+### Open a Firebase Account
 
 If you haven't already, [sign up for a free Firebase account](https://www.firebase.com/).
 
-Create an app, then follow the instructions to install ```firebase-tools``` from the command line (CLI):
+Create an app, then follow the instructions to install `firebase-tools` from the command line (CLI):
 
 ```
 npm install -g firebase-tools
 ```
 
-This installs ```firebase-tools``` globally so you don't have to do this for every project.
+This installs `firebase-tools` globally so you don't have to do this for every project.
 
-Deploy your app from your project root directory, i.e., from ```CRUDiest-Movies-Firebase```:
+Deploy your app from your project root directory, i.e., from `CRUDiest-Movies-Firebase`:
 
 ```
 firebase init
 ```
 
-This creates a ```firebase.json``` file.
+This creates a `firebase.json` file. It should look similar to this:
+
+Your `firebase.json` file should look something like this:
+
+```js
+{
+  "firebase": "my-firebase",
+  "public": "public",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
+}
+```
 
 Then upload your files with
 
@@ -293,11 +134,11 @@ Then upload your files with
 firebase deploy
 ```
 
-## GitHub Repository
+### GitHub Repository
 
-In your GitHub account, click the ```+``` in the upper right corner to create a new repository. Name it ```CRUDiest Movies Firebase```. Don't check the box for "Initialize this repository with a README".
+In your GitHub account, click the `+` in the upper right corner to create a new repository. Name it `CRUDiest Movies Firebase`. Don't check the box for "Initialize this repository with a README".
 
-GitHub will give you instructions to run in ```CRUDiest-Movies-Firebase```:
+GitHub will give you instructions to run in `CRUDiest-Movies-Firebase`:
 
 ```
 echo "# CRUDiest-Movies-Firebase" >> README.md
@@ -308,13 +149,13 @@ git remote add origin git@github.com:myAccount/CRUDiest-Movies-Firebase.git
 git push -u origin master
 ```
 
-Change ```myAccount``` to your GitHub account name.
+Change `myAccount` to your GitHub account name.
 
 Check that your files uploaded to your GitHub repository.
 
 ## index.html
 
-Open the file ```index.html``` in your text editor. If you're using Atom, Type ```html``` followed by the ```TAB``` key to autofill from a snippet.
+Open the file `index.html` in your text editor. If you're using Atom, type `html` followed by the `TAB` key to autofill a snippet.
 
 Your file should look like this:
 
@@ -331,15 +172,15 @@ Your file should look like this:
 </html>
 ```
 
-Change line 2 from ```<html>``` to
+Change line 2 from `<html>` to
 
 ```html
 <html lang="en" ng-app="CRUDiestMoviesFirebase">
 ```
 
-This declares that this will be an Angular app, and sets the name of the app. ```ng``` is short for _Angular_.
+This declares that this will be an Angular app, and sets the name of the app. `ng` is short for _Angular_.
 
-Below ```<meta charset="utf-8">``` add three more ```<meta>``` tags:
+Below `<meta charset="utf-8">` add three more `<meta>` tags:
 
 ```html
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -349,15 +190,15 @@ Below ```<meta charset="utf-8">``` add three more ```<meta>``` tags:
 
 The first two set up responsive views for Bootstrap. The third is used by search engines to describe your website.
 
-Change ```<title></title>``` to ```<title>CRUDiest Movies Firebase</title>```.
+Change `<title></title>` to `<title>CRUDiest Movies Firebase</title>`.
 
-Hook up the style sheet in the ```<head>``` secton:
+Hook up the style sheet in the `<head>` secton:
 
 ```html
 <link rel="stylesheet" href="css/style.css">
 ```
 
-In the ```<body``` add a text header and then hook up the JavaScript files:
+In the `<body` add a text header and then hook up the JavaScript files:
 
 ```html
 <h1>CRUDiest Movies Firebase</h1>
@@ -368,19 +209,9 @@ In the ```<body``` add a text header and then hook up the JavaScript files:
 <script type="text/javascript" src="javascript/controllers/ShowController.js"></script>
 ```
 
-## AngularFire
+### Content Delivery Networks (CDNs)
 
-Firebase has a "vanilla" interface that we won't be using. It also has interfaces for five frameworks:
-
-* GeoFire for realtime location queries.
-* AngularFire for AngularJS.
-* EmberFire for Ember.
-* ReactFire for React.
-* Ionic for developing hybrid mobile apps with AngularFire.
-
-We'll use the AngularFire bindings.
-
-To use AngularFire we need AngularJS, Firebase, and AngularFire. For this project we'll also need the Angular router, Bootstrap, and UI Bootstrap. Install these content delivery networks (CDN) in the ```<head>``` section of ```index.html```;
+To use AngularFire we need AngularJS, Firebase, and AngularFire. For this project we'll also need the Angular router, Bootstrap, and UI Bootstrap. Install these content delivery networks (CDN) in the `<head>` section of `index.html`;
 
 ```html
 <!-- AngularJS -->
@@ -398,9 +229,9 @@ To use AngularFire we need AngularJS, Firebase, and AngularFire. For this projec
 <script type="text/javascript" src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
 ```
 
-The ```Bootstrap CSS``` requires that you download your own copy with a complete hash number (starting with ```sha384-```).
+The `Bootstrap CSS` requires that you download your own copy with a complete hash number (starting with `sha384-`).
 
-Update the version numbers now for
+Update the version numbers:
 1. Angular: https://angularjs.org/ (Don't use Angular 2, it's a different framework.)
 2. Bootstrap CSS: http://getbootstrap.com/
 3. UI Bootstrap: https://angular-ui.github.io/bootstrap/
@@ -411,9 +242,43 @@ Every Monday morning I go through my [checklist of software updates](https://git
 
 Alternatively you can [download Angular](https://angularjs.org/) and the other libraries and link to them locally. That's more reliable as you can use your app without an Internet connection. The CDN is easier to install and update. To update it you just change the version number.
 
+### Inject `firebase` Dependency To Angular Module
+
+Inject `firebase` into your Angular module:
+
+```js
+var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'firebase']);
+```
+
+### Creating a Firebase Reference
+
+In each controller we create a Firebase _reference_. You can call it anything you want but the norm is `ref`.
+
+The Firebase reference is an object created with the `new` operator and the Firebase constructor function (_object-oriented programming_  or OOP):
+
+```js
+// Create Firebase reference
+var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
+```
+
+Replace `crudiest-firebase` with the name of your app. Be sure to use the "Dashboard" URL that ends in `firebaseio.com`, not the "URL" URL that ends in `firebaseapp.com`.
+
+The Firebase reference doesn't create a connection to the remote Firebase nor does it download data.
+
+This is the easiest part of Firebase. The syntax never changes and is done once in each controller, near the top.
+
+## Connect the Firebase Reference To the `$scope`
+
+Now connect the new Firebase object to the `$scope` so that the data is available locally. In `HomeController.js` use `$firebaseArray` and call the array `movies` (plural):
+
+```js
+var ref = new Firebase("https://my-angularfire-app.firebaseio.com/");
+$scope.movies = $firebaseArray(ref);
+```
+
 ## Bootstrap and Angular
 
-Bootstrap starts with a container in ```index.html```:
+Bootstrap starts with a container in `index.html`:
 
 ```html
 <div class="container">
@@ -421,7 +286,7 @@ Bootstrap starts with a container in ```index.html```:
 </div>
 ```
 
-Angular uses ```<ng-view />``` to make the template views appear:
+Angular uses `<ng-view />` to make the template views appear:
 
 ```html
 <div class="container">
@@ -430,7 +295,7 @@ Angular uses ```<ng-view />``` to make the template views appear:
 </div>
 ```
 
-Let's center the ```<h1>``` header:
+Let's center the `<h1>` header:
 
 ```html
 <div class="row text-center">
@@ -438,7 +303,7 @@ Let's center the ```<h1>``` header:
 </div>
 ```
 
-Let's a backlink so that clicking on the title takes the user back to the home page. In Angular we use ```ng-href``` instead of ```href```:
+Let's a backlink so that clicking on the title takes the user back to the home page. In Angular we use `ng-href` instead of `href`:
 
 ```html
 <a ng-href="/#/movies"><h1>CRUDiest Movies Database</h1></a>
@@ -446,7 +311,7 @@ Let's a backlink so that clicking on the title takes the user back to the home p
 
 ## Finish index.html
 
-Your ```index.html``` should now look like:
+Your `index.html` should now look like:
 
 ```html
 <!DOCTYPE html>
@@ -491,7 +356,7 @@ Your ```index.html``` should now look like:
 </html>
 ```
 
-Open your browser to the URL that Firebase provided to you. It prints after you run ```firebase deploy```. You should see your ```<h1>``` header:
+Open your browser to the URL that Firebase provided to you. It prints after you run `firebase deploy`. You should see your `<h1>` header:
 
 ![Image of header](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb-header.png?raw=true)
 
@@ -507,7 +372,7 @@ firebase deploy
 
 ## app.js
 
-In your file ```app.js``` inject the dependencies for the router and for Firebase:
+In your file `app.js` inject the dependencies for the router and for Firebase:
 
 ```js
 var app = angular.module("CRUDiestMoviesFirebase", ['ngRoute', 'firebase']);
@@ -517,7 +382,7 @@ var app = angular.module("CRUDiestMoviesFirebase", ['ngRoute', 'firebase']);
 
 ## Angular Routes
 
-We'll set up ```routes.js``` now:
+We'll set up `routes.js` now:
 
 ```js
 app.config(function($routeProvider) {
@@ -535,26 +400,26 @@ app.config(function($routeProvider) {
 });
 ```
 
-The first line adds or configures the ```$routeProvider``` function to the ```app``` object. Each routes starts with ```.when``` followed by a route:
+The first line adds or configures the `$routeProvider` function to the `app` object. Each routes starts with `.when` followed by a route:
 
-* ```/movies``` is the home page or ```INDEX``` route, where all records are displayed. We'll combine this with ```ADD```.
-* ```/movies/:id``` displays one movie, dynamically identified by its ID number, called the ```SHOW``` route. We'll combine this with ```EDIT```.
+* `/movies` is the home page or `INDEX` route, where all records are displayed. We'll combine this with `ADD`.
+* `/movies/:id` displays one movie, dynamically identified by its ID number, called the `SHOW` route. We'll combine this with `EDIT`.
 
-The ```.otherwise``` route redirects any other requests to the home page.
+The `.otherwise` route redirects any other requests to the home page.
 
-The order of the routes matters. The ```/movies/:id``` route has to be at the bottom because it catches other routes.
+The order of the routes matters. The `/movies/:id` route has to be at the bottom because it catches other routes.
 
 > The dynamic URLs (with the ID numbers) are something Node does easily that's hard to do with Apache.
 
 ## Set Up Views
 
-In ```index.html```, put ```<ng-view />``` in the ```<body>``` below the ```<h1>``` element:
+In `index.html`, put `<ng-view />` in the `<body>` below the `<h1>` element:
 
-This is the Angular directive (it starts with ```ng-```) for displaying a view.
+This is the Angular directive (it starts with `ng-`) for displaying a view.
 
 ## Add a Movie With UI Bootstrap Typeahead
 
-We'll set up the HTML templates (views) now. In ```home.html``` start with the Bootstrap ```row``` container:
+We'll set up the HTML templates (views) now. In `home.html` start with the Bootstrap `row` container:
 
 ```html
 <div class="row">
@@ -570,16 +435,16 @@ Let's make a form for adding movies. We could make a form with a dozen inputs fo
 
 ### Linking to UI Bootstrap
 
-We already added the UI Bootstrap CDN to ```index.html```. Here's more detailed instructions on this critical step:
+We already added the UI Bootstrap CDN to `index.html`. Here's more detailed instructions on this critical step:
 
 The UI Bootstrap CDN must be below the Angular CDN.
 
 You can [find the latest CDN](https://cdnjs.com/libraries/angular-ui-bootstrap). This website gives you a choice of four CDNs:
 
-* Two with _templates_ that start with ```ui-bootstrap-tpls```.
-* Two without templates, that start with ```ui-bootstrap```.
-* Two _minified_ files that are small and load quickly, but can't be read by humans, and end in ```min.js```.
-* Two not minified files that are bigger but humans can read (and change) the code, and end in ```js```.
+* Two with _templates_ that start with `ui-bootstrap-tpls`.
+* Two without templates, that start with `ui-bootstrap`.
+* Two _minified_ files that are small and load quickly, but can't be read by humans, and end in `min.js`.
+* Two not minified files that are bigger but humans can read (and change) the code, and end in `js`.
 
 We'll use the CDN with templates, minified:
 
@@ -589,11 +454,11 @@ We'll use the CDN with templates, minified:
 
 Link only one of the four CDNs. Adding a second CDN will cause errors.
 
-> Alternatively you can also download the library from the [UI Bootstrap](https://angular-ui.github.io/bootstrap/) website. There's a big purple button that says ```Download```. Move the file into your project folder and make a local link.
+> Alternatively you can also download the library from the [UI Bootstrap](https://angular-ui.github.io/bootstrap/) website. There's a big purple button that says `Download`. Move the file into your project folder and make a local link.
 
 ### Dependency Injection
 
-Add the dependencies ```ui.bootstrap``` and ```ui.bootstrap.typeahead``` to ```app.js```:
+Add the dependencies `ui.bootstrap` and `ui.bootstrap.typeahead` to `app.js`:
 
 ```js
 var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'ui.bootstrap.typeahead']);
@@ -601,14 +466,14 @@ var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'ui.bo
 
 ## Typeahead Plugin
 
-Go to [UI Bootstrap](https://angular-ui.github.io/bootstrap/) and scroll down to the bottom. The last plugin is ```Typeahead```. You'll see there are five type of typeahead plugins:
+Go to [UI Bootstrap](https://angular-ui.github.io/bootstrap/) and scroll down to the bottom. The last plugin is `Typeahead`. You'll see there are five type of typeahead plugins:
 
 ![Five typeaheads](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/typeahead_five_options.png)
 
-* Four of the plugins -- ```Static arrays```, ```ngModelOptions support```, ```Custom templates for results```, and ```Custom popup templates for typeahead's dropdown``` -- look up in an array of values in your controller. This is ideal when you have a limited number of options, e.g., the fifty states. The four choice format the values differently for the user, including one that adds a state flag downloaded live from Wikipedia.
-* The ```Asynchronous results``` plugin goes to any database on the Internet with an API. We'll use this to connect to the Internet Movie Database (IMDB).
+* Four of the plugins -- `Static arrays`, `ngModelOptions support`, `Custom templates for results`, and `Custom popup templates for typeahead's dropdown` -- look up in an array of values in your controller. This is ideal when you have a limited number of options, e.g., the fifty states. The four choice format the values differently for the user, including one that adds a state flag downloaded live from Wikipedia.
+* The `Asynchronous results` plugin goes to any database on the Internet with an API. We'll use this to connect to the Internet Movie Database (IMDB).
 
-Add this code to ```home.html```.
+Add this code to `home.html`.
 
 ```html
 <form class="form-horizontal">
@@ -629,21 +494,21 @@ Add this code to ```home.html```.
 </form>
 ```
 
-This form is styled as Bootstrap class ```form-horizontal```. The input is a text entry field styled as Bootstrap class ```form-control```. We add a class ```addMovie``` for additional styling.
+This form is styled as Bootstrap class `form-horizontal`. The input is a text entry field styled as Bootstrap class `form-control`. We add a class `addMovie` for additional styling.
 
-We connect the form to the ```$scope``` with ```ng-model``` set to the movie title.
+We connect the form to the `$scope` with `ng-model` set to the movie title.
 
 The next five lines set up a [UI Bootstrap](https://angular-ui.github.io/bootstrap/) typeahead.
 
 The placeholder tells the user what to do.
 
-The ```search``` glyphicon puts a search icon in the box.
+The `search` glyphicon puts a search icon in the box.
 
-The ```refresh``` glyphicon tells the user that data is being downloaded.
+The `refresh` glyphicon tells the user that data is being downloaded.
 
-Lastly, the ```remove``` glyphicon tells the user that no movie was found.
+Lastly, the `remove` glyphicon tells the user that no movie was found.
 
-In ```HomeController.js``` we'll add two handlers for the typeahead:
+In `HomeController.js` we'll add two handlers for the typeahead:
 
 ```js
 $scope.getLocation = function(val) {
@@ -691,19 +556,19 @@ $scope.onSelect = function ($item) {
 };
 ```
 
-The ```getLocation()``` handler queries the OMDb for the movie and returns a drop-down menu of ten movies for the user to choose from.
+The `getLocation()` handler queries the OMDb for the movie and returns a drop-down menu of ten movies for the user to choose from.
 
-When the user selects a movie from the list ```onSelect()``` fires and adds the movie to our database. The ```$scope.loading``` variable switches on to show the ```refresh``` glyphicon. The next line prevents the previous query from autofilling the search form.
+When the user selects a movie from the list `onSelect()` fires and adds the movie to our database. The `$scope.loading` variable switches on to show the `refresh` glyphicon. The next line prevents the previous query from autofilling the search form.
 
 We create a movie object using data from the OMDb, plus a few fields of our own:
 
-* ```movieComments``` is an empty array, ready for users to add comments.
-* ```movieLikes``` is initialized at zero, ready for users to like or dislike a movie.
-* ```movieDateAdded``` takes the current time and date.
+* `movieComments` is an empty array, ready for users to add comments.
+* `movieLikes` is initialized at zero, ready for users to like or dislike a movie.
+* `movieDateAdded` takes the current time and date.
 
-We run the AngularFire method [$add()](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-addnewdata) to add the movie object to our movies array. This is similar to the JavaScript method ```push()```.
+We run the AngularFire method [$add()](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebasearray-addnewdata) to add the movie object to our movies array. This is similar to the JavaScript method `push()`.
 
-After the movie object is added to the movies array a promise is executed. We reset the viewing order so that the new movie appears in the upper left position. Then we switch the ```$scope.loading``` variable off to hide the ```refresh``` glyphicon.
+After the movie object is added to the movies array a promise is executed. We reset the viewing order so that the new movie appears in the upper left position. Then we switch the `$scope.loading` variable off to hide the `refresh` glyphicon.
 
 Deploy to Firebase and see if it works.
 
@@ -723,7 +588,7 @@ git push origin master
 
 ## Display Movies
 
-Now we'll display our movies in ```home.html```:
+Now we'll display our movies in `home.html`:
 
 ```html
 <div ng-repeat="movie in movies | orderBy : order : reverse" class="movieIndex">
@@ -731,13 +596,13 @@ Now we'll display our movies in ```home.html```:
 </div>
 ```
 
-This will display all the movie objects in our movies array, ordered by reverse date added. The ```img``` displays the movie poster, and when the user clicks on the poster the route changes to the ```SHOW``` page.
+This will display all the movie objects in our movies array, ordered by reverse date added. The `img` displays the movie poster, and when the user clicks on the poster the route changes to the `SHOW` page.
 
 ![Typeahead](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_poster.png)
 
 ### Style Movie Posters
 
-The movies posters display in a column down the left side of the browser window. Let's add CSS styling to make the movies display in rows. In ```style.css```:
+The movies posters display in a column down the left side of the browser window. Let's add CSS styling to make the movies display in rows. In `style.css`:
 
 ```css
 .movieIndex {
@@ -747,9 +612,9 @@ The movies posters display in a column down the left side of the browser window.
 
 ## View Movie Title in SHOW/EDIT
 
-Click on a movie poster and the view changes. Note that the URL changes, with the _key_ of ```$id``` of the movie object appearing in the URL. This works because we wrapped the movie image with ```<a ng-href="/#/movies/{{movie.$id}}">``` and set up a route for ```'/movies/:id'```.
+Click on a movie poster and the view changes. Note that the URL changes, with the _key_ of `$id` of the movie object appearing in the URL. This works because we wrapped the movie image with `<a ng-href="/#/movies/{{movie.$id}}">` and set up a route for `'/movies/:id'`.
 
-In ```show.html```, all Bootstrap views begin with:
+In `show.html`, all Bootstrap views begin with:
 
 ```html
 <div class="row">
@@ -776,7 +641,7 @@ Let's add a form for showing and editing the movie title:
 </div>
 ```
 
-This doesn't display anything because we need to work on the controller. In ```ShowController.js``` log ```$scope.movie```:
+This doesn't display anything because we need to work on the controller. In `ShowController.js` log `$scope.movie`:
 
 ```js
 app.controller('ShowController', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
@@ -789,13 +654,13 @@ app.controller('ShowController', ['$scope', '$firebaseObject', function($scope, 
 }]);
 ```
 
-If you've added more than one movie to your array, you'll see that ```$scope.movie``` includes all your movies, when we want just one movie. We need to drill down through the array and pick out one movie. Firebase doesn't use JavaScript array notation here, such as brackets or dot notation. Instead it uses a ```child``` method:
+If you've added more than one movie to your array, you'll see that `$scope.movie` includes all your movies, when we want just one movie. We need to drill down through the array and pick out one movie. Firebase doesn't use JavaScript array notation here, such as brackets or dot notation. Instead it uses a `child` method:
 
 ```js
 $scope.movie = $firebaseObject(ref.child($routeParams.id));
 ```
 
-We're telling Firebase to get a child object from the array, selected by the ```$routeParams.id``` passed via the URL. We'll also have to inject the service ```$routeParams``` into the controller:
+We're telling Firebase to get a child object from the array, selected by the `$routeParams.id` passed via the URL. We'll also have to inject the service `$routeParams` into the controller:
 
 ```js
 app.controller('ShowController', ['$scope', '$firebaseObject', '$routeParams', function($scope, $firebaseObject, $routeParams) {
@@ -818,11 +683,11 @@ Note the UI Bootstrap _tooltip_ in the form that informs users "You can type in 
 
 ## Edit Movie Title
 
-You can type in the movie title form but if you refresh the browser the change wasn't saved. In the ```show.html``` we have ```ng-model="movie.movieTitle"``` so edits in the view should bind to the ```$scope```. But to get three-way data binding to Firebase we have to use the ```$save``` Firebase method.
+You can type in the movie title form but if you refresh the browser the change wasn't saved. In the `show.html` we have `ng-model="movie.movieTitle"` so edits in the view should bind to the `$scope`. But to get three-way data binding to Firebase we have to use the `$save` Firebase method.
 
-In ```show.html``` we also have ```ng-change="change('title')"```. When the user makes a change in the form, the handler ```$scope.change()``` runs in the controller. We're passing through the movie object property `'title'`.
+In `show.html` we also have `ng-change="change('title')"`. When the user makes a change in the form, the handler `$scope.change()` runs in the controller. We're passing through the movie object property `'title'`.
 
-Add ```$scope.change``` to ```ShowController.js```:
+Add `$scope.change` to `ShowController.js`:
 
 ```js
 $scope.change = function() {
@@ -834,7 +699,7 @@ Now when you edit the field and refresh you'll see that the changes were saved.
 
 ## Save Message
 
-Three-way data binding is neat but you may have noticed a user interface/user experience (UI/UX) problem. Users aren't going to check the Firebase Dashboard or refresh the browser to see if their edits were saved. We need to alert the user. We'll show the message "Saved!" next to the field when the data is saved to Firebase. In ```show.html``` add this:
+Three-way data binding is neat but you may have noticed a user interface/user experience (UI/UX) problem. Users aren't going to check the Firebase Dashboard or refresh the browser to see if their edits were saved. We need to alert the user. We'll show the message "Saved!" next to the field when the data is saved to Firebase. In `show.html` add this:
 
 ```html
 <div class="row">
@@ -854,7 +719,7 @@ Three-way data binding is neat but you may have noticed a user interface/user ex
 </div>
 ```
 
-Near the top of ```ShowController.js``` initialize the variable:
+Near the top of `ShowController.js` initialize the variable:
 
 ```js
 // Initialize variables
@@ -863,7 +728,7 @@ $scope.watch = {
 };
 ```
 
-Near the bottom of```ShowController.js``` make a function using the Firebase method [$watch](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebaseobject-watchcallback-context):
+Near the bottom of `ShowController.js` make a function using the Firebase method [$watch](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebaseobject-watchcallback-context):
 
 ```js
 // Watch movie object title property, show "Saved!" message
@@ -872,23 +737,23 @@ $firebaseObject(ref.child($routeParams.id).child('movieTitle')).$watch(function(
 });
 ```
 
-The Firebase method ```$watch``` registers an event listener any time there is a change to the data, firing its callback function. We've attached ```$watch``` to a grandchild of the movies array. The child selects a movie by its ```$id``` key, and then the grandchild selects the ```movieTitle``` property from the movie object.
+The Firebase method `$watch` registers an event listener any time there is a change to the data, firing its callback function. We've attached `$watch` to a grandchild of the movies array. The child selects a movie by its `$id` key, and then the grandchild selects the `movieTitle` property from the movie object.
 
-The callback function switches the variable ```$scope.watch.titleSave``` to show the message.
+The callback function switches the variable `$scope.watch.titleSave` to show the message.
 
-That works too well. The ```$watch``` fires when page loads. Let's add a second condition, indicating that the user has changed the data.
+That works too well. The `$watch` fires when page loads. Let's add a second condition, indicating that the user has changed the data.
 
-In ```show.html``` add the second condition:
+In `show.html` add the second condition:
 
 ```html
 <div ng-show="watch.titleChange && watch.titleSave" class="saved">Saved!</div>
 ```
 
-> We could also write "watch.titleSave; watch.titleChange" but not "watch.titleChange; watch.titleSave". With that syntax the order of the variables matters. The ```&&``` syntax is more reliable.
+> We could also write "watch.titleSave; watch.titleChange" but not "watch.titleChange; watch.titleSave". With that syntax the order of the variables matters. The `&&` syntax is more reliable.
 
 Now the message will show only when the user makes a change and the data is saved.
 
-In ```ShowController.js``` add the variable to ```$scope.change()```:
+In `ShowController.js` add the variable to `$scope.change()`:
 
 ```js
 $scope.change = function() {
@@ -907,7 +772,7 @@ $scope.watch = {
 };
 ```
 
-Now ```ShowController.js``` should look like this:
+Now `ShowController.js` should look like this:
 
 ```js
 app.controller('ShowController', ['$scope', '$firebaseObject', '$routeParams', function($scope, $firebaseObject, $routeParams) {
@@ -936,7 +801,7 @@ app.controller('ShowController', ['$scope', '$firebaseObject', '$routeParams', f
 }]);
 ```
 
-Now it'd be nice if the ```Saved!``` message went away after a few seconds. We can't use ```setTimeout()``` because it doesn't work with Angular. Instead we add the Angular service ```$timeout``` to the ```ShowController.js```:
+Now it'd be nice if the `Saved!` message went away after a few seconds. We can't use `setTimeout()` because it doesn't work with Angular. Instead we add the Angular service `$timeout` to the `ShowController.js`:
 
 ```js
 app.controller('ShowController', ['$scope', '$routeParams', '$location', '$firebaseObject', '$timeout', function($scope, $routeParams, $location, $firebaseObject, $timeout) {
@@ -945,7 +810,7 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
 }]);
 ```
 
-Now we can use ```$timeout()``` in a function:
+Now we can use `$timeout()` in a function:
 
 ```js
 // Shows and hides Saved! message
@@ -960,7 +825,7 @@ $scope.change = function(prop) {
 
 This waits 9.9 seconds and then switches off the message.
 
-It's unnecessary but we can add a timer to the Firebase ```$watch``` as well:
+It's unnecessary but we can add a timer to the Firebase `$watch` as well:
 
 ```js
 $firebaseObject(ref.child($routeParams.id).child('movieTitle')).$watch(function() {
@@ -971,7 +836,7 @@ $firebaseObject(ref.child($routeParams.id).child('movieTitle')).$watch(function(
 });
 ```
 
-It'd be nicer if the message were animated. Add styling to ```style.css```:
+It'd be nicer if the message were animated. Add styling to `style.css`:
 
 ```css
 .saved {
@@ -1018,7 +883,7 @@ The message is aligning with the top of the form. Let's move it down to align wi
 
 We've completed two of the hardest parts of the web app: the typeahead and the "Saved!" messages. Now we'll work on the easier features and the styling. We'll save the authorization/authentication, which is another hard part, for the end.
 
-In ```show.html``` within the ```<form>``` add the rest of the fields:
+In `show.html` within the `<form>` add the rest of the fields:
 
 ```html
 <div class="form-group">
@@ -1174,7 +1039,7 @@ In ```show.html``` within the ```<form>``` add the rest of the fields:
 
 ![All fields added to SHOW/EDIT view](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_all_fields.png)
 
-In ```ShowController.js``` we could write a ```$scope.change()``` handler for each field. Or we could refactor the code to pass the property from the view:
+In `ShowController.js` we could write a `$scope.change()` handler for each field. Or we could refactor the code to pass the property from the view:
 
 ```js
 // Shows and hides Saved! message
@@ -1187,9 +1052,9 @@ $scope.change = function(prop) {
 };
 ```
 
-Now this one function works with all the fields. You'll have to refactor the movie title form with ```ng-change="change('title')"```.
+Now this one function works with all the fields. You'll have to refactor the movie title form with `ng-change="change('title')"`.
 
-We can't write a single function to handle all the Firebase ```$watch``` properties because the ```$watch``` callback doesn't tell us which property changed. (A ```$watch``` callback on a Firebase array provides the key of the object that changed and whether the DOM changed but not the changed property.) We'll have to write many nearly identical functions:
+We can't write a single function to handle all the Firebase `$watch` properties because the `$watch` callback doesn't tell us which property changed. (A `$watch` callback on a Firebase array provides the key of the object that changed and whether the DOM changed but not the changed property.) We'll have to write many nearly identical functions:
 
 ```js
 // Watch movie object poster property, show "Saved!" message
@@ -1355,7 +1220,7 @@ $scope.watch = {
 
 ## Delete Movie Button
 
-We'll also need to delete movies. We can create a Bootstrap button in ```show.html```:
+We'll also need to delete movies. We can create a Bootstrap button in `show.html`:
 
 ```html
 <div class="form-group">
@@ -1371,7 +1236,7 @@ We'll also need to delete movies. We can create a Bootstrap button in ```show.ht
 </div>
 ```
 
-Clicking the button fires the handler ```$scope.deleteMovie()``` so we'll add that to ```ShowController.js```:
+Clicking the button fires the handler `$scope.deleteMovie()` so we'll add that to `ShowController.js`:
 
 ```js
 // Delete movie
@@ -1388,7 +1253,7 @@ $scope.deleteMovie = function() {
 
 We're using the Firebase method  [$remove()](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebaseobject-remove) on the movie object. The method returns a promise. When the promise executes we log the event and then redirect the user to the home page.
 
-The ```show.html``` template should look like this now:
+The `show.html` template should look like this now:
 
 ```html
 <div class="row">
@@ -1570,7 +1435,7 @@ The ```show.html``` template should look like this now:
 </div>
 ```
 
-The ```ShowController,js``` controller should look like this now:
+The `ShowController.js` controller should look like this now:
 
 ```js
 app.controller('ShowController', ['$scope', '$routeParams', '$location', '$firebaseObject', '$timeout', function($scope, $routeParams, $location, $firebaseObject, $timeout) {
@@ -1768,11 +1633,11 @@ app.controller('ShowController', ['$scope', '$routeParams', '$location', '$fireb
 
 ## Home Page Styling
 
-Let's leave the ```SHOW/EDIT``` page and work on the ```INDEX/NEW``` or home page.
+Let's leave the `SHOW/EDIT` page and work on the `INDEX/NEW` or home page.
 
 ### Title Font
 
-First, we need a better font! Google "movie fonts" and you'll see many choices. I like the "Terminator" font so I downloaded ```Terminator.ttf``` to the ```fonts``` directory (in the ```css``` directory). Then we put the font at the top of ```styles.css```, and then use the font in our ```h1``` header:
+First, we need a better font! Google "movie fonts" and you'll see many choices. I like the "Terminator" font so I downloaded `Terminator.ttf` to the `fonts` directory (in the `css` directory). Then we put the font at the top of `styles.css`, and then use the font in our `h1` header:
 
 ```css
 @font-face {
@@ -1789,7 +1654,7 @@ h1 {
 
 ![Terminator font](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_terminator.png)
 
-In ```home.html```, let's wrap the ```Add a Movie``` search form in a Bootstrap 12-column ```div```:
+In `home.html`, let's wrap the `Add a Movie` search form in a Bootstrap 12-column `div`:
 
 ```html  
 <div class="col-lg-12">
@@ -1812,7 +1677,7 @@ In ```home.html```, let's wrap the ```Add a Movie``` search form in a Bootstrap 
 </div>
 ```
 
-Let's make the placeholder font a little bigger in the ```Add a Movie``` search form, in ```styles.css```:
+Let's make the placeholder font a little bigger in the `Add a Movie` search form, in `styles.css`:
 
 ```css
 .addMovie {
@@ -1820,7 +1685,7 @@ Let's make the placeholder font a little bigger in the ```Add a Movie``` search 
 }
 ```
 
-The ```glyphicon-search``` icon needs help:
+The `glyphicon-search` icon needs help:
 
 ```css
 .glyphicon-search {
@@ -1844,7 +1709,7 @@ The movie posters are too big and are slightly different sizes. Let's fix this:
 
 ## Responsive Views
 
-Six movies in a row looks good on my 15" laptop screen, but what if users have smaller screens? We'll set up Bootstrap responsive views in ```home.html```:
+Six movies in a row looks good on my 15" laptop screen, but what if users have smaller screens? We'll set up Bootstrap responsive views in `home.html`:
 
 ```html
 <!-- Responsive views -->
@@ -1873,7 +1738,7 @@ Six movies in a row looks good on my 15" laptop screen, but what if users have s
 </div>
 ```
 
-Then in ```styles.css``` we'll set five movies in a row on medium screens, four movies in a row on small screens, and two movies in a row oin mobile devices:
+Then in `styles.css` we'll set five movies in a row on medium screens, four movies in a row on small screens, and two movies in a row oin mobile devices:
 
 ```css
 .extraSmallMoviePoster {
@@ -1901,7 +1766,7 @@ Now you can make you browser window bigger and smaller and see the number of mov
 
 ## Order By Options
 
-Perhaps users would like some options for ordering the movies? Let's give users a choice of ordering by date added (the default), by IMDb rating, or by year. We'll have forward and reverse ordering for each, so a total of six buttons, in ```home.html```:
+Perhaps users would like some options for ordering the movies? Let's give users a choice of ordering by date added (the default), by IMDb rating, or by year. We'll have forward and reverse ordering for each, so a total of six buttons, in `home.html`:
 
 ```html
 <!-- orderBy labels row -->
@@ -1970,18 +1835,18 @@ One small, medium, and large screens the buttons are each two columns, with labe
 
 The colors are standard Bootstrap:
 
-* ```default``` is white.
-* ```primary``` is dark blue.
-* ```success``` is green.
-* ```info``` is light blue.
-* ```warning``` is yellow-orange.
-* ```danger``` is red.
+* `default` is white.
+* `primary` is dark blue.
+* `success` is green.
+* `info` is light blue.
+* `warning` is yellow-orange.
+* `danger` is red.
 
-The ```ng-click``` sets what the buttons do when clicked. Note that none run a handler in the controller. Each button sets two variables, ```order``` and ```reverse```. There are three options for ```order```: ```movieDateAdded```, ```movieImdbRating```, or ```movieYear```. We could use ```$id``` instead of ```movieDateAdded``` but the latter is more reliable.
+The `ng-click` sets what the buttons do when clicked. Note that none run a handler in the controller. Each button sets two variables, `order` and `reverse`. There are three options for `order`: `movieDateAdded`, `movieImdbRating`, or `movieYear`. We could use `$id` instead of `movieDateAdded` but the latter is more reliable.
 
 ## Tech Notes and Resume
 
-I'm looking for a job so I want to tell hiring managers about this project, and I want them to download my resume. Let's make two buttons. The ```Add a Movie``` field is wider than necessary so let's make that half the window width, and make the buttons quarter-width each:
+I'm looking for a job so I want to tell hiring managers about this project, and I want them to download my resume. Let's make two buttons. The `Add a Movie` field is wider than necessary so let's make that half the window width, and make the buttons quarter-width each:
 
 ```html
 <div class="row">
@@ -2023,7 +1888,7 @@ I'm looking for a job so I want to tell hiring managers about this project, and 
 
 ### Tech Notes
 
-The ```Tech Notes``` button switches the variable ```techNotes``` on or off. Let's make a Tech Notes row:
+The `Tech Notes` button switches the variable `techNotes` on or off. Let's make a Tech Notes row:
 
 ```HTML
 <!-- Tech Notes row -->
@@ -2039,13 +1904,13 @@ The ```Tech Notes``` button switches the variable ```techNotes``` on or off. Let
 </div>
 ```
 
-The ```Tech Notes``` are styled with a Bootstrap well, and the text is justified with Bootstrap.
+The `Tech Notes` are styled with a Bootstrap well, and the text is justified with Bootstrap.
 
 ![Tech notes well](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_tech_notes.png)
 
 ### Download Resume
 
-We added a button to ```home.html``` for downloading a resume:
+We added a button to `home.html` for downloading a resume:
 
 ```html
 <div class="col-sm-3 col-md-3 col-lg-3">
@@ -2055,9 +1920,9 @@ We added a button to ```home.html``` for downloading a resume:
 </div>
 ```
 
-You can put your resume in the directory ```resume```, change the filename in the button, and it should download.
+You can put your resume in the directory `resume`, change the filename in the button, and it should download.
 
-I don't like the underline when you hover over the button. Let's get rid of it, in ```styles.css```:
+I don't like the underline when you hover over the button. Let's get rid of it, in `styles.css`:
 
 ```css
 .resume:link {
@@ -2067,7 +1932,7 @@ I don't like the underline when you hover over the button. Let's get rid of it, 
 
 ## Highlight Movies
 
-Users may not know that they can click movie posters to go to the ```SHOW/EDIT``` page. Let's highlight each movie in blue on mouse hover, in ```styles.css```:
+Users may not know that they can click movie posters to go to the `SHOW/EDIT` page. Let's highlight each movie in blue on mouse hover, in `styles.css`:
 
 ```css
 .extraSmallMoviePoster:hover, .smallMoviePoster:hover, .mediumMoviePoster:hover, .largeMoviePoster:hover {
@@ -2075,11 +1940,11 @@ Users may not know that they can click movie posters to go to the ```SHOW/EDIT``
 }
 ```
 
-We're using the _group selector_ or comma to apply this style to more than one class. The colon makes these _pseudo-classes_, e.g., ```.largeMoviePoster``` is a class and ```.largeMoviePoster:hover``` is a pseudo-class.
+We're using the _group selector_ or comma to apply this style to more than one class. The colon makes these _pseudo-classes_, e.g., `.largeMoviePoster` is a class and `.largeMoviePoster:hover` is a pseudo-class.
 
 ## Likes
 
-The ```INDEX/NEW``` home page is finished, except for authorization/authentication. Let's finish the ```SHOW/EDIT``` view. In ```show.html``` you can add:
+The `INDEX/NEW` home page is finished, except for authorization/authentication. Let's finish the `SHOW/EDIT` view. In `show.html` you can add:
 
 ```html
 <div class="row">
@@ -2101,9 +1966,9 @@ The ```INDEX/NEW``` home page is finished, except for authorization/authenticati
 </div>
 ```
 
-This makes two Bootstrap columns, equal widths. The left column displays the number of likes. The right column has two forms, above and below. Each form is a single button. One has a "thumbs-up" glyphicon and the other has "thumbs-down". Clicking fires handlers for ```$scope.upLike()``` or ```$scope.downLike()```
+This makes two Bootstrap columns, equal widths. The left column displays the number of likes. The right column has two forms, above and below. Each form is a single button. One has a "thumbs-up" glyphicon and the other has "thumbs-down". Clicking fires handlers for `$scope.upLike()` or `$scope.downLike()`
 
-The buttons look fine but the number is small and in the upper left corner of its column. Let's style that in ```styles.css```:
+The buttons look fine but the number is small and in the upper left corner of its column. Let's style that in `styles.css`:
 
 ```css
 .likes {
@@ -2114,7 +1979,7 @@ The buttons look fine but the number is small and in the upper left corner of it
 
 ![Likes](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/media/crudfb_likes.png)
 
-Let's add the handler in ```ShowController.js```:
+Let's add the handler in `ShowController.js`:
 
 ```js
 // Likes section
@@ -2139,7 +2004,7 @@ $scope.downLike = function() {
 };
 ```
 
-Both handlers affect the property ```movieLikes``` on the movie object. ```$scope.upLike()``` uses the ```+=``` _assignment operator_ to increment the variable by one. ```$scope.downLike()``` uses the less common ```-=``` to decrement by one.
+Both handlers affect the property `movieLikes` on the movie object. `$scope.upLike()` uses the `+=` _assignment operator_ to increment the variable by one. `$scope.downLike()` uses the less common `-=` to decrement by one.
 
 Both handlers then use the Firebase method [$save](https://www.firebase.com/docs/web/libraries/angular/api.html#angularfire-firebaseobject-save) to fire three-way data binding.
 
@@ -2149,7 +2014,7 @@ Nested comments are a feature where NoSQL databases shine. With SQL you'd make a
 
 With NoSQL, comments are an array of comment objects. Each comment object has several properties: comment text, comment author, and date added. The comments array is a property of the movie object. The movie objects are in the array of movies. You have nested arrays of objects. It's easy to set up and there's no danger of comments becoming disassociated from their movies.
 
-In ```show.html``` we'll add a comments row with three groups of elements:
+In `show.html` we'll add a comments row with three groups of elements:
 
 ```html
 <!-- Comments row -->
@@ -2200,15 +2065,15 @@ In ```show.html``` we'll add a comments row with three groups of elements:
 </div>
 ```
 
-The first element group shows or hides comments. It tells you how many comments there are. ```ng-pluralize``` then either displays nothing if there are no comments, displays "1 comment" if there is one comment, and if there is more than one comment the number of comments is displayed, followed by "comments". A tooltip tells users they can click to show or hide the comments.
+The first element group shows or hides comments. It tells you how many comments there are. `ng-pluralize` then either displays nothing if there are no comments, displays "1 comment" if there is one comment, and if there is more than one comment the number of comments is displayed, followed by "comments". A tooltip tells users they can click to show or hide the comments.
 
-The second element group displays the comments. The comment text is displayed first, followed by the author and the date. A ```Delete Comment``` button is on the right side. This button fires the handler ```$scope.deleteComment()```.
+The second element group displays the comments. The comment text is displayed first, followed by the author and the date. A `Delete Comment` button is on the right side. This button fires the handler `$scope.deleteComment()`.
 
-The third element group has a form for adding a new comment. It has two fields, for the text and the author. It fires the handler ```$scope.newComment()```.
+The third element group has a form for adding a new comment. It has two fields, for the text and the author. It fires the handler `$scope.newComment()`.
 
 ### Add New Comment
 
-Let's add the ```$scope.newComment``` handler in ```ShowController.js```:
+Let's add the `$scope.newComment` handler in `ShowController.js`:
 
 ```js
 // Comments section
@@ -2234,29 +2099,28 @@ The first line passes the comment in from the view.
 
 Next, we take the comment and add a date timestamp.
 
-Next, we check if there is a ```movieComments``` array. If not we create an empty array.
+Next, we check if there is a `movieComments` array. If not we create an empty array.
 
 Next we have two lines that prevent autofilling the comments forms with the previous comment and author.
 
-Now we have a long line that does a lot of work. We create a new ```$firebaseArray``` for the array of movies.
+Now we have a long line that does a lot of work. We create a new `$firebaseArray` for the array of movies.
 
-> Check that ```$firebaseArray``` is injected in ```ShowController.js```:
+> Check that `$firebaseArray` is injected in `ShowController.js`:
 
 ```js
 app.controller('ShowController', ['$scope', '$routeParams', '$location', '$firebaseObject', '$firebaseArray', '$timeout', function($scope, $routeParams, $location, $firebaseObject, $firebaseArray, $timeout) {
   console.log("Show controller.");
 
-  }]);
-  ```
-
-Then we drill down into the array of movies to select one movie: ```$firebaseArray(ref.child($routeParams.id)```
-
-Then we drill down into the comments array: ```$firebaseArray(ref.child($routeParams.id).child('movieComments'))```
-
-Then we add our comment to the array: ```$firebaseArray(ref.child($routeParams.id).child('movieComments')).$add(commentWithDate)```
-
-Finally we have a promise that's executed when the comment is added to the array: ```$firebaseArray(ref.child($routeParams.id).child('movieComments')).$add(commentWithDate).then(function() { });
+}]);
 ```
+
+Then we drill down into the array of movies to select one movie: `$firebaseArray(ref.child($routeParams.id)`
+
+Then we drill down into the comments array: `$firebaseArray(ref.child($routeParams.id).child('movieComments'))`
+
+Then we add our comment to the array: `$firebaseArray(ref.child($routeParams.id).child('movieComments')).$add(commentWithDate)`
+
+Finally we have a promise that's executed when the comment is added to the array: `$firebaseArray(ref.child($routeParams.id).child('movieComments')).$add(commentWithDate).then(function() { });`
 
 We could add new comments with JavaScript methods instead of Firebase methods:
 
@@ -2264,13 +2128,13 @@ We could add new comments with JavaScript methods instead of Firebase methods:
 $scope.movie.movieComments.push(commentObject);
 ```
 
-If we use JavaScript methods Firebase won't assign keys to the objects in the array. If we use the Firebase method ```$add``` then our objects have keys.
+If we use JavaScript methods Firebase won't assign keys to the objects in the array. If we use the Firebase method `$add` then our objects have keys.
 
 ## Delete Comments
 
-The handler ```$scope.deleteComment()``` is trickier than other handlers because it's working with nested arrays and objects. Remember that Firebase uses ```.child()``` notation, not JavaScript dot notation, because Firebase objects are not JavaScript objects. Firebase objects have keys.
+The handler `$scope.deleteComment()` is trickier than other handlers because it's working with nested arrays and objects. Remember that Firebase uses `.child()` notation, not JavaScript dot notation, because Firebase objects are not JavaScript objects. Firebase objects have keys.
 
-This is the comments display section of ```show.html```:
+This is the comments display section of `show.html`:
 
 ```html
 <div ng-hide="showComments" ng-repeat="comment in movie.movieComments">
@@ -2324,7 +2188,7 @@ What we need is this:
 </div>
 ```
 
-How do we make a ```$scope.comments``` array to hold our movie's comments? Our movie's comments are here:
+How do we make a `$scope.comments` array to hold our movie's comments? Our movie's comments are here:
 
 ```js
 $scope.movie.movieComments
@@ -2338,19 +2202,19 @@ $scope.comments = $scope.movie.movieComments
 
 because it creates an array that Firebase methods can't attach to. (Because the array was created with dot notation.)
 
-Here's how we do it, in ```ShowController.js```:
+Here's how we do it, in `ShowController.js`:
 
 ```js
 $scope.comments = $firebaseArray(ref.child($routeParams.id).child('movieComments'));
 ```
 
-Now the button works. If you use ```$firebaseObject``` instead of ```$firebaseArray```:
+Now the button works. If you use `$firebaseObject` instead of `$firebaseArray`:
 
 ```js
 $scope.comments = $firebaseObject(ref.child($routeParams.id).child('movieComments'));
 ```
 
-the button deletes all comments, because ```$remove()``` removes the entire object or array that it's attached to. When we use ```$firebaseArray``` then a different method is used. It's confusing that the two methods have the same name. The ```$firebaseArray``` method ```$remove(recordOrIndex)``` removes one object from an array.
+the button deletes all comments, because `$remove()` removes the entire object or array that it's attached to. When we use `$firebaseArray` then a different method is used. It's confusing that the two methods have the same name. The `$firebaseArray` method `$remove(recordOrIndex)` removes one object from an array.
 
 What if you want your logic in the controller, not the view? We can change our button to fire a handler, in `show.html`:
 

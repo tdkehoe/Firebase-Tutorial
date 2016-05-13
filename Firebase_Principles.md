@@ -38,41 +38,21 @@ The order of chapters is
 
 Please update this document and make [pull requests](https://github.com/tdkehoe/Firebase-Tutorial) or send me an e-mail at kehoe@casafuturatech.com.
 
-## A Short History of Websites
+## What Is Firebase, and Why Do We Need Another Database?
 
-To explain the advantages of Firebase, allow me to walk through my twenty years of building websites. In the 1990s we built _static_ websites by hand-coding HTML. World Wide Web (WWW) users  could look up information but websites weren't interactive. The browser sent an _HTTP request_ to the server, which served an HTML file to the browser, and the browser displayed the HTML code for the user to see. Then the user clicked a link, which sent another HTTP request to the server for another webpage, and so on.
+I believe that in the future when we go to websites there will be other people there. For my Galvanize coding bootcamp graduation project I built a web platform that enables users to see a list of users who are online (_presence_), select a partner, and open a video conferencing window. You and your partner then select a JavaScript app to run together. This could be a Cognitive Bias Modification (CBM) app to treat a behavioral disorder such as depression, anxiety, or addiction. Or you could be on a learn-to-code website and you want a pair programming partner.
 
-In 1999 I wrote the first documentation for using a new language called Personal Home Page (PHP) with a new(ish) database called MySQL. My documentation became the most popular and highest-rated download from DevShed.com. Connecting a database to your HTML made websites _interactive_, i.e., users could write or upload stuff that other users could then search or read,  e.g., a dating website where users could make profiles and search other members' profiles.
+I used WebRTC for the videoconferencing. The collaborative apps were more challenging. I needed a database where concurrent users could read and write shared data, with the updated data appearing instantly in each user's browser.
 
-In interactive websites, the browser sent an HTTP request to the server, as usual. The HTML pages had blocks of PHP code that accessed the database to fill in the blocks with data such as text or images. The server then rendered the page into HTML and served it to the browser.
+Other databases such as MongoDB and MySQL wait for the browser to send an HTTP request to the server, and then the server sends a query to the database. The database then sends the data to the server, which sends the data to the browser.
 
-The next step was _dynamic websites_, in which a database retrieved parts of a website and assembled the parts into webpages. No longer did webmasters have to write HTML. Instead we used _content management systems_ (CMS) such as WordPress. A blogger could set up a complex website by plugging in modules, with little or no coding knowledge. With Ruby on Rails (RoR) developers could spin up a website in hours instead of weeks, plugging in modules for almost anything.
+But what if the data updates in the database? How will the browser update if the user doesn't click anything or otherwise send an HTTP request to the server? E.g., if you order pizza and the driver's GPS is constantly updating your pizza's location, how does your browser display the changing location without you refreshing the browser?
 
-While dynamic websites were a boon to webmasters, they're slow. When a browser sends an HTTP request to the server, the server hits the database perhaps hundreds of times to assemble the webpage, then renders the webpage and serves it to the browser. The user clicks on a button or a link, another HTTP request goes to the server, the server hits the database hundreds more times, etc.
-
-Dynamic website users click and wait while a lot of stuff happens on the server, before their page loads. Users bounce if a website is slow or requires too many clicks and page reloads. Webmasters pay top dollar for the fastest hosting services, and their websites are still slow.
-
-Dynamic websites are great if your website can fit into a content management system. But if you need to do stuff beyond what WordPress or Magento is capable of, you'll have to hire developers. A lot of them, each with specialized skills such as in SQL administration. With SQL a database administrator must set up the _schema_ or structure of the database. The arrays and objects that software developers create must be translated into tables of columns and rows. All this is written in PHP, C, Java, or Python. Such websites are slow to build, slow to run, with a lot to go wrong. (Think of the Obamacare website.)
-
-The next step was JavaScript. JavaScript is the only language that runs in the browser. Initially JavaScript did only minor tasks on websites but then frameworks such as Angular were developed. Initially the browser sends an HTTP request to the server, then the server sends not a webpage but an application that runs on the user's computer, in the browser. The user clicks on buttons and the app does stuff, such as opening a calendar, without going back to the server. The user interface or user experience (UI/UX) is fast, practically instantaneous.
-
-JavaScript web apps still need data. An app can open a calendar, but to open a calendar of your AirBnB reservations the app has to send an HTTP request to the server to access the database and send back data. This is faster than a client-server website because only small amounts of data are requested (instead of entire webpages), and the webpages (now called _views_) don't have to be rendered each time they change, as only the parts that change are updated.
-
-With JavaScript web apps the _back end_ servers do little. The servers just translate HTTP requests into SQL queries and send data in HTTP responses.
-
-_NoSQL databases_ eliminate the translation into SQL queries. NoSQL databases store arrays and objects, connecting seamlessly to programming languages, especially JavaScript and JavaScript Object Notation (JSON). NoSQL databases generally don't require schema. A NoSQL server can be spun up in a few hours, and after that there's little or nothing to do on the back end.
-
-## What Is Firebase?
-
-Firebase is a NoSQL cloud database. You write your front-end app in Angular, React, or another framework. You use the `$firebaseArray` and `$firebaseObject` _services_ in your controllers to _bind_ your local arrays and objects to arrays and objects in the remote database. Your local arrays and objects stay synchronized to the remote database without HTTP requests or database queries. You don't need to write schema on the back end, the remote arrays and objects mirror your local arrays and objects.
-
-When data changes in Firebase the app updates, and vice versa. In contrast, with a client-server structure the app only updates when the browser sends an HTTP request to the server, usually when the user clicks something. If you order a pizza and the driver's GPS is constantly sending updates, you don't want to have to click every time you want to see where your pizza is. You want the app to show your pizza getting closer to you without you having to click anything.
-
-I also made a [MEAN stack movies database](https://crudiest-movies.firebaseapp.com/#/movies) using Node, Express, and MongoDB on the back end. If multiple users are using the apps at the same time, the MEAN stack users see new data from other users only if the user refreshes the browser. In contrast, the Firebase users see new movies added or data edited by other users appear magically, with the user doing nothing.  
+Firebase is a NoSQL cloud database. You write your front-end app in Angular, React, Ember, Backbone, or another framework. You use the `$firebaseArray` and `$firebaseObject` _services_ in your controllers to _bind_ your local arrays and objects to arrays and objects in the remote database. Your local arrays and objects synchronize to the remote database without HTTP requests or database queries.
 
 A third service, `$firebaseAuth`, creates an _auth object_ to log in a user, authorize which views the user can access, what data the user can read or write, etc.
 
-With Firebase, front-end developers can focus on the UI/UX without thinking about the back end. Compare the [CRUDiest Movies Firebase](https://crudiest-firebase.firebaseapp.com/#/movies) to the [Internet Movies Database](http://www.imdb.com/) (IMDb). The IMDb feels like it was written a long time ago in a galaxy far, far away. In contrast, the Firebase app feels like it's a native app accessing data on your computer.
+With Firebase, front-end developers can focus on the UI/UX without thinking about the back end. Compare my [CRUDiest Movies Firebase](https://crudiest-firebase.firebaseapp.com/#/movies) to the [Internet Movies Database](http://www.imdb.com/) (IMDb). The IMDb feels like it was written a long time ago in a galaxy far, far away. In contrast, the Firebase app feels like it's a native app accessing data on your computer.
 
 #### Things That Can Only Be Done With Firebase
 * Data binding synchronizes your local arrays and objects to remote arrays and objects. You don't have to write HTTP requests or database queries. Data updates in your app without your users having to click anything.
@@ -143,9 +123,11 @@ But what are they called? They synchronize local arrays and objects with remote 
 
 ### One Synchrolizer or Many Synchorays and Synchrojects?
 
-IMHO, it's best practice to write a synchrolizer for every array or object that the controller uses. If you only write a synchroray for the top level array you'd have to use dot notation to access the nested objects and arrays, and Firebase methods don't work with dot notation (they only work with child notation).
+Each synchrolizer in a controller uses resources to download data from the remote Firebase to the local `$scope`. To reduce resource use you should write one synchrolizer for the highest array or object that the controller uses, and then use dot notation to access nested arrays and objects.
 
-But I suspect that other Firebase developers have other opinions.
+The problem with that is that Firebase methods don't work with dot notation (they only work with child notation). IMHO, it's best practice to write a synchrolizer for every array or object that the controller uses.
+
+Worst practice is to make a synchrolizer to the top array (your entire database) when your controller only accesses a nested object or array. Use child notation in your synchrolizers to just access the data you need.
 
 ### Firebase Objects vs. JavaScript (JSON) Objects
 
