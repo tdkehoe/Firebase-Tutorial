@@ -1,6 +1,6 @@
 # Async Typeahead
 
-In this chapter you'll add UI Bootstrap's async typeahead. Users will type a word, see a menu of a ten movies with that word in the title, select their movie and the movie info downloads.
+In this chapter you'll add UI Bootstrap's async typeahead.
 
 An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
 
@@ -64,11 +64,11 @@ var app = angular.module("CRUDiestMoviesFirebase", ['ngRoute', 'firebase', `ui.b
 
 ## Typeahead Plugin
 
-Go to [UI Bootstrap](https://angular-ui.github.io/bootstrap/) and scroll down to the bottom. The last plugin is `Typeahead`. You'll see there are five type of typeahead plugins:
+Go to [UI Bootstrap](https://angular-ui.github.io/bootstrap/) and scroll down to the bottom. The last plugin is `Typeahead`. You'll see there are five types of typeahead plugins:
 
 ![Five typeaheads](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/typeahead_five_options.png)
 
-* Four of the plugins -- `Static arrays`, `ngModelOptions support`, `Custom templates for results`, and `Custom popup templates for typeahead's dropdown` -- look up in an array of values in your controller. This is ideal when you have a limited number of options, e.g., the fifty states. The four choice format the values differently for the user, including one that adds a state flag downloaded live from Wikipedia.
+* Four of the plugins -- `Static arrays`, `ngModelOptions support`, `Custom templates for results`, and `Custom popup templates for typeahead's dropdown` -- look up in an array of values in your controller. This is ideal when you have a limited number of options, e.g., the fifty states. The four choices format the values differently for the user, including one that adds a state flag downloaded live from Wikipedia.
 * The `Asynchronous results` plugin goes to any database on the Internet with an API. We'll use this to connect to the Internet Movie Database (IMDB).
 
 Add this code to `home.html`.
@@ -96,7 +96,7 @@ This form is styled as Bootstrap class `form-horizontal`. The input is a text en
 
 We connect the form to the `$scope` with `ng-model` set to the movie title.
 
-The next five lines set up a [UI Bootstrap](https://angular-ui.github.io/bootstrap/) typeahead.
+The next five lines set the [UI Bootstrap](https://angular-ui.github.io/bootstrap/) typeahead parameters.
 
 The placeholder tells the user what to do.
 
@@ -136,13 +136,13 @@ $scope.getLocation = function(val) {
 };
 
 $scope.onSelect = function ($item) {
-  $scope.loading = true; // switch on the glyphicon to indicate that the data is loading
+  $scope.loading = true; // switch on the "downloading data" glyphicon
   $scope.movie.title = null; // needed to prevent previous query from autofilling search form
   console.log("Selected!");
-  return $http.get('//www.omdbapi.com/?t=' + $item)
-  .then(function(response){
-    var movie = {
-      actors: response.data.Actors,
+  return $http.get('//www.omdbapi.com/?t=' + $item) // send an HTTP request to the OMDb to get a movie object
+  .then(function(response){ // then execute a promise
+    var movie = { // make a movie object locally matching the downloaded OMDb movie object
+      actors: response.data.Actors, // local fields are filled with data from the OMDb
       awards: response.data.Awards,
       comments: [],
       country: response.data.Country,
@@ -163,17 +163,17 @@ $scope.onSelect = function ($item) {
       imdbVotes: response.data.imdbVotes,
       dateAdded: Date.now()
     };
-    $scope.movies.$add(movie).then(function() {
+    $scope.movies.$add(movie).then(function() { // use a Firebase array method to add the new movie object to our movies array
       $scope.order = '$id' // reset orderBy so that new movie appears in upper left
-      $scope.loading = false;
+      $scope.loading = false; // switch off the "downloading data" glyphicon
     });
   });
 };
 ```
 
-The `getLocation()` handler queries the OMDb for the movie and returns a drop-down menu of ten movies for the user to choose from. Note: you'll see an error message logged in the console "TypeError: Cannot read property 'map' of undefined" for every keystroke in which OMDb can't find a matching movie title word. This error message can be ignored.
+The `$scope.getLocation()` handler queries the OMDb for the movie and returns a drop-down menu of ten movies for the user to choose from. Note: you'll see an error message logged in the console "TypeError: Cannot read property 'map' of undefined" for every keystroke in which OMDb can't find a matching movie title word. This error message can be ignored.
 
-When the user selects a movie from the list `onSelect()` fires and adds the movie to our database. The `$scope.loading` variable switches on to show the `refresh` glyphicon. The next line prevents the previous query from autofilling the search form.
+When the user selects a movie from the list `$scope.onSelect()` fires and adds the movie object to our array of movies. The `$scope.loading` variable switches on to show the `refresh` glyphicon. The next line prevents the previous query from autofilling the search form.
 
 We create a movie object using data from the OMDb, plus a few fields of our own:
 
