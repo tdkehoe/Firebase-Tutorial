@@ -4,11 +4,18 @@ In this chapter you'll add UI Bootstrap's async typeahead. Users will type a wor
 
 An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
 
-## Firebase Principles Table of Contents
+## Table of Contents
 
-* [Add a Movie With UI Bootstrap Typeahead](## Add a Movie With UI Bootstrap Typeahead)
+1. [Set Up Bootstrap](## Set Up Bootstrap)
+2. [UI Bootstrap CDN](## UI Bootstrap CDN)
+3. [App.js Dependency Injection](## App.js Dependency Injection)
+4. [Typeahead Plugin](## Typeahead Plugin)
+5. [Controller Dependency Injection](## Controller Dependency Injection)
+6. [Handlers in Controller](## Handlers in Controller)
+7. [Display Movies in Index View (Homepage)](## Display Movies in Index View (Homepage))
+8. [Style Movie Posters](## Style Movie Posters)
 
-## Add a Movie With UI Bootstrap Typeahead
+## Set Up Bootstrap
 
 We'll set up the HTML templates (views) now. In `home.html` start with the Bootstrap `row` container:
 
@@ -18,13 +25,13 @@ We'll set up the HTML templates (views) now. In `home.html` start with the Boots
 </div>
 ```
 
+## UI Bootstrap CDN
+
 We need to add some movies.
 
 Let's make a form for adding movies. We could make a form with a dozen inputs for the movie title, poster, actors, director, year, etc. and expect users to type in all this data. Or we can make a _typeahead_ enabling the user to enter one word of a movie title and the typeahead finds the movie in the Open Movies Database (OMDb), then downloads the data.
 
 [UI Bootstrap](https://angular-ui.github.io/bootstrap/) includes a _typeahead_ plugin. UI Bootstrap is the JavaScript plugin library for Angular. Standard Bootstrap JavaScript plugins are [incompatible with Angular](https://scotch.io/tutorials/how-to-correctly-use-bootstrapjs-and-angularjs-together).
-
-### Linking to UI Bootstrap
 
 We already added the UI Bootstrap CDN to `index.html`. Here's more detailed instructions on this critical step:
 
@@ -47,7 +54,7 @@ Link only one of the four CDNs. Adding a second CDN will cause errors.
 
 > Alternatively you can also download the library from the [UI Bootstrap](https://angular-ui.github.io/bootstrap/) website. There's a big purple button that says `Download`. Move the file into your project folder and make a local link.
 
-### Dependency Injection
+## App.js Dependency Injection
 
 Add the dependencies `ui.bootstrap` and `ui.bootstrap.typeahead` to `app.js`:
 
@@ -55,7 +62,7 @@ Add the dependencies `ui.bootstrap` and `ui.bootstrap.typeahead` to `app.js`:
 var app = angular.module("CRUDiestMoviesFirebase", ['ngRoute', 'firebase', `ui.bootstrap`, `ui.bootstrap.typeahead`]);
 ```
 
-### Typeahead Plugin
+## Typeahead Plugin
 
 Go to [UI Bootstrap](https://angular-ui.github.io/bootstrap/) and scroll down to the bottom. The last plugin is `Typeahead`. You'll see there are five type of typeahead plugins:
 
@@ -99,7 +106,7 @@ The `refresh` glyphicon tells the user that data is being downloaded.
 
 Lastly, the `remove` glyphicon tells the user that no movie was found.
 
-## Inject `$http` Dependency
+## Controller Dependency Injection
 
 In `HomeController.js` inject the dependency `$http`:
 
@@ -184,7 +191,7 @@ Deploy to Firebase and see if it works.
 
 Select a movie, then go to your Firebase Dashboard and the movie should be there.
 
-![Typeahead](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_data.png)
+![Data](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_data.png)
 
 ## Display Movies in Index View (Homepage)
 
@@ -198,9 +205,7 @@ Now we'll display our movies in `home.html`:
 
 This will display all the movie objects in our movies array, ordered by reverse date added. The `img` displays the movie poster, and when the user clicks on the poster the route changes to the `SHOW` page.
 
-![Typeahead](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_poster.png)
-
-### Style Movie Posters
+## Style Movie Posters
 
 The movies posters display in a column down the left side of the browser window. Let's add CSS styling to make the movies display in rows. In `style.css`:
 
@@ -214,7 +219,7 @@ Deploy to Firebase, refresh your browser, and you should see your first movie.
 
 ![First Movie](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_first_movie.png)
 
-### Save and Commit Your Work
+## Save and Commit Your Work
 
 Deploy to Firebase and save to GitHuB:
 
