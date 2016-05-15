@@ -219,7 +219,11 @@ Three Firebase array methods can take the _record_ as an argument. These methods
 * `$remove(recordOrIndex)`
 * `$keyAt(recordOrIndex)`.
 
-A _record_ and an _object_ are not the same. You can't use objects as arguments for these methods.
+A _record_ is a group of related fields in a database. In an SQL database a record is a _row_. In NoSQL database a record is an _object_.
+
+Firebase mirrors the arrays and object in your local `$scope` to the remote database. So an object in your `$scope` is the same as a record in the remote Firebase, right? And you can say, for example, `$save($scope.movie)`?
+
+No and no. A record in your remote Firebase isn't the same as its matching object in your `$scope`. You can't use an object from your `$scope` as the argument in these three Firebase array methods.
 
 ```js
 var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
