@@ -1,39 +1,13 @@
-# Firebase Project: Make the CRUDiest Movies Database
+# Setting Up Firebase With Angular
 
-In this chapter you'll build a project using Firebase. Specifically, we'll use the AngularFire bindings with Angular and Bootstrap.
+In this chapter you'll set up Firebase and Angular. An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
 
-The order of chapters is
-
-1. [Firebase Principles](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Principles.md) (this chapter)
-2. [Setting Up Firebase with Angular](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_CRUD.md)
-3. [Async Typehead]()
-3. [Firebase Auth: Add Login to Your Project](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Authorization.md)
-
-## Firebase Principles Table of Contents
+## Table of Contents
 
 * [Set Up Your Directory Structure](## Set Up Your Directory Structure)
 * [Open A Firebase Account](## Open A Firebase Account)
 * [Set Up `index.html`](## Set Up `index.html`)
 * [Set Up Angular](## Set Up Angular)
-* [Add a Movie With UI Bootstrap Typeahead](## Add a Movie With UI Bootstrap Typeahead)
-* [Display Movies in Index View (Homepage)](## Display Movies in Index View (Homepage))
-* [View Movie Title in SHOW/EDIT](## View Movie Title in SHOW/EDIT)
-
-### Contact Me
-
-Please update this document and make [pull requests](https://github.com/tdkehoe/Firebase-Tutorial) or send me an e-mail at kehoe@casafuturatech.com.
-
-### Why Another Movies Database?
-
-Every coding bootcamp student makes a movies database. I picture a hiring manager going through a stack of resumes, clicking on project after project, spending no more than seconds on each. If you make a unique, innovative project that takes time and effort to understand, the hiring manager will move on. I figure that the best way to impress a hiring manager is with a web app he or she can quickly understand and be impressed by, e.g., a well-executed movies database.
-
-## Set Up Your Computer for Software Development
-
-If you're new to coding you'll need a text editor and other software. I have tutorials for
-
-* [Setting up your computer](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/Set_Up_Your_Computer.md) for software development.
-* [UNIX and the Command Line Interface (CLI)](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/UNIX_and_the_Command_Line.md).
-* [Updating checklist](https://github.com/tdkehoe/Learn-To-Code-By-Breaking-Stuff/blob/master/Update_Checklist.md) to keep your software up to date every week.
 
 ## Set Up Your Directory Structure
 

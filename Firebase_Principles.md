@@ -1,8 +1,9 @@
 # Firebase Principles
 
-This chapter provides an overview of Firebase's array and objects methods. The Firebase auth methods are in another chapter. Other chapters are a tutorial for building a project.
+This chapter provides an overview of Firebase's array and objects methods.
+An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
 
-This document is written for the AngularFire methods, i.e., for Angular users. The project chapters of this documentation also use Bootstrap. I try to explain everything for beginners but the code will make more sense to users who know Angular and Bootstrap.
+This document is written for the AngularFire bindings, i.e., for Angular users. This chapter requires no knowledge of Angular. The other chapters are written for beginners but will make more sense to users who know Angular and Bootstrap.
 
 Firebase also supports:
 
@@ -19,26 +20,14 @@ Plus there are unofficial REST wrappers for
 * PHP
 * Ruby
 
-The order of chapters is
-
-1. [Firebase Principles](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Principles.md) (this chapter)
-2. [Firebase Project: Make the CRUDiest Movies Database](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_CRUD.md)
-3. [Firebase Auth: Add Login to Your Project](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Authorization.md)
-
 ## Table of Contents
 
-* [A Short History of Websites](## A Short History of Websites)
 * [What Is Firebase?](## What Is Firebase?)
 * [The Most Confusing Parts of Firebase](## The Most Confusing Parts of Firebase)
-* [Setting Up Your Firebase App](## Setting Up Your Firebase App)
 * [Firebase Object Methods](## Firebase Object Methods)
 * [Firebase Array Methods](## Firebase Array Methods)
 
-### Contact Me
-
-Please update this document and make [pull requests](https://github.com/tdkehoe/Firebase-Tutorial) or send me an e-mail at kehoe@casafuturatech.com.
-
-## What Is Firebase, and Why Do We Need Another Database?
+## What Is Firebase?
 
 I believe that in the future when we go to websites there will be other people there. For my Galvanize coding bootcamp graduation project I built a web platform that enables users to see a list of users who are online (_presence_), select a partner, and open a video conferencing window. You and your partner then select a JavaScript app to run together. This could be a Cognitive Bias Modification (CBM) app to treat a behavioral disorder such as depression, anxiety, or addiction. Or you could be on a learn-to-code website and you want a pair programming partner.
 
@@ -54,15 +43,15 @@ A third service, `$firebaseAuth`, creates an _auth object_ to log in a user, aut
 
 With Firebase, front-end developers can focus on the UI/UX without thinking about the back end. Compare my [CRUDiest Movies Firebase](https://crudiest-firebase.firebaseapp.com/#/movies) to the [Internet Movies Database](http://www.imdb.com/) (IMDb). The IMDb feels like it was written a long time ago in a galaxy far, far away. In contrast, the Firebase app feels like it's a native app accessing data on your computer.
 
-#### Things That Can Only Be Done With Firebase
+### Things That Can Only Be Done With Firebase
 * Data binding synchronizes your local arrays and objects to remote arrays and objects. You don't have to write HTTP requests or database queries. Data updates in your app without your users having to click anything.
 * Data binding can be used to make collaborative apps, i.e., multiple users can use the same app at the same time and each user's data instantly updates to the other users. (This is why I learned Firebase. Ask me how in the future when you go to websites there will be other people there.)
 
-#### Things That Are Easier With Firebase But Can Be Done Without Firebase
+### Things That Are Easier With Firebase But Can Be Done Without Firebase
 * Firebase handles authorization and authentication for you, including OAuth2, e-mail & password login, and routing authorization.
 * No backend server. Servers take time to set up, and then can crash or are shut down by your host for maintenance. A Node/Express/MongoDB server adds no value to your website, i.e., it doesn't do anything that you can't do in a front-end framework such as AngularJS (e.g., routing).
 
-#### Things That Are Good But Not Unique To Firebase
+### Things That Are Good But Not Unique To Firebase
 * NoSQL means not having to write schema to set up database tables or translate HTTP requests from objects and arrays into SQL queries.
 * Firebase is fast. I built two versions of the same app, in the [MEAN stack](https://crudiest-movies.firebaseapp.com/#/movies) and in [Firebase](https://crudiest-firebase.firebaseapp.com/#/movies). Open each and you'll see that the Firebase version loads the movies array faster. Add some movies and see if you notice a difference in speed.
 * Firebase is [free for limited accounts](https://www.firebase.com/pricing.html).
