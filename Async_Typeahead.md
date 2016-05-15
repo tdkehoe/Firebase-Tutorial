@@ -1,28 +1,12 @@
-# Firebase Project: Make the CRUDiest Movies Database
+# Async Typeahead
 
-In this chapter you'll build a project using Firebase. Specifically, we'll use the AngularFire bindings with Angular and Bootstrap.
+In this chapter you'll add UI Bootstrap's async typeahead. Users will type a word, see a menu of a ten movies with that word in the title, select their movie and the movie info downloads.
 
-The order of chapters is
-
-1. [Firebase Principles](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Principles.md) (this chapter)
-2. [Firebase Project: Make the CRUDiest Movies Database](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_CRUD.md)
-4. [Async Typehead]()
-3. [Firebase Auth: Add Login to Your Project](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Authorization.md)
+An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
 
 ## Firebase Principles Table of Contents
 
-* [Set Up Your Directory Structure](## Set Up Your Directory Structure)
-* [Open A Firebase Account](## Open A Firebase Account)
-* [Set Up `index.html`](## Set Up `index.html`)
-* [Set Up Angular](## Set Up Angular)
 * [Add a Movie With UI Bootstrap Typeahead](## Add a Movie With UI Bootstrap Typeahead)
-* [Display Movies in Index View (Homepage)](## Display Movies in Index View (Homepage))
-* [View Movie Title in SHOW/EDIT](## View Movie Title in SHOW/EDIT)
-
-### Contact Me
-
-Please update this document and make [pull requests](https://github.com/tdkehoe/Firebase-Tutorial) or send me an e-mail at kehoe@casafuturatech.com.
-
 
 ## Add a Movie With UI Bootstrap Typeahead
 
@@ -38,7 +22,7 @@ We need to add some movies.
 
 Let's make a form for adding movies. We could make a form with a dozen inputs for the movie title, poster, actors, director, year, etc. and expect users to type in all this data. Or we can make a _typeahead_ enabling the user to enter one word of a movie title and the typeahead finds the movie in the Open Movies Database (OMDb), then downloads the data.
 
-[UI Bootstrap](https://angular-ui.github.io/bootstrap/) includes a _typeahead_ plugin. UI Bootstrap is the JavaScript plugin library for Angular. Standard Bootstrap JavaScript plugins are [incompatible with Angular](https://scotch.io/tutorials/how-to-correctly-use-bootstrapjs-and-angularjs-together), and don't have a _typeahead_ plugin.
+[UI Bootstrap](https://angular-ui.github.io/bootstrap/) includes a _typeahead_ plugin. UI Bootstrap is the JavaScript plugin library for Angular. Standard Bootstrap JavaScript plugins are [incompatible with Angular](https://scotch.io/tutorials/how-to-correctly-use-bootstrapjs-and-angularjs-together).
 
 ### Linking to UI Bootstrap
 
@@ -68,7 +52,7 @@ Link only one of the four CDNs. Adding a second CDN will cause errors.
 Add the dependencies `ui.bootstrap` and `ui.bootstrap.typeahead` to `app.js`:
 
 ```js
-var app = angular.module("CRUDiestMoviesApp", ['ngRoute', 'ui.bootstrap', 'ui.bootstrap.typeahead']);
+var app = angular.module("CRUDiestMoviesFirebase", ['ngRoute', 'firebase', `ui.bootstrap`, `ui.bootstrap.typeahead`]);
 ```
 
 ### Typeahead Plugin
@@ -114,6 +98,21 @@ The `search` glyphicon puts a search icon in the box.
 The `refresh` glyphicon tells the user that data is being downloaded.
 
 Lastly, the `remove` glyphicon tells the user that no movie was found.
+
+## Inject `$http` Dependency
+
+In `HomeController.js` inject the dependency `$http`:
+
+```js
+app.controller('HomeController', ['$scope', `$http`, '$firebaseArray', function($scope, $http, $firebaseArray) {
+  console.log("Home controller.");
+
+}]);
+```
+
+The handler `$scope.getLocation` uses the `$http` service to send an HTTP request to the Open Movies Database (OMDb).
+
+## Handlers in Controller
 
 In `HomeController.js` we'll add two handlers for the typeahead:
 
@@ -187,14 +186,6 @@ Select a movie, then go to your Firebase Dashboard and the movie should be there
 
 ![Typeahead](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_data.png)
 
-Save your work to your GitHub repository:
-
-```
-git add .
-git commit -m "UI Bootstrap typeahead working."
-git push origin master
-```
-
 ## Display Movies in Index View (Homepage)
 
 Now we'll display our movies in `home.html`:
@@ -218,6 +209,25 @@ The movies posters display in a column down the left side of the browser window.
   display: inline;
 }
 ```
+
+Deploy to Firebase, refresh your browser, and you should see your first movie.
+
+![First Movie](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_first_movie.png)
+
+### Save and Commit Your Work
+
+Deploy to Firebase and save to GitHuB:
+
+```
+firebase deploy
+git status
+git add .
+git commit -m "Finished async typeahead."
+git push origin master
+```
+
+
+
 
 ## View Movie Title in SHOW/EDIT
 

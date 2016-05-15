@@ -1,6 +1,8 @@
 # Setting Up Firebase With Angular
 
-In this chapter you'll set up Firebase and Angular. An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
+In this chapter you'll set up Firebase and Angular.
+
+An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
 
 ## Table of Contents
 
@@ -15,8 +17,6 @@ Set up this directory structure:
 
 ```
 ── CRUDiest-Movies-Firebase
-    ├── README.md
-    ├── firebase.json
     └── public
         ├── app.js
         ├── css
@@ -36,7 +36,6 @@ Set up this directory structure:
         ├── resume
         └── scripts
             └── angular-ui
-                └── ui-bootstrap-tpls-1.2.5.min.js
 ```
 
 These commands should create these directories and files:
@@ -73,6 +72,9 @@ touch show.html
 cd ..
 cd ..
 mkdir resume
+mkdir scripts
+cd scripts
+mkdir angular-ui
 cd ..
 cd ..
 tree
@@ -133,9 +135,7 @@ git remote add origin git@github.com:myAccount/CRUDiest-Movies-Firebase.git
 git push -u origin master
 ```
 
-Change `myAccount` to your GitHub account name.
-
-Check that your files uploaded to your GitHub repository.
+Use the code provided by GitHub, not the above code, or change `myAccount` to your GitHub account name.
 
 ## Set Up `index.html`
 
@@ -176,13 +176,13 @@ The first two set up responsive views for Bootstrap. The third is used by search
 
 Change `<title></title>` to `<title>CRUDiest Movies Firebase</title>`.
 
-Hook up the style sheet in the `<head>` secton:
+Hook up the style sheet in the `<head>` section:
 
 ```html
 <link rel="stylesheet" href="css/style.css">
 ```
 
-In the `<body` add a text header and then hook up the JavaScript files:
+In the `<body` section add a text header and then hook up the JavaScript files:
 
 ```html
 <h1>CRUDiest Movies Firebase</h1>
@@ -213,7 +213,7 @@ To use AngularFire we need AngularJS, Firebase, and AngularFire. For this projec
 <script type="text/javascript" src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
 ```
 
-The `Bootstrap CSS` requires that you download your own copy with a complete hash number (starting with `sha384-`).
+The `Bootstrap CSS` requires that you download your own copy with a complete hash number (starting with `sha384-`.
 
 Update the version numbers:
 1. Angular: https://angularjs.org/ (Don't use Angular 2, it's a different framework.)
@@ -221,8 +221,6 @@ Update the version numbers:
 3. UI Bootstrap: https://angular-ui.github.io/bootstrap/
 4. Firebase: https://www.firebase.com/docs/web/changelog.html
 5. AngularFire: https://www.firebase.com/docs/web/libraries/angular/changelog.html
-
-Every Monday morning I go through my [checklist of software updates](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Update_Checklist.md).
 
 Alternatively you can [download Angular](https://angularjs.org/) and the other libraries and link to them locally. That's more reliable as you can use your app without an Internet connection. The CDN is easier to install and update. To update it you just change the version number.
 
@@ -240,7 +238,7 @@ Angular uses `<ng-view />` to make the template views appear:
 
 ```html
 <div class="container">
-  <h1>CRUDiest Movies Database</h1><
+  <h1>CRUDiest Movies Database</h1>
   <ng-view />
 </div>
 ```
@@ -248,12 +246,15 @@ Angular uses `<ng-view />` to make the template views appear:
 Let's center the `<h1>` header:
 
 ```html
-<div class="row text-center">
-  <a ng-href="/#/movies"><h1>CRUDiest Movies Database</h1></a>
+<div class="container">
+  <div class="row text-center">
+    <h1>CRUDiest Movies Database</h1>
+  </div>
+  <ng-view />
 </div>
 ```
 
-Let's a backlink so that clicking on the title takes the user back to the home page. In Angular we use `ng-href` instead of `href`:
+Let's make a backlink so that clicking on the title takes the user back to the home page. In Angular we use `ng-href` instead of `href`:
 
 ```html
 <a ng-href="/#/movies"><h1>CRUDiest Movies Database</h1></a>
@@ -278,7 +279,7 @@ Your `index.html` should now look like:
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-route.js"></script>
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-..." crossorigin="anonymous">
   <!-- UI Bootstrap-->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.3.2/ui-bootstrap-tpls.min.js"></script>
 
@@ -306,27 +307,42 @@ Your `index.html` should now look like:
 </html>
 ```
 
-Open your browser to the URL that Firebase provided to you. It prints after you run `firebase deploy`. You should see your `<h1>` header:
-
-![Image of header](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb-header.png?raw=true)
-
-Save to GitHuB and deploy to Firebase
+Deploy to Firebase from your command line:
 
 ```
-git status
-git add .
-git commit -m "Finished index.html."
-git push origin master
 firebase deploy
 ```
 
+Open your browser to the URL that Firebase prints after you run `firebase deploy`. Use the `URL` URL, not the `Dashboard` URL
+
+You should see your `<h1>` header:
+
+![Image of header](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_header.png?raw=true)
+
 ## Set Up Angular
 
-Begin by injecting `firebase` into your `app.js` Angular module, along with your router:
+Open your `app.js` file.
+
+Inject `firebase` into your `app.js` Angular module, along with your router:
 
 ```js
 var app = angular.module("CRUDiestMoviesFirebase", ['ngRoute', 'firebase']);
 ```
+
+### Set Up Controllers
+
+In `HomeController.js` set up the controller:
+
+```js
+app.controller('HomeController', ['$scope', function($scope) {
+  console.log("Home controller.");
+
+}]);
+```
+
+We injected the dependencies `$scope` to access our local arrays and objects.
+
+In `ShowController.js` set up the same code.
 
 ### Creating a Firebase Reference
 
@@ -336,22 +352,80 @@ The Firebase reference is an object created with the `new` operator and the Fire
 
 ```js
 // Create Firebase reference
-var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
+var ref = new Firebase("https://my-firebase.firebaseio.com/");
 ```
 
-Replace `crudiest-firebase` with the name of your app. Be sure to use the "Dashboard" URL that ends in `firebaseio.com`, not the "URL" URL that ends in `firebaseapp.com`.
+Replace `https://my-firebase.firebaseio.com/` with your Firebase Dashboard URL. Don't use the URL that ends in `firebaseapp.com`.
 
 The Firebase reference doesn't create a connection to the remote Firebase nor does it download data.
 
 This is the easiest part of Firebase. The syntax never changes and is done once in each controller, near the top.
 
-### Connect the Firebase Reference To the `$scope`
-
-Now connect the new Firebase object to the `$scope` so that the data is available locally. In `HomeController.js` use `$firebaseArray` and call the array `movies` (plural):
+Your controllers should now look like this:
 
 ```js
-var ref = new Firebase("https://my-angularfire-app.firebaseio.com/");
+app.controller('HomeController', ['$scope', function($scope) {
+  console.log("Home controller.");
+
+  var ref = new Firebase("https://my-firebase.firebaseio.com/");
+
+}]);
+```
+
+and
+
+```js
+app.controller('ShowController', ['$scope', function($scope) {
+  console.log("Show controller.");
+
+  var ref = new Firebase("https://my-firebase.firebaseio.com/");
+
+}]);
+```
+
+### Connect the Firebase Reference To the `$scope`
+
+Now connect the new Firebase `ref` to the `$scope` so that the data is available locally.
+
+In `HomeController.js` inject the dependency `$firebaseArray`:
+
+```js
+app.controller('HomeController', ['$scope', '$firebaseArray', function($scope, $firebaseArray) {
+  ...
+}]);
+```
+
+Then make what I call a _synchroray_ or _synchrolizer_ after the Firebase `ref`. I have no idea is there is an official term for these things.
+
+We'll call the array `movies` (plural) because the `INDEX/NEW` view will display all of our movies:
+
+```js
+var ref = new Firebase("https://my-firebase.firebaseio.com/");
 $scope.movies = $firebaseArray(ref);
+```
+
+Your `HomeController.js` should now look like this:
+
+```js
+app.controller('HomeController', ['$scope', '$firebaseArray', function($scope, $firebaseArray) {
+  console.log("Home controller.");
+
+  var ref = new Firebase("https://my-firebase.firebaseio.com/");
+  $scope.movies = $firebaseArray(ref);
+
+}]);
+```
+
+Make the `ShowController.js` similar but inject `$firebaseObject` instead of `$firebaseArray`. Then make a _synchroject_ using `firebaseObject`. Call the local array `movie` (singular), as the `SHOW/EDIT` view will display only one movie:
+
+```js
+app.controller('ShowController', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
+  console.log("Show controller.");
+
+  var ref = new Firebase("https://my-firebase.firebaseio.com/");
+  $scope.movie = $firebaseObject(ref);
+
+}]);
 ```
 
 ## Angular Routes
@@ -362,11 +436,11 @@ We'll set up `routes.js` now:
 app.config(function($routeProvider) {
 
   $routeProvider
-  .when('/movies', { // INDEX
+  .when('/movies', { // INDEX/NEW
     templateUrl: 'javascript/templates/home.html',
     controller: 'HomeController'
   })
-  .when('/movies/:id', { // SHOW
+  .when('/movies/:id', { // SHOW/EDIT
     templateUrl: 'javascript/templates/show.html',
     controller: 'ShowController'
   })
@@ -374,11 +448,23 @@ app.config(function($routeProvider) {
 });
 ```
 
-The first line adds or configures the `$routeProvider` function to the `app` object. Each routes starts with `.when` followed by a route:
+The first line injects the `$routeProvider` service to the `app` object. Each routes starts with `.when` followed by a route:
 
-* `/movies` is the home page or `INDEX` route, where all records are displayed. We'll combine this with `ADD`.
-* `/movies/:id` displays one movie, dynamically identified by its ID number, called the `SHOW` route. We'll combine this with `EDIT`.
+* `/movies` is the home page or `INDEX` route, where all records are displayed. We'll combine this with the `NEW` route.
+* `/movies/:id` displays one movie, dynamically identified by its ID number, called the `SHOW` route. We'll combine this with the `EDIT` route.
 
 The `.otherwise` route redirects any other requests to the home page.
 
 The order of the routes matters. The `/movies/:id` route has to be at the bottom because it catches other routes.
+
+### Save and Commit Your Work
+
+Deploy to Firebase and save to GitHuB:
+
+```
+firebase deploy
+git status
+git add .
+git commit -m "Finished index.html and set up Angular."
+git push origin master
+```

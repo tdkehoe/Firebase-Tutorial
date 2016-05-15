@@ -1,6 +1,7 @@
 # Firebase Principles
 
 This chapter provides an overview of Firebase's array and objects methods.
+
 An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
 
 This document is written for the AngularFire bindings, i.e., for Angular users. This chapter requires no knowledge of Angular. The other chapters are written for beginners but will make more sense to users who know Angular and Bootstrap.
@@ -237,9 +238,11 @@ The _object_ includes a `$$conf` object.
 
 The _record_ is the keys and values of the object, i.e., the regular ol' JavaScript object without metadata.
 
-If you get the error message "Invalid record; could determine key for [object Object]", after you wonder whether that was supposed to say "_couldn't_ determine key", this error message means that you used an object when the method was expecting a record. Translated into English, the error message means, "Invalid record; the argument for this method appears to be an object not a record. Use $getRecord(key) to get an object's record."
+If you get the error message "Invalid record; could determine key for [object Object]", this error message means that you used an object when the method was expecting a record. Translated into English, the error message means, "Invalid record; the argument for this method appears to be an object not a record. Use $getRecord(key) to get an object's record."
 
 Firebase doesn't have a `$record` return method, e.g., `movie.$record` would return the movie object without the `$$conf` metadata. That would be similar to the `$id` return method, e.g., `movie.$id` returns the movie object's key. The only way to get an object's record is to use `$getRecord(key)` on the array.
+
+> Is there a typo in the error message? Maybe it should say "_couldn't_ determine key"?
 
 ### Async Operations
 
@@ -285,6 +288,24 @@ If you're building an app that multiple users will be using simultaneously, with
 ### Firebase Limitations
 
 Firebase has [limitations](https://www.firebase.com/docs/web/guide/understanding-data.html) on big data, including 32 layers of nesting child nodes and files no bigger then 10 MB.
+
+### One Last Quibble
+
+After you run `firebase deploy` Firebase prints out the two URLs for your app and its dashboard:
+
+```
+✔  Deploy complete!
+
+URL: https://crudiest-movies-fire.firebaseapp.com
+Dashboard: https://crudiest-movies-fire.firebaseio.com
+```
+
+They're both URLs. Shouldn't it say:
+
+```
+App: https://crudiest-movies-fire.firebaseapp.com
+Dashboard: https://crudiest-movies-fire.firebaseio.com
+```
 
 ## Firebase Object Methods
 
