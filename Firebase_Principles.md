@@ -4,7 +4,7 @@ This chapter provides an overview of Firebase's array and objects methods.
 
 An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
 
-This document is written for the AngularFire bindings, i.e., for Angular users. This chapter requires no knowledge of Angular. The other chapters are written for beginners but will make more sense to users who know Angular and Bootstrap.
+This document is written for the AngularFire bindings, i.e., for Angular users. This chapter requires no knowledge of Angular. The other chapters are written for beginners but will make more sense to users who know some Angular and Bootstrap.
 
 Firebase also supports:
 

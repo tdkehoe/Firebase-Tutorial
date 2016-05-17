@@ -14,6 +14,7 @@ An overview and directory for the entire project is in the [README.md](https://g
 6. [Handlers in Controller](## Handlers in Controller)
 7. [Display Movies in Index View (Homepage)](## Display Movies in Index View (Homepage))
 8. [Style Movie Posters](## Style Movie Posters)
+9. [Add More Cruddy Movies](## Add More Cruddy Movies)
 
 ## Set Up Bootstrap
 
@@ -74,6 +75,7 @@ Go to [UI Bootstrap](https://angular-ui.github.io/bootstrap/) and scroll down to
 Add this code to `home.html`.
 
 ```html
+<!-- Add movie form -->
 <form class="form-horizontal">
   <input type="text"
   class="form-control addMovie"
@@ -205,6 +207,19 @@ Now we'll display our movies in `home.html`:
 
 This will display all the movie objects in our movies array, ordered by reverse date added. The `img` displays the movie poster, and when the user clicks on the poster the route changes to the `SHOW` page.
 
+## Set Order By Default
+
+The Angular filter `| orderBy : order : reverse` sets the order of the movies. `order` is the variable `$scope.order`. `reverse` sets reverse order.
+
+We need to set the default for the variable `$scope.order`. The default should be `dataAdded` so that when a user adds a new movie it appears in the upper left position, providing UI/UX feedback for the user's action.
+
+Near the top of `HomeController.js` add this:
+
+```js
+// Set variables
+$scope.order = 'dateAdded';
+```
+
 ## Style Movie Posters
 
 The movies posters display in a column down the left side of the browser window. Let's add CSS styling to make the movies display in rows. In `style.css`:
@@ -219,12 +234,140 @@ Deploy to Firebase, refresh your browser, and you should see your first movie.
 
 ![First Movie](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_first_movie.png)
 
+## Add More Cruddy Movies
+
+Add at least six more cruddy movies. Here are some lists of cruddy movies to add to your database:
+
+* [Wikipedia's Worst Movies List](https://en.wikipedia.org/wiki/List_of_films_considered_the_worst)
+* [IMDb's Bottom 100](http://www.imdb.com/chart/bottom)
+* [Rotten Tomatoes' 25 Movies So Bad They're Unmissable](http://editorial.rottentomatoes.com/article/25-movies-so-bad-theyre-unmissable/)
+* [CheatSheet's 10 Worst Movies of All Time](http://www.cheatsheet.com/entertainment/the-10-best-worst-movies-of-all-time.html/)
+
 ## Save and Commit Your Work
 
-Deploy to Firebase and save to GitHuB:
+Files changed in this chapter:
+
+```
+app.js
+home.html
+HomeController.js
+style.css
+```
+
+Your `app.js` should look like this:
+
+```js
+var app = angular.module("CRUDiestMoviesFirebase", ['ngRoute', 'firebase', `ui.bootstrap`, `ui.bootstrap.typeahead`]);
+```
+
+Your `home.html` should now look like this:
+
+```html
+<div class="row">
+
+    <!-- Add movie form -->
+    <form class="form-horizontal">
+      <input type="text"
+      class="form-control addMovie"
+      ng-model="movie.title"
+      uib-typeahead="address for address in getLocation($viewValue)"
+      typeahead-loading="loadingLocations"
+      typeahead-no-results="noResults"
+      typeahead-min-length="3"
+      typeahead-on-select="onSelect($item)"
+      placeholder="Add the worst movie you've seen!"/>
+      <span class="glyphicon glyphicon-search form-control-feedback"></span>
+      <i ng-show="loading" class="glyphicon glyphicon-refresh"></i>
+      <div ng-show="noResults">
+        <i class="glyphicon glyphicon-remove"></i> No Results Found
+      </div>
+    </form>
+
+  <div ng-repeat="movie in movies | orderBy : order : reverse" class="movieIndex">
+    <a ng-href="/#/movies/{{movie.$id}}"><img class="largeposter" ng-src="{{movie.poster}}" alt="{{movie.title}}"></a>
+  </div>
+
+</div>
+```
+
+Your `HomeController.js` should now look like this:
+
+```js
+app.controller('HomeController', ['$scope', `$http`, '$firebaseArray', function($scope, $http, $firebaseArray) {
+  console.log("Home controller.");
+
+  var ref = new Firebase("https://crudiest-movies-fire.firebaseio.com/");
+  $scope.movies = $firebaseArray(ref);
+
+  // Set variables
+  $scope.order = 'dateAdded';
+
+  $scope.getLocation = function(val) {
+    return $http.get('//www.omdbapi.com/?s=' + val) // send an HTTP request to the OMDb
+    .then(function(response){ // then execute a promise
+      return response.data.Search.map(function(item){ // when OMDb can't find a movie to match the search string an error is logged "TypeError: Cannot read property 'map' of undefined". This error can be ignored, when the OMDb finds a movie then no error is logged.
+        return item.Title;
+      });
+    }, function(error) {
+      console.log(error);
+    });
+  };
+
+  $scope.onSelect = function ($item) {
+    $scope.loading = true; // switch on the glyphicon to indicate that the data is loading
+    $scope.movie.title = null; // needed to prevent previous query from autofilling search form
+    console.log("Selected!");
+    return $http.get('//www.omdbapi.com/?t=' + $item) // send an HTTP request to the OMDb to get a movie object
+    .then(function(response){ // then execute a promise
+      var movie = { // make a movie object locally matching the downloaded OMDb movie object
+        actors: response.data.Actors, // local fields are filled with data from the OMDb
+        awards: response.data.Awards,
+        comments: [],
+        country: response.data.Country,
+        director: response.data.Director,
+        genre: response.data.Genre,
+        language: response.data.Language,
+        likes: 0,
+        metascore: response.data.Metascore,
+        plot: response.data.Plot,
+        poster: response.data.Poster,
+        rated: response.data.Rated,
+        runtime: response.data.Runtime,
+        title: response.data.Title,
+        writer: response.data.Writer,
+        year: response.data.Year,
+        imdbID: response.data.imdbID,
+        imdbRating: response.data.imdbRating,
+        imdbVotes: response.data.imdbVotes,
+        dateAdded: Date.now()
+      };
+      $scope.movies.$add(movie).then(function() { // use a Firebase array method to add the new movie object to our movies array
+        $scope.order = '$id' // reset orderBy so that new movie appears in upper left
+        $scope.loading = false; // switch off the "downloading data" glyphicon
+      });
+    });
+  };
+
+}]);
+```
+
+Your `style.css` should now look like this:
+
+```css
+.movieIndex {
+  display: inline;
+}
+```
+
+Deploy to Firebase:
 
 ```
 firebase deploy
+```
+
+and save to GitHuB:
+
+```
 git status
 git add .
 git commit -m "Finished async typeahead."

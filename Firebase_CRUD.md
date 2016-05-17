@@ -4,6 +4,8 @@ In this chapter you'll set up Firebase and Angular.
 
 An overview and directory for the entire project is in the [README.md](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/README.md).
 
+All the code is provided so you can cut-and-paste if you're impatient. But I recommend typing every character. The top student in my class at the Galvanize coding bootcamp told me that he never cuts-and-pastes, he always types everything out. And after he finished a project he'd "rm -rf" (delete) the project and make it again.
+
 ## Table of Contents
 
 * [Set Up Your Directory Structure](## Set Up Your Directory Structure)
@@ -114,11 +116,15 @@ Your `firebase.json` file should look something like this:
 }
 ```
 
-Then upload your files with
+Then when you write code run
 
 ```
 firebase deploy
 ```
+
+and refresh your browser to see your changes.
+
+> If your changes don't seem to take effect then your browser may be cacheing your web app or its data. [Clear Chrome's cache](https://support.google.com/chrome/answer/95582?hl=en) or use the Chrome browser's "Incognito" mode.
 
 ### GitHub Repository
 
@@ -342,7 +348,7 @@ app.controller('HomeController', ['$scope', function($scope) {
 
 We injected the dependencies `$scope` to access our local arrays and objects.
 
-In `ShowController.js` set up the same code.
+In `ShowController.js` set up the same code, changing `Home` to `Show`.
 
 ### Creating a Firebase Reference
 
@@ -459,10 +465,25 @@ The order of the routes matters. The `/movies/:id` route has to be at the bottom
 
 ### Save and Commit Your Work
 
-Deploy to Firebase and save to GitHuB:
+Files changed in this chapter:
+
+```
+index.html
+app.js
+HomeController.js
+ShowController.js
+routes.js
+```
+
+Deploy to Firebase:
 
 ```
 firebase deploy
+```
+
+and save to GitHuB:
+
+```
 git status
 git add .
 git commit -m "Finished index.html and set up Angular."

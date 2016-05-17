@@ -6,13 +6,14 @@ The best way to learn is to build a project. This tutorial will teach you about 
 
 This tutorial is divided into several files. The files are:
 
-1. [Firebase Principles](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Principles.md) (this chapter)
+1. [Firebase Principles](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Principles.md)
 2. [Setting Up Firebase With Angular](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_CRUD.md)
 3. [Async Typehead](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Async_Typeahead.md)
-4. [SHOW/EDIT View](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Show_Page.md)
-5. [INDEX/NEW Homepage](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Home_Page.md)
-6. [Likes and Comments](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Likes_Comments.md)
-7. [Login and Authorization](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Authorization.md)
+4. ["Saved" Message](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Saved_Message.md)
+5. [SHOW/EDIT View](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Show_Page.md)
+6. [INDEX/NEW Homepage](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Home_Page.md)
+7. [Likes and Comments](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Likes_Comments.md)
+8. [Login and Authorization](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/Firebase_Authorization.md)
 
 ## Contact Me
 
