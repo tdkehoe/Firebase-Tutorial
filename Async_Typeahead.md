@@ -108,6 +108,13 @@ The `refresh` glyphicon tells the user that data is being downloaded.
 
 Lastly, the `remove` glyphicon tells the user that no movie was found.
 
+We introduced a new variable, `loading`. When we introduce a new variable we always set the default value in the controller. In `HomeController.js` add this near the top:
+
+```js
+// Set variables
+$scope.loading = false;
+```
+
 ## Controller Dependency Injection
 
 In `HomeController.js` inject the dependency `$http`:
@@ -207,16 +214,26 @@ Now we'll display our movies in `home.html`:
 
 This will display all the movie objects in our movies array, ordered by reverse date added. The `img` displays the movie poster, and when the user clicks on the poster the route changes to the `SHOW` page.
 
+We introduced the variable `reverse`. Set its default value in `HomeController.js`:
+
+```js
+// Set variables
+$scope.loading = false;
+$scope.reverse = true;
+```
+
 ## Set Order By Default
 
 The Angular filter `| orderBy : order : reverse` sets the order of the movies. `order` is the variable `$scope.order`. `reverse` sets reverse order.
 
 We need to set the default for the variable `$scope.order`. The default should be `dataAdded` so that when a user adds a new movie it appears in the upper left position, providing UI/UX feedback for the user's action.
 
-Near the top of `HomeController.js` add this:
+We introduced the variable `order`. Set its default value in `HomeController.js`:
 
 ```js
 // Set variables
+$scope.loading = false;
+$scope.reverse = true;
 $scope.order = 'dateAdded';
 ```
 
@@ -300,6 +317,8 @@ app.controller('HomeController', ['$scope', `$http`, '$firebaseArray', function(
   $scope.movies = $firebaseArray(ref);
 
   // Set variables
+  $scope.loading = false;
+  $scope.reverse = true;
   $scope.order = 'dateAdded';
 
   $scope.getLocation = function(val) {

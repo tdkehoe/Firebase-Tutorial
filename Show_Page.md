@@ -369,7 +369,7 @@ We'll also need to delete movies. We can create a Bootstrap button in `show.html
   <div class="col-lg-2">
     <p>&nbsp;</p>
   </div>
-  <div class="col-sm-8">
+  <div class="col-lg-8">
     <button type="button"
     ng-click="deleteMovie()"
     class="form-control btn btn-danger btn-block">Delete Movie</button>
@@ -602,7 +602,7 @@ The `show.html` template should look like this now:
       <div class="col-lg-2">
         <p>&nbsp;</p>
       </div>
-      <div class="col-sm-8">
+      <div class="col-lg-8">
         <button type="button"
         ng-click="deleteMovie()"
         class="form-control btn btn-danger btn-block">Delete Movie</button>

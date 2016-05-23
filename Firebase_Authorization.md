@@ -6,9 +6,9 @@ _Authorization_ is the process of determining if a user if allowed to do somethi
 
 _Auth_ means either or both authentication or authorization.
 
-"Old school" websites use a login name and a password. Current design uses _OAuth_ for authorization with third-party websites such as Google, Facebook, Twitter, GitHub, etc. Users like the convenience of clicking "Login With Facebook", etc. But [OAuth 2.0 is controversial](https://en.wikipedia.org/wiki/OAuth#Controversy) because enterprise users made the project "more complex, less interoperable, less useful, more incomplete, and most importantly, less secure" in order "to sell consulting services and integration solutions."
+"Old school" websites use a login name and a password. Current design uses _OAuth_ for authorization with third-party websites such as Google, Facebook, Twitter, and GitHub. Users like the convenience of clicking "Login With Facebook", etc. But [OAuth 2.0 is controversial](https://en.wikipedia.org/wiki/OAuth#Controversy) because enterprise users made the project "more complex, less interoperable, less useful, more incomplete, and most importantly, less secure" in order "to sell consulting services and integration solutions."
 
-Authorization and authentication are headaches if you write the code yourself, as well as security risks if you don't know what you're doing. To solve this problem several authorization and authentication services are available. Firebase includes an one, and this is a major reason for using Firebase.
+Authorization and authentication are headaches if you write the code yourself, as well as security risks if you don't know what you're doing. To solve this problem several authorization and authentication services are available. Firebase includes one, and this is a major reason for using Firebase.
 
 Setting up Firebase authorization involves these steps:
 
@@ -19,15 +19,15 @@ Setting up Firebase authorization involves these steps:
 
 ## Login Anonymously
 
-We'll start with anonymous login. Even if we don't plan to allow this on our ultra-high-security movies database we'll start here because it's easy.
+We'll start with anonymous login. Even if we don't plan to allow this on our NSA-level-security movies database we'll start here because it's easy.
 
 ### Enable Anonymous User Authentication
 
-Navigate to your Firebase dashboard and click ```Login & Auth``` in the left column. Select the ```Anonymous``` tab and click to enable anonymous authentication.
+Navigate to your Firebase dashboard and click `Auth` in the left column. Select the `SIGN IN METHOD` tab in the main window. Then click the `Anonymous` provider, slide the `Enable` slider to the right, and click `SAVE`.
 
-## Inject ```$firebaseAuth``` into ```HomeController.js```
+## Inject `$firebaseAuth` into `HomeController.js`
 
-In ```HomeController.js``` inject ```$firebaseAuth```:
+In `HomeController.js` inject `$firebaseAuth`:
 
 ```js
 app.controller('HomeController', ['$scope', '$http', '$route', '$location', '$firebaseArray', '$firebaseAuth', function($scope, $http, $route, $location, $firebaseArray, $firebaseAuth) {
@@ -35,18 +35,20 @@ app.controller('HomeController', ['$scope', '$http', '$route', '$location', '$fi
 }]);
 ```
 
-## Create ```$firebaseAuth``` Object
+## Create `$firebaseAuth` Object
 
-Make a object for ```$firebaseAuth``` and put it on the $scope:
+Make a object for `$firebaseAuth` and put it on the $scope:
 
 ```js
-var ref = new Firebase("https://crudiest-firebase.firebaseio.com/");
+var ref = new Firebase("https://my-firebase.firebaseio.com/");
 $scope.authObj = $firebaseAuth(ref);
 ```
 
-### ```$scope.login```
+Change the URL to your Firebase URL.
 
-In ```HomeController.js``` add a function ```$scope.login```:
+### `$scope.login`
+
+In `HomeController.js` add a function `$scope.login`:
 
 ```js
 $scope.login = function() {
@@ -63,17 +65,18 @@ $scope.login = function() {
 };
 ```
 
-This function creates two new variables in the ```$scope```: ```authData``` and ```error```. The variables start as ```null``` or no value.
+This function creates two new variables in the `$scope`: `authData` and `error`. The variables start as `null` or no value.
 
-We then run the method ```$authAnonymously()``` on our ```$firebaseAuth``` object. It returns (as a promise) data, which we store as ```$scope.authData```.
+We then run the Firebase method `$authAnonymously()` on our `$firebaseAuth` object. It returns (as a promise) data, which we store as `$scope.authData`.
 
-[Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) can be fulfilled or rejected. When a promise is fulfilled the ```.then(function()){})``` callback is executed. If the promise is rejected, we can handle the error in the ```.then``` function. But it's neater to chain a ```.catch``` callback for error handling. Here we assign the error message to ```$scope.error```.
+[Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) can be fulfilled or rejected. When a promise is fulfilled the `.then(function()){})` callback is executed. If the promise is rejected, we can handle the error in the `.then` function. But it's neater to chain a `.catch` callback for error handling. Here we assign the error message to `$scope.error`.
 
-### Make Login Buttons
+### Make Login Button
 
-Now we'll make a button for anonymous login on ```home.html```:
+Now we'll make a button for anonymous login on `home.html`. Let's put it at the top, to make it obvious to users that they should login:
 
 ```html
+<!-- Auth row -->
 <div class="row">
   <div class="col-sm-12">
     <button type="button" class="btn btn-info btn-block" ng-click="login()">Login Anonymously</button>
@@ -91,17 +94,17 @@ That's ugly but it works.
 
 ### Logout Button
 
-Now we need a ```Logout``` button.
+Now we need a `Logout` button.
 
-Add ```ng-if="!authData"``` to our ```Login Anonymously``` button:
+Add `ng-if="!authData"` to our `Login Anonymously` button:
 
 ```HTML
 <button type="button" class="btn btn-info btn-block" ng-click="login()" ng-if="!authData">Login Anonymously</button>
 ```
 
-This shows the ```Login``` button when there's no ```authData``` (the user isn't logged in).
+This shows the `Login` button when there's no `authData` (the user isn't logged in).
 
-Now we can add a ```Logout``` button:
+Now we can add a `Logout` button:
 
 ```HTML
 <button type="button" class="btn btn-info btn-block" ng-click="auth.$unauth()" ng-if="authData">Logout</button>
@@ -115,7 +118,7 @@ Let's make a handler. Change the button to:
 <button type="button" class="btn btn-info btn-block" ng-click="logout()" ng-if="authData">Logout</button>
 ```
 
-In ```HomeController.js``` add a ```$scope.logout()``` handler:
+In `HomeController.js` add a `$scope.logout()` handler:
 
 ```js
 $scope.logout = function() {
@@ -125,7 +128,7 @@ $scope.logout = function() {
 };
 ```
 
-That doesn't do anything either. Let's check the auth status of the user with ```$onAuth()```:
+That doesn't do anything either. Let's check the auth status of the user with `$onAuth()`:
 
 ```js
 $scope.logout = function() {
@@ -143,7 +146,7 @@ $scope.logout = function() {
 
 The console log says that the user is logged out.
 
-Let's clear the ```$scope.authData``` object by adding ```$scope.authData = null;```:
+Let's clear the `$scope.authData` object by adding `$scope.authData = null;`:
 
 ```js
 $scope.logout = function() {
@@ -160,15 +163,15 @@ $scope.logout = function() {
 };
 ```
 
-That works. This suggests that authorization and ```$scope.authData``` are different objects. You can't see the logged in users on your Firebase dashboard. You can't see if a user is logged in on ```$scope.authData```. You can only see if a user is logged in with ```$onAuth()```. In other words, ```$authAnonymously()``` put the ```authData``` on the ```$scope``` but ```unauth()``` doesn't take it off the ```$scope```.
+That works. This suggests that authorization and `$scope.authData` are different objects. You can't see the logged in users on your Firebase dashboard. You can't see if a user is logged in on `$scope.authData`. You can only see if a user is logged in with `$onAuth()`. In other words, `$authAnonymously()` put the `authData` on the `$scope` but `unauth()` doesn't take it off the `$scope`.
 
 It might be better not to put the authData on the $scope and instead rely directly on authData.
 
 ### Authorize Adding a Movie
 
-Let's make it so that only logged in users can add a movie. We'll hide the ```Add a Movie``` data entry field until the user logs in.
+Let's make it so that only logged in users can add a movie. We'll hide the `Add a Movie` data entry field until the user logs in.
 
-Add ```ng-if="authData"``` to the ```Add a Movie``` field, and to the ```glyphicon-search``` icon:
+Add `ng-if="authData"` to the `Add a Movie` field, and to the `glyphicon-search` icon:
 
 ```html
 <div class="col-sm-6 col-md-6 col-lg-6">
@@ -192,7 +195,7 @@ Add ```ng-if="authData"``` to the ```Add a Movie``` field, and to the ```glyphic
 </div>
 ```
 
-Now let's add a ```Logout``` button alongside the ```Add a Movie``` field. Change the ```Add a Movie``` field to use five columns, and then add a one-column button:
+Now let's add a `Logout` button alongside the `Add a Movie` field. Change the `Add a Movie` field to use five columns, and then add a one-column button:
 
 ```HTML
 <div class="col-sm-1 col-md-1 col-lg-1">
@@ -202,7 +205,7 @@ Now let's add a ```Logout``` button alongside the ```Add a Movie``` field. Chang
 
 ![Atom HTML](/Users/TDK/playground/BreakingStuff/media/login_logout_button.png)
 
-Now let's show the login button when the ```Add a Movie``` field hides. Copy and paste the ```Login Anonymously``` button into the five-column ```div```, below the ```Add a Movie``` field.
+Now let's show the login button when the `Add a Movie` field hides. Copy and paste the `Login Anonymously` button into the five-column `div`, below the `Add a Movie` field.
 
 ```html
 <div class="col-sm-5 col-md-5 col-lg-5">
@@ -236,7 +239,7 @@ Remove the old login button. Now the interface looks cleaner.
 
 ### Adding More Login Services
 
-Let's add buttons for Google, Facebook, Twitter, and e-mail and password. Start by copying and pasting four ```Login Anonymously``` buttons, and changing the labels:
+Let's add buttons for Google, Facebook, Twitter, and e-mail and password. Start by copying and pasting four `Login Anonymously` buttons, and changing the labels:
 
 ```HTML
 <div class="col-sm-5 col-md-5 col-lg-5">
@@ -274,17 +277,17 @@ Now we'll set up these third-party providers.
 
 ## Get Client ID and Client Secret From Google
 
-Go to your [Google Developers Console](https://console.developers.google.com/apis/library) and click on ```Credentials``` in the left column. Put in your project name, click ```Create```, then ```Create credentials```, then ```OAuth client ID```. Fill out the forms and get your ```Client ID``` and ```Client secret```.
+Go to your [Google Developers Console](https://console.developers.google.com/apis/library) and click on `Credentials` in the left column. Put in your project name, click `Create`, then `Create credentials`, then `OAuth client ID`. Fill out the forms and get your `Client ID` and `Client secret`.
 
-In the field ```Authorized JavaScript origins``` put in ```https://auth.firebase.com```. This is not your app's URL or home page.
+In the field `Authorized JavaScript origins` put in `https://auth.firebase.com`. This is not your app's URL or home page.
 
-In the field ```Authorized redirect URIs``` put in ```https://auth.firebase.com/v2/``` followed by your project name followed by ```/auth/google/callback```. For example, my project name is ```crudiest-firebase``` so the ```Authorized redirect URIs``` is  ```https://auth.firebase.com/v2/crudiest-firebase/auth/google/callback```.
+In the field `Authorized redirect URIs` put in `https://auth.firebase.com/v2/` followed by your project name followed by `/auth/google/callback`. For example, my project name is `crudiest-firebase` so the `Authorized redirect URIs` is  `https://auth.firebase.com/v2/crudiest-firebase/auth/google/callback`.
 
-If you don't enter your authorized redirect URI, when you attempt to login you'll get an error message such as ```Given URL is not allowed by the Application configuration: One or more of the given URLs is not allowed by the App's settings.``` This is confusing because your Firebase Dashboard Login & Auth tabs has a field to enter ```Authorized Domains for OAuth Redirects```. This is not the same as ```Authorized redirect URIs```. Firebase automatically creates the ```Authorized Domains for OAuth Redirects``` in its dashboard, you shouldn't need to enter any domains here. In contrast, the ```Authorized redirect URIs``` at the provider (Google, Facebook, etc.) must have a domain entered.
+If you don't enter your authorized redirect URI, when you attempt to login you'll get an error message such as `Given URL is not allowed by the Application configuration: One or more of the given URLs is not allowed by the App's settings.` This is confusing because your Firebase Dashboard Login & Auth tabs has a field to enter `Authorized Domains for OAuth Redirects`. This is not the same as `Authorized redirect URIs`. Firebase automatically creates the `Authorized Domains for OAuth Redirects` in its dashboard, you shouldn't need to enter any domains here. In contrast, the `Authorized redirect URIs` at the provider (Google, Facebook, etc.) must have a domain entered.
 
 ### Save Your Client IDs and Client secrets
 
-Make a new file and call it ```OAuth_keys.txt```. Put it in your project folder at the root level, not in the ```public``` folder. Add the file to your ```.gitignore``` file. You don't want to upload this information to a public GitHub repository.
+Make a new file and call it `OAuth_keys.txt`. Put it in your project folder at the root level, not in the `public` folder. Add the file to your `.gitignore` file. You don't want to upload this information to a public GitHub repository.
 
 In this file make a form:
 
@@ -306,11 +309,11 @@ Later we'll add the information for Facebook, GitHub, etc.
 
 ### Firebase Login & Auth
 
-Now navigate to your Firebase dashboard and click ```Login & Auth``` in the left column. Select the ```Google``` tab, click to enable Google authentication, and enter your Google Client ID and Google Client Secret.
+Now navigate to your Firebase dashboard and click `Login & Auth` in the left column. Select the `Google` tab, click to enable Google authentication, and enter your Google Client ID and Google Client Secret.
 
 ### $scope.loginGoogle
 
-In ```HomeController.js``` add a ```$scope.loginGoogle``` function:
+In `HomeController.js` add a `$scope.loginGoogle` function:
 
 ```js
 $scope.loginGoogle = function() {
@@ -325,33 +328,33 @@ $scope.loginGoogle = function() {
 };
 ```
 
-Now in ```home.html``` set the ```ng-click```:
+Now in `home.html` set the `ng-click`:
 
 ```HTML
 <button type="button" class="btn btn-info" ng-click="loginGoogle()" ng-if="!authData.uid">Google</button>
 ```
 
-Deploy your code, refresh your browser, and the ```Google``` button should open a pop-up window. OK the authorization and you should see the ```Add a Movie``` field, and the console log should say ```Logged in as: ``` followed by the user ID.
+Deploy your code, refresh your browser, and the `Google` button should open a pop-up window. OK the authorization and you should see the `Add a Movie` field, and the console log should say `Logged in as: ` followed by the user ID.
 
 ### Facebook
 
-Go to [facebook for developers](https://developers.facebook.com/apps) and click ```+ Add a New App```.
+Go to [facebook for developers](https://developers.facebook.com/apps) and click `+ Add a New App`.
 
-Get your ```Facebook App ID``` and ```Facebook App Secret```. Save them in your file ```OAuth-keys.txt```.
+Get your `Facebook App ID` and `Facebook App Secret`. Save them in your file `OAuth-keys.txt`.
 
-In your ```developers.facebook.com```, look in the left column under ```PRODUCT SETTINGS``` for ```Facebook Login```. On this page, look for ```Valid OAuth redirect URIs```.
+In your `developers.facebook.com`, look in the left column under `PRODUCT SETTINGS` for `Facebook Login`. On this page, look for `Valid OAuth redirect URIs`.
 
-In this field put in ```https://auth.firebase.com/v2/``` followed by your project name followed by ```/auth/facebook/callback```. For example, my project name is ```crudiest-firebase``` so the ```Authorized redirect URIs``` is  ```https://auth.firebase.com/v2/crudiest-firebase/auth/facebook/callback```.
+In this field put in `https://auth.firebase.com/v2/` followed by your project name followed by `/auth/facebook/callback`. For example, my project name is `crudiest-firebase` so the `Authorized redirect URIs` is  `https://auth.firebase.com/v2/crudiest-firebase/auth/facebook/callback`.
 
-Save changes and go to the Firebase Dashboard. In ```Login & Auth``` in the ```Facebook``` tab, check the box for ```Enable Facebook Authentication``` and enter your ```Facebook App ID``` and ```Facebook App Secret```.
+Save changes and go to the Firebase Dashboard. In `Login & Auth` in the `Facebook` tab, check the box for `Enable Facebook Authentication` and enter your `Facebook App ID` and `Facebook App Secret`.
 
-Set up the button in ```home.html```:
+Set up the button in `home.html`:
 
 ```html
 <button type="button" class="btn btn-info" ng-click="loginFacebook()" ng-if="!authData.uid">Facebook</button>
 ```
 
-In ```HomeController.js``` set up the ```loginFacebook()``` function:
+In `HomeController.js` set up the `loginFacebook()` function:
 
 ```js
 $scope.loginFacebook = function() {
@@ -370,28 +373,28 @@ $scope.loginFacebook = function() {
 
 Alternatively, Facebook has a _Software Development Kit_ (SDK). The kit has two pieces:
 
-* A JavaScript block that you're told to put in the  ```<body>``` of your ```index.html```. You can put this script into a controller. There is a short code block and a long code block, depending on what features you want.
+* A JavaScript block that you're told to put in the  `<body>` of your `index.html`. You can put this script into a controller. There is a short code block and a long code block, depending on what features you want.
 * HTML code blocks for your view. These give you a button, display the user's login status, etc.
 
-The SDK is easy to use and works well if you're not using Angular. However, the Facebook SDK has an ```authResponse``` object when Firebase has an ```authData``` object. Facebook has a field for ```userID``` when Firebase has a field for ```uid```. We need ```authData.uid``` for make the ```Add a Movie``` field and the ```Logout``` button display. Getting the data from the Facebook SDK into our ```$scope``` in the format we need isn't easy.
+The SDK is easy to use and works well if you're not using Angular. However, the Facebook SDK has an `authResponse` object when Firebase has an `authData` object. Facebook has a field for `userID` when Firebase has a field for `uid`. We need `authData.uid` for make the `Add a Movie` field and the `Logout` button display. Getting the data from the Facebook SDK into our `$scope` in the format we need isn't easy.
 
 ### Twitter
 
-Go to [Twitter Apps](https://apps.twitter.com/) and click ```Create New App```.
+Go to [Twitter Apps](https://apps.twitter.com/) and click `Create New App`.
 
-Enter your app's name, description, website, and the ```Callback URL```. In this field put in ```https://auth.firebase.com/v2/``` followed by your project name followed by ```/auth/twitter/callback```. For example, my project name is ```crudiest-firebase``` so the ```Authorized redirect URIs``` is  ```https://auth.firebase.com/v2/crudiest-firebase/auth/twitter/callback```.
+Enter your app's name, description, website, and the `Callback URL`. In this field put in `https://auth.firebase.com/v2/` followed by your project name followed by `/auth/twitter/callback`. For example, my project name is `crudiest-firebase` so the `Authorized redirect URIs` is  `https://auth.firebase.com/v2/crudiest-firebase/auth/twitter/callback`.
 
-In the ```Keys and Access Tokens``` tab copy your  ```Consumer Key (API Key)``` and ```Consumer Secret (API Secret)``` to your file ```OAuth-keys.txt```.
+In the `Keys and Access Tokens` tab copy your  `Consumer Key (API Key)` and `Consumer Secret (API Secret)` to your file `OAuth-keys.txt`.
 
-Go to your Firebase Dashboard. In ```Login & Auth``` in the ```Twitter``` tab, check the box for ```Enable Twitter Authentication``` and enter your ```Twitter API Key``` and ```Twitter App Secret```.
+Go to your Firebase Dashboard. In `Login & Auth` in the `Twitter` tab, check the box for `Enable Twitter Authentication` and enter your `Twitter API Key` and `Twitter App Secret`.
 
-Set up the button in ```home.html```:
+Set up the button in `home.html`:
 
 ```html
 <button type="button" class="btn btn-info" ng-click="loginTwitter()" ng-if="!authData.uid">Twitter</button>
 ```
 
-In ```HomeController.js``` set up the ```loginTwitter()``` function:
+In `HomeController.js` set up the `loginTwitter()` function:
 
 ```js
 $scope.loginTwitter = function() {
@@ -408,21 +411,21 @@ $scope.loginTwitter = function() {
 
 ### GitHub
 
-Go to [Developer applications](https://github.com/settings/developers) and click ```Register new application```.
+Go to [Developer applications](https://github.com/settings/developers) and click `Register new application`.
 
-Enter your application's name, Homepage URL, description, and the ```Authorization callback URL```. In this field put in ```https://auth.firebase.com/v2/``` followed by your project name followed by ```/auth/github/callback```. For example, my project name is ```crudiest-firebase``` so the ```Authorized redirect URIs``` is  ```https://auth.firebase.com/v2/crudiest-firebase/auth/github/callback```.
+Enter your application's name, Homepage URL, description, and the `Authorization callback URL`. In this field put in `https://auth.firebase.com/v2/` followed by your project name followed by `/auth/github/callback`. For example, my project name is `crudiest-firebase` so the `Authorized redirect URIs` is  `https://auth.firebase.com/v2/crudiest-firebase/auth/github/callback`.
 
-In the ```Keys and Access Tokens``` tab copy your  ```Client ID``` and ```Client Secret``` to your file ```OAuth-keys.txt```.
+In the `Keys and Access Tokens` tab copy your  `Client ID` and `Client Secret` to your file `OAuth-keys.txt`.
 
-Go to your Firebase Dashboard. In ```Login & Auth``` in the ```GitHub``` tab, check the box for ```Enable GitHub Authentication``` and enter your ```GitHub Client ID``` and ```GitHub Client Secret```.
+Go to your Firebase Dashboard. In `Login & Auth` in the `GitHub` tab, check the box for `Enable GitHub Authentication` and enter your `GitHub Client ID` and `GitHub Client Secret`.
 
-Set up the button in ```home.html```:
+Set up the button in `home.html`:
 
 ```html
 <button type="button" class="btn btn-info" ng-click="loginGitHub()" ng-if="!authData.uid">GitHub</button>
 ```
 
-In ```HomeController.js``` set up the ```loginGitHub()``` function:
+In `HomeController.js` set up the `loginGitHub()` function:
 
 ```js
 $scope.loginGitHub = function() {
@@ -439,7 +442,7 @@ $scope.loginGitHub = function() {
 
 ### Complete OAuth2 Code
 
-Here's the ```home.html``` code with all the OAuth2 buttons:
+Here's the `home.html` code with all the OAuth2 buttons:
 
 ```html
 <div class="row">
@@ -592,7 +595,7 @@ Here's the ```home.html``` code with all the OAuth2 buttons:
 
 ```
 
-Here's ```HomeController.js``` with all the OAuth2 functions:
+Here's `HomeController.js` with all the OAuth2 functions:
 
 ```js
 app.controller('HomeController', ['$scope', '$http', '$route', '$location', '$firebaseArray', '$firebaseAuth', function($scope, $http, $route, $location, $firebaseArray, $firebaseAuth) {
@@ -747,15 +750,15 @@ A UI Bootstrap modal window requires making:
 * An HTML button in the view to open the modal window.
 * A template.
 * A controller.
-* A link in ```index.html``` to hook up the controller.
+* A link in `index.html` to hook up the controller.
 
-Start with the button to open the modal window in ```home.html```:
+Start with the button to open the modal window in `home.html`:
 
 ```html
 <button type="button" class="btn btn-info" ng-click="openLoginModal('md')" ng-controller="EmailLoginModalCtrl">E-mail &amp; password</button>
 ```
 
-Make a new file, call it ```emailLoginModalContent.html```, and save it in the directory ```templates```:
+Make a new file, call it `emailLoginModalContent.html`, and save it in the directory `templates`:
 
 ```html
 <div class="modal-header">
@@ -771,7 +774,7 @@ Make a new file, call it ```emailLoginModalContent.html```, and save it in the d
 </div>
 ```
 
-In ```HomeController.js``` we need a handler to open the modal window:
+In `HomeController.js` we need a handler to open the modal window:
 
 ```js
   $scope.openLoginModal = function(size) {
@@ -783,15 +786,15 @@ In ```HomeController.js``` we need a handler to open the modal window:
   };
 ```
 
-The method ```open``` on the ```$uibModal``` service creates an object, called the _modal instance_. The [documentation](https://angular-ui.github.io/bootstrap/) lists 17 properties. Most of these you can leave off and accept the default setting. We will specify just three properties:
+The method `open` on the `$uibModal` service creates an object, called the _modal instance_. The [documentation](https://angular-ui.github.io/bootstrap/) lists 17 properties. Most of these you can leave off and accept the default setting. We will specify just three properties:
 
-* ```templateUrl``` is the path to the template with the modal's content.
-* ```controller``` is the controller for the modal instance (the second controller).
-* ```size``` is the size of the modal window. The choices are ```'sm'```, ```'md'```, or ```'lg'```.
+* `templateUrl` is the path to the template with the modal's content.
+* `controller` is the controller for the modal instance (the second controller).
+* `size` is the size of the modal window. The choices are `'sm'`, `'md'`, or `'lg'`.
 
 Note that the modal object looks like a router.
 
-Now we'll make the controller. Call it ```EmailLoginModalInstanceCtrl.js``` and save it in the controllers directory:
+Now we'll make the controller. Call it `EmailLoginModalInstanceCtrl.js` and save it in the controllers directory:
 
 ```js
 app.controller('EmailLoginModalInstanceCtrl', function ($scope, $uibModalInstance) {
@@ -806,7 +809,7 @@ app.controller('EmailLoginModalInstanceCtrl', function ($scope, $uibModalInstanc
 
 We've included a handler to close the modal window.
 
-Finally, in ```index.html``` hook up the controller:
+Finally, in `index.html` hook up the controller:
 
 ```html
 <script type="text/javascript" src="javascript/controllers/EmailLoginModalInstanceCtrl.js"></script>
@@ -818,7 +821,7 @@ Deploy and refresh, click the button, and the modal window should open:
 
 #### Modal Content
 
-In ```emailLoginModalContent.html``` add a Bootstrap form for entering an e-mail address and password:
+In `emailLoginModalContent.html` add a Bootstrap form for entering an e-mail address and password:
 
 ```html
 <div class="modal-header">
@@ -846,17 +849,18 @@ In ```emailLoginModalContent.html``` add a Bootstrap form for entering an e-mail
   <button class="btn btn-warning" type="button" ng-click="cancel()">Close Modal Window</button>
 </div>
 ```
-The form has two data entry forms. The first is for the e-mail address. Setting ```type="email"``` verifies that the user entered a correctly formatted e-mail address. Similarly in the second field setting ```type="password"``` hides the password.
 
-The form has three buttons. ```Create New User``` runs the function ```$scope.newUser()```. Note that we're not passing through the email and password, e.g., ```ng-click="newUser(email, password)"``` in the view and ```$scope.newUser = function(email, password) {``` in the controller. We could, it works either way, but the Angular way is to pass data through on the ```$scope```. We'll see an advantage of this in a minute.
+The form has two data entry forms. The first is for the e-mail address. Setting `type="email"` verifies that the user entered a correctly formatted e-mail address. Similarly in the second field setting `type="password"` hides the password.
 
-The ```Login``` button is similar.
+The form has three buttons. `Create New User` runs the function `$scope.newUser()`. Note that we're not passing through the email and password, e.g., `ng-click="newUser(email, password)"` in the view and `$scope.newUser = function(email, password) {` in the controller. We could, it works either way, but the Angular way is to pass data through on the `$scope`. We'll see an advantage of this in a minute.
 
-The button ```Reset``` runs the handler ```$scope.reset()```.
+The `Login` button is similar.
+
+The button `Reset` runs the handler `$scope.reset()`.
 
 #### EmailLoginModalInstanceCtrl
 
-First, add the ```$firebaseAuth``` service to ```EmailLoginModalInstanceCtrl.js```:
+First, add the `$firebaseAuth` service to `EmailLoginModalInstanceCtrl.js`:
 
 ```js
 app.controller('EmailLoginModalInstanceCtrl', ['$scope', '$uibModalInstance', '$firebaseAuth', function($scope, $uibModalInstance, $firebaseAuth) {
@@ -870,7 +874,7 @@ app.controller('EmailLoginModalInstanceCtrl', ['$scope', '$uibModalInstance', '$
 }]);
 ```
 
-Now add the Firebase ```ref```:
+Now add the Firebase `ref`:
 
 ```js
 app.controller('EmailLoginModalInstanceCtrl', ['$scope', '$uibModalInstance', '$firebaseAuth', function($scope, $uibModalInstance, $firebaseAuth) {
@@ -886,7 +890,7 @@ app.controller('EmailLoginModalInstanceCtrl', ['$scope', '$uibModalInstance', '$
 }]);
 ```
 
-Now add the handler ```$scope.newUser```:
+Now add the handler `$scope.newUser`:
 
 ```js
 app.controller('EmailLoginModalInstanceCtrl', ['$scope', '$uibModalInstance', '$firebaseAuth', function($scope, $uibModalInstance, $firebaseAuth) {
@@ -987,23 +991,23 @@ app.controller('EmailLoginModalInstanceCtrl', ['$scope', '$uibModalInstance', '$
 }]);
 ```
 
-You can look at your new users in your Firebase Dashboard in ```Login & Auth``` (left column) under the tab ```Email & Password``` at the bottom of the page.
+You can look at your new users in your Firebase Dashboard in `Login & Auth` (left column) under the tab `Email & Password` at the bottom of the page.
 
-There's one bug. When you enter something that's not an e-mail address in the form for the e-mail address, then click ```Reset```, the non-address doesn't clear. The form verification allows the reset only to clear valid e-mail addresses.
+There's one bug. When you enter something that's not an e-mail address in the form for the e-mail address, then click `Reset`, the non-address doesn't clear. The form verification allows the reset only to clear valid e-mail addresses.
 
 #### Duplicate User Creation
 
-What happens when we enter the same e-mail address twice, to create duplicate accounts? You'll see in the console: ```Error creating user: Error: The specified email address is already in use.``` OK, but the user should see the error message too. Let's create an alert.
+What happens when we enter the same e-mail address twice, to create duplicate accounts? You'll see in the console: `Error creating user: Error: The specified email address is already in use.` OK, but the user should see the error message too. Let's create an alert.
 
 HTML alerts are easy but we'll use a more stylish Bootstrap alert. Dismissible alerts require JavaScript so we have to use UI Bootstrap [alerts](https://angular-ui.github.io/bootstrap/).
 
-Add the alert to ```emailLoginModalContent.html```. Let's put the alert into the ```modal-footer```.
+Add the alert to `emailLoginModalContent.html`. Let's put the alert into the `modal-footer`.
 
 ```html
 <uib-alert class="alert" ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
 ```
 
-In ```EmailLoginModalInstanceCtrl.js``` we create an array for alerts. Then we'll make a function to dismiss the alert:
+In `EmailLoginModalInstanceCtrl.js` we create an array for alerts. Then we'll make a function to dismiss the alert:
 
 ```js
 // Alerts
@@ -1028,23 +1032,23 @@ if (error) {
 }
 ```
 
-We created an array of alerts. When there's an error, we push an alert object into the array. The alert object has two properties, the ```type``` and the  ```message```. We then run ```$scope.apply()``` for the two-way binding to make the alert available in the view.
+We created an array of alerts. When there's an error, we push an alert object into the array. The alert object has two properties, the `type` and the  `message`. We then run `$scope.apply()` for the two-way binding to make the alert available in the view.
 
 In the view, we've created an element that displays all the alerts in the array. The alert has a dismiss button. The message is taken from the alert object.
 
-The ```type``` property has the same values as [Bootstrap alerts](http://getbootstrap.com/components/#alerts): ```'success'```, ```'info'```, ```'warning'```, and ```'danger'```. The types must be in quotes.
+The `type` property has the same values as [Bootstrap alerts](http://getbootstrap.com/components/#alerts): `'success'`, `'info'`, `'warning'`, and `'danger'`. The types must be in quotes.
 
 Let's try it out:
 
 ![Atom HTML](/Users/TDK/playground/BreakingStuff/media/login_alert_duplicate.png)
 
-Click ```Create New User``` a few times to make the alert repeat.
+Click `Create New User` a few times to make the alert repeat.
 
 ### Login User
 
 Now we'll let the users login.
 
-In ```EmailLoginModalInstanceCtrl.js``` add a function similar to the function to create a new user:
+In `EmailLoginModalInstanceCtrl.js` add a function similar to the function to create a new user:
 
 ```js
 $scope.loginUser = function(user) {
@@ -1061,7 +1065,7 @@ $scope.loginUser = function(user) {
 };
 ```
 
-Run it and you should see in the console ```Authenticated successfully with payload: ``` followed by the auth object.
+Run it and you should see in the console `Authenticated successfully with payload: ` followed by the auth object.
 
 ![Atom HTML](/Users/TDK/playground/BreakingStuff/media/login_auth_object.png)
 
@@ -1087,7 +1091,7 @@ $scope.loginUser = function(user) {
 };
 ```
 
-The modal window closes but the ```Add a Movie``` form doesn't appear. We need to put the auth object on the ```$scope```:
+The modal window closes but the `Add a Movie` form doesn't appear. We need to put the auth object on the `$scope`:
 
 ```js
 $scope.loginUser = function(user) {
@@ -1111,13 +1115,13 @@ $scope.loginUser = function(user) {
 };
 ```
 
-That doesn't work. ```$scope.authData.uid``` prints in the console, then the modal window closes, but in the home window the ```Add a Movie``` form doesn't appear. If we console log ```$scope.authData``` it's undefined, i.e., not available.
+That doesn't work. `$scope.authData.uid` prints in the console, then the modal window closes, but in the home window the `Add a Movie` form doesn't appear. If we console log `$scope.authData` it's undefined, i.e., not available.
 
-The modal window and its controller are on a _child $scope_. Data in the global $scope are available to the child $scope, but data in the child $scope isn't available to the global $scope. Looking in the [UI Bootstrap documentation](https://angular-ui.github.io/bootstrap/), the section ```return``` says
+The modal window and its controller are on a _child $scope_. Data in the global $scope are available to the child $scope, but data in the child $scope isn't available to the global $scope. Looking in the [UI Bootstrap documentation](https://angular-ui.github.io/bootstrap/), the section `return` says
 
 > close(result) (Type: function) - Can be used to close a modal, passing a result.
 
-We'll pass ```authData``` as the ```result```:
+We'll pass `authData` as the `result`:
 
 ```js
 // Login user
@@ -1140,7 +1144,7 @@ $scope.loginUser = function(user) {
 };
 ```
 
-Now we have to execute code in ```HomeController.js``` to put ```authData``` on the global ```$scope```.
+Now we have to execute code in `HomeController.js` to put `authData` on the global `$scope`.
 
 ```js
 // Open modal window
@@ -1160,13 +1164,13 @@ The documentation says:
 
 > result (Type: promise) - Is resolved when a modal is closed
 
-After the modal window closes then the promise executes. In the promise we put ```authData``` on the ```$scope```. The ```Add a Movie``` form now shows.
+After the modal window closes then the promise executes. In the promise we put `authData` on the `$scope`. The `Add a Movie` form now shows.
 
 ### Login Error Alerts
 
-Let's test a wrong e-mail address. I see in the console ```Login Failed! Error: The specified user does not exist.```
+Let's test a wrong e-mail address. I see in the console `Login Failed! Error: The specified user does not exist.`
 
-Let's test a wrong password. I see in the console ```Login Failed! Error: The specified password is incorrect.```
+Let's test a wrong password. I see in the console `Login Failed! Error: The specified password is incorrect.`
 
 We need to alert the user. We could give the user different error messages for wrong e-mail address vs. wrong password, but it's recommended not to give this info to potential hackers. It's better to have a single, ambiguous error message to make life harder for hackers:
 
@@ -1204,7 +1208,7 @@ OK, now everything is working!
 
 ### Straighten Up Buttons
 
-Some users will want to change their e-mail address. We'll need to provide an ```Account``` button to open a view to edit the e-mail address. Later we can use the same view for changing the password. Let's put the ```Account``` button next to the ```Logout``` button. The columns in ```home.html``` have gotten confused, let's straighten these up:
+Some users will want to change their e-mail address. We'll need to provide an `Account` button to open a view to edit the e-mail address. Later we can use the same view for changing the password. Let's put the `Account` button next to the `Logout` button. The columns in `home.html` have gotten confused, let's straighten these up:
 
 ```html
 <div class="row">
@@ -1279,7 +1283,7 @@ Here's the view when the user is logged in:
 
 We'll make another modal window for updating the user's e-mail address and password.
 
-Set the ```Account``` button to open the user's account forms:
+Set the `Account` button to open the user's account forms:
 
 ```html
 <div class="col-sm-2 col-md-2 col-lg-2" ng-show="authData.uid">
@@ -1287,7 +1291,7 @@ Set the ```Account``` button to open the user's account forms:
 </div>
 ```
 
-We'll start by showing the user's e-mail address. In ```accountModalContent.html```:
+We'll start by showing the user's e-mail address. In `accountModalContent.html`:
 
 ```html
 <div class="modal-header">
@@ -1304,7 +1308,7 @@ We'll start by showing the user's e-mail address. In ```accountModalContent.html
 </div>
 ```
 
-Make a controller ```AccountModalInstanceCtrl.js``` and save it in the controllers folder:
+Make a controller `AccountModalInstanceCtrl.js` and save it in the controllers folder:
 
 ```js
 app.controller('AccountModalInstanceCtrl', ['$scope', '$uibModalInstance', '$firebaseAuth', function($scope, $uibModalInstance, $firebaseAuth) {
@@ -1334,7 +1338,8 @@ app.controller('AccountModalInstanceCtrl', ['$scope', '$uibModalInstance', '$fir
 }]);
 ```
 
-Lastly, hook up the controller in ```index.html```:
+Lastly, hook up the controller in `index.html`:
+
 ```html
 <script type="text/javascript" src="javascript/controllers/AccountModalInstanceCtrl.js"></script>
 ```
@@ -1369,7 +1374,7 @@ Let's make tabs in the modal window body:
 
 ![Atom HTML](/Users/TDK/playground/BreakingStuff/media/modal_account_update.png)
 
-The user's e-mail address isn't showing up because ```authData``` isn't available to the modal window. We'll use the AngularFire method ```$getAuth()``` to get the current ```authData``` object:
+The user's e-mail address isn't showing up because `authData` isn't available to the modal window. We'll use the AngularFire method `$getAuth()` to get the current `authData` object:
 
 ```js
 app.controller('AccountModalInstanceCtrl', ['$scope', '$uibModalInstance', '$firebaseAuth', function($scope, $uibModalInstance, $firebaseAuth) {
@@ -1445,7 +1450,7 @@ Let's put in a form for changing your e-mail address:
 </div>
 ```
 
-Now we'll make the handler in ```AccountModalInstanceCtrl.js```:
+Now we'll make the handler in `AccountModalInstanceCtrl.js`:
 
 ```js
 // Update e-mail address
@@ -1464,7 +1469,7 @@ $scope.updateAddress = function(user) {
 };
 ```
 
-That worked, according to the console log and the Firebase Dashboard's list of users. But the user needs to be told that it worked. We've alerady put an alert in ```accountModalContent.html```:
+That worked, according to the console log and the Firebase Dashboard's list of users. But the user needs to be told that it worked. We've alerady put an alert in `accountModalContent.html`:
 
 ```html
 <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
@@ -1506,7 +1511,7 @@ $scope.updateAddress = function(user) {
 
 ### Change Password
 
-We'll copy the ```Change Password``` form from the ```Change E-mail Address``` form and make a few changes:
+We'll copy the `Change Password` form from the `Change E-mail Address` form and make a few changes:
 
 ```html
 <uib-tab heading="Update Password">
@@ -1605,27 +1610,27 @@ Save to GitHub.
 
 ### Stay Logged In When Changing Views
 
-Click on a movie poster to go to the ```SHOW/EDIT``` view, then return to the ```INDEX/NEW``` (home) page. You're no longer logged in.
+Click on a movie poster to go to the `SHOW/EDIT` view, then return to the `INDEX/NEW` (home) page. You're no longer logged in.
 
-To fix this, in ```HomeController.js``` below ```$scope.authObj = $firebaseAuth(ref);``` add:
+To fix this, in `HomeController.js` below `$scope.authObj = $firebaseAuth(ref);` add:
 
 ```js
 var authData = $scope.authObj.$getAuth();
 $scope.authData = authData;
 ```
 
-The Firebase method ```$getAuth()``` gets the ```authData``` object. We then put the data object on the ```$scope``` to make it available for the view to hide and show elements.
+The Firebase method `$getAuth()` gets the `authData` object. We then put the data object on the `$scope` to make it available for the view to hide and show elements.
 
 ### Routing With Auth
 
 The whole point of authorization and authentication is to allow logged-in users to access certain pages, and block users who aren't logged-in. We do this in the router. (We don't do this in the controllers because it's a lot of code, and because the page may flash into view briefly while the controller is running code.)
 
-We're using ```ngRoute```, Angular's official router, which doesn't have auth support. I.e., out of the box Angular doesn't have a way to access or block authorized routes. ```ui-router``` is the other popular router, and it doesn't have auth support either. Luckily [Firebase provides two helper methods for route authorization](https://www.firebase.com/docs/web/libraries/angular/guide/user-auth.html#section-routers):
+We're using `ngRoute`, Angular's official router, which doesn't have auth support. I.e., out of the box Angular doesn't have a way to access or block authorized routes. `ui-router` is the other popular router, and it doesn't have auth support either. Luckily [Firebase provides two helper methods for route authorization](https://www.firebase.com/docs/web/libraries/angular/guide/user-auth.html#section-routers):
 
-* ```$waitForAuth()``` gets the authentication state before the route is rendered. We'll use this for the home page, although it's not necessary.
-* ```$requireAuth()``` is used when we want to require a route to have an authenticated user, and redirect unauthenticted users somewhere else. We'll use this for the ```SHOW/EDIT``` page.
+* `$waitForAuth()` gets the authentication state before the route is rendered. We'll use this for the home page, although it's not necessary.
+* `$requireAuth()` is used when we want to require a route to have an authenticated user, and redirect unauthenticted users somewhere else. We'll use this for the `SHOW/EDIT` page.
 
-First we're going to make a factory. A _factory_ is the other type of Angular modular or  _service_. We've used services written by other people, such as ```ngRoute```, ```$firebaseObject```, and various UI Bootstrap services. We haven't written a service so this will be our first service.
+First we're going to make a factory. A _factory_ is the other type of Angular modular or  _service_. We've used services written by other people, such as `ngRoute`, `$firebaseObject`, and various UI Bootstrap services. We haven't written a service so this will be our first service.
 
 Services create objects. There are two types of services. A _service_ creates a unique object. A _factory_ creates many, identical objects.
 
@@ -1638,11 +1643,11 @@ app.factory("Auth", ["$firebaseAuth", function($firebaseAuth) {
 }]);
 ```
 
-Create a new directory ```services``` in your directory ```javascript```. Save the factory as ```authFactory.js```. Change the Firebase URL to your Firebase URL.
+Create a new directory `services` in your directory `javascript`. Save the factory as `authFactory.js`. Change the Firebase URL to your Firebase URL.
 
-All our factory does is create objects called ```Auth``` by connecting to Firebase and getting the auth object. We've done this before in controllers.
+All our factory does is create objects called `Auth` by connecting to Firebase and getting the auth object. We've done this before in controllers.
 
-In ```routes.js``` add three code blocks:
+In `routes.js` add three code blocks:
 
 ```js
 app.config(function($routeProvider) {
@@ -1679,11 +1684,11 @@ app.run(function($rootScope, $location){
 });
 ```
 
-The ```resolve``` property for ```show.html``` gets an ```Auth``` object from the factory and checks if the user is logged in.
+The `resolve` property for `show.html` gets an `Auth` object from the factory and checks if the user is logged in.
 
-The ```$routeChangeError``` function sends the user back to the home page if he or she isn't logged in.
+The `$routeChangeError` function sends the user back to the home page if he or she isn't logged in.
 
-(We're planning to remove the ```EDIT``` route.)
+(We're planning to remove the `EDIT` route.)
 
 You can run this, it should work.
 
@@ -1691,11 +1696,11 @@ You can run this, it should work.
 
 ## Security & Rules
 
-Firebase also has security to protect your remote database from hackers. In your Firebase Deashboard, in the left column look for ```Security & Rules```. If you have a red exclamation point, it's alerting you that you should specify your database security rules.
+Firebase also has security to protect your remote database from hackers. In your Firebase Deashboard, in the left column look for `Security & Rules`. If you have a red exclamation point, it's alerting you that you should specify your database security rules.
 
-Make a file called ```SecurityRules.json``` and put it in your project root, i.e., _not_ in your ```public``` folder.
+Make a file called `SecurityRules.json` and put it in your project root, i.e., _not_ in your `public` folder.
 
-In your Firebase Deshboard ```Security & Rules``` section, you should see the default rules:
+In your Firebase Deshboard `Security & Rules` section, you should see the default rules:
 
 ```js
 {
@@ -1706,9 +1711,9 @@ In your Firebase Deshboard ```Security & Rules``` section, you should see the de
 }
 ```
 
-That says that your data can be read or written, by anyone. A third rule is also available, ```.validate```, which could check if e-mail addresses are correctly formatted or limit comments to 165 characters, etc.
+That says that your data can be read or written, by anyone. A third rule is also available, `.validate`, which could check if e-mail addresses are correctly formatted or limit comments to 165 characters, etc.
 
-Rules have various variables. We'll use ```auth```, which is the auth object. We'll start with a simple rule allowing anyone to read our website but only logged-in users have write access:
+Rules have various variables. We'll use `auth`, which is the auth object. We'll start with a simple rule allowing anyone to read our website but only logged-in users have write access:
 
 ```js
 {
@@ -1749,4 +1754,4 @@ Let's allow only anonymously logged-in users to edit data:
 
 Try logging in anonymously and changing data, then log out, log in with one of the OAuth2 providers, and try to change data.
 
-Let's put it back to ```".write": "auth.uid != null"```. The [Firebase documentation](https://www.firebase.com/docs/security/guide/) goes into detail about the many rules you can add. For example, we could allow users to only edit movies they've added.
+Let's put it back to `".write": "auth.uid != null"`. The [Firebase documentation](https://www.firebase.com/docs/security/guide/) goes into detail about the many rules you can add. For example, we could allow users to only edit movies they've added.

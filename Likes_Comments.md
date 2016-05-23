@@ -358,9 +358,62 @@ Let's add some styling for the comments to `style.css`:
 }
 ```
 
-That's better but not perfect. We'll do some more styling later.
+## Two Columns in Large View
+
+In the large responsive view we have plenty of room for two columns.
+
+We'll make two six-column containers. In `show.html` wrap the `<form>` with a `<div>` and then wrap everything else in another `<div>`:
+
+```html
+<div class="col-sm-6 col-md-6 col-lg-6"> <!-- left column -->
+
+  <!-- <form> goes here -->
+
+</div> <!-- end left column -->
+
+<div class="col-sm-6 col-md-6 col-lg-6"> <!-- right column -->
+
+  <!-- likes and comments go here -->
+
+</div> <!-- end right column -->
+```
+
+![Two columns](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_two_columns.png)
+
+Let's add the poster to the right column, above the likes:
+
+```html
+<img class="moviePoster center-block" ng-src="{{movie.poster}}" alt="{{movie.title}}">
+
+<hr />
+```
+
+We put a horizontal line between the poster and the likes.
+
+![Two columns](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_show_poster.png)
+
+We need a `Tech Notes` on this page to point out the awesome features to hiring managers. We'll put the button at the top of the right column for maximum visibility:
+
+```html
+<button type="button" class="btn btn-danger btn-block" ng-click="techSummary = !techSummary">Tech Notes</button>
+<br />
+
+<!-- Tech Summary row -->
+<div class="row well well-lg" ng-show="techSummary">
+  <p class="text-justify">This large screen view combines the SHOW and EDIT views. You can edit the fields in the left column. The small screen views have seperate SHOW and EDIT pages.</p>
+  <p class="text-justify">To get a single movie object from the array of movies, one can use $firebaseArray to get the array of movies from the remote database and then use the Firebase method $getRecord(key) to get one movie from the array. Or one can use $firebaseObject(ref.child(key)) to get a single movie from the remote database. The latter method is used on this page for improved performance and reliability.</p>
+  <p class="text-justify">Edits are saved immediately to the remote database using Firebase three-way binding. No "Update" button is needed. To inform users that their edits have been saved the Firebase method $watch() is used to display an animated "Saved!" message. This was one of the most challenging features to implement. Each field has its own $watch() method, as opposed to watching the entire database for changes, which would trigger the "Saved!" message when other users add or edit other movies. To hide the "Saved!" message when the page loads the message shows only when two conditions are met, the user changing the field and the remote database changing. The Angular service $timeout() is used to display the message for 9.9 seconds. A 10-second animation changes the opacity to make the message fade in and out.</p>
+  <p class="text-justify">The Firebase remote database is set with security rules to allow only logged-in users to write data.</p>
+  <p class="text-justify">The like/dislike buttons are styled with glyphicons.</p>
+  <p class="text-justify">Comments are an array of objects nested in the movie object. This is easy with the NoSQL database but would be more work with an SQL database. The "number of comments display" hides and shows the comments when clicked. A tooltip informs users of this feature. The number of comments pluralizes.</p>
+</div>
+```
+
+![Two columns](https://github.com/tdkehoe/Firebase-Tutorial/blob/master/media/crudfb_show_notes.png)
 
 ### Save and Commit Your Work
+
+Check the responsive views.
 
 Files changed in this chapter:
 
@@ -375,216 +428,239 @@ Your `show.html` should now look like this:
 ```html
 <div class="row">
 
-  <form class="form-horizontal" name="editMovie">
+  <div class="col-sm-6 col-md-6 col-lg-6"> <!-- left column -->
 
-    <div class="form-group">
-      <label for="editTitle" class="col-lg-2 control-label">Title: </label>
-      <div class="col-lg-8">
-        <input type="text"
-        class="form-control"
-        name="editTitle"
-        ng-model="movie.title"
-        ng-change="change('title')"
-        uib-tooltip="You can type in this field"
-        tooltip-placement="top-left"></input>
+    <form class="form-horizontal" name="editMovie">
+
+      <div class="form-group">
+        <label for="editTitle" class="col-lg-2 control-label">Title: </label>
+        <div class="col-lg-8">
+          <input type="text"
+          class="form-control"
+          name="editTitle"
+          ng-model="movie.title"
+          ng-change="change('title')"
+          uib-tooltip="You can type in this field"
+          tooltip-placement="top-left"></input>
+        </div>
+        <div class="col-lg-2">
+          <div ng-show="watch.titleSave && watch.titleChange" class="saved">Saved</div>
+        </div>
       </div>
-      <div class="col-lg-2">
-        <div ng-show="watch.titleSave && watch.titleChange" class="saved">Saved</div>
+
+      <div class="form-group">
+        <label for="editPoster" class="col-lg-2 control-label">Poster: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editPoster" ng-model="movie.poster" ng-change="change('poster')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.posterSave && watch.posterChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editPlot" class="col-lg-2 control-label">Plot: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editPlot" ng-model="movie.plot" ng-change="change('plot')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.plotSave && watch.plotChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editTrivia" class="col-lg-2 control-label">Trivia: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editTrivia" ng-model="movie.movieTrivia" ng-change="change('trivia')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.triviaSave && watch.triviaChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editDirector" class="col-lg-2 control-label">Director: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editDirector" ng-model="movie.director" ng-change="change('director')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.directorSave && watch.directorChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editWriter" class="col-lg-2 control-label">Writer: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editWriter" ng-model="movie.writer" ng-change="change('writer')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.writerSave && watch.writerChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editActors" class="col-lg-2 control-label">Actors: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editActors" ng-model="movie.actors" ng-change="change('actors')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.actorsSave && watch.actorsChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editYear" class="col-lg-2 control-label">Year: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editYear" ng-model="movie.year" ng-change="change('year')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.yearSave && watch.yearChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editCountry" class="col-lg-2 control-label">Country: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editCountry" ng-model="movie.country" ng-change="change('country')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.countrySave && watch.countryChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editLanguage" class="col-lg-2 control-label">Language: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editLanguage" ng-model="movie.language" ng-change="change('language')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.languageSave && watch.languageChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editGenre" class="col-lg-2 control-label">Genre: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editGenre" ng-model="movie.genre" ng-change="change('genre')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.genreSave && watch.genreChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editRated" class="col-lg-2 control-label">Rated: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editRated" ng-model="movie.rated" ng-change="change('rated')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.ratedSave && watch.ratedChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editAwards" class="col-lg-2 control-label">Awards: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editAwards" ng-model="movie.awards" ng-change="change('awards')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.awardsSave && watch.awardsChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editIMDBRating" class="col-lg-2 control-label">IMDB Rating: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editIMDBRating" ng-model="movie.imdbRating" ng-change="change('imdbRating')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.imdbRatingSave && watch.imdbRatingChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editIMDBVotes" class="col-lg-2 control-label">IMDB Votes: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editIMDBVotes" ng-model="movie.imdbVotes" ng-change="change('imdbVotes')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.imdbVotesSave && watch.imdbVotesChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editMetascore" class="col-lg-2 control-label">Metascore: </label>
+        <div class="col-lg-8">
+          <input type="text" class="form-control" name="editMetascore" ng-model="movie.metascore" ng-change="change('metascore')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
+        </div>
+        <div class="col-lg-2">
+          <p ng-show="watch.metascoreSave && watch.metascoreChange" class="saved">Saved!</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-lg-2">
+          <p>&nbsp;</p>
+        </div>
+        <div class="col-lg-8">
+          <button type="button"
+          ng-click="deleteMovie()"
+          class="form-control btn btn-danger btn-block">Delete Movie</button>
+        </div>
+        <div class="col-lg-2">
+          <p>&nbsp;</p>
+        </div>
+      </div>
+
+    </form>
+
+  </div> <!-- end left column -->
+
+  <div class="col-sm-6 col-md-6 col-lg-6"> <!-- right column -->
+
+    <button type="button" class="btn btn-danger btn-block" ng-click="techSummary = !techSummary">Tech Notes</button>
+    <br />
+
+    <!-- Tech Summary row -->
+    <div class="row well well-lg" ng-show="techSummary">
+      <p class="text-justify">This large screen view combines the SHOW and EDIT views. You can edit the fields in the left column. The small screen views have seperate SHOW and EDIT pages.</p>
+      <p class="text-justify">To get a single movie object from the array of movies, one can use $firebaseArray to get the array of movies from the remote database and then use the Firebase method $getRecord(key) to get one movie from the array. Or one can use $firebaseObject(ref.child(key)) to get a single movie from the remote database. The latter method is used on this page for improved performance and reliability.</p>
+      <p class="text-justify">Edits are saved immediately to the remote database using Firebase three-way binding. No "Update" button is needed. To inform users that their edits have been saved the Firebase method $watch() is used to display an animated "Saved!" message. This was one of the most challenging features to implement. Each field has its own $watch() method, as opposed to watching the entire database for changes, which would trigger the "Saved!" message when other users add or edit other movies. To hide the "Saved!" message when the page loads the message shows only when two conditions are met, the user changing the field and the remote database changing. The Angular service $timeout() is used to display the message for 9.9 seconds. A 10-second animation changes the opacity to make the message fade in and out.</p>
+      <p class="text-justify">The Firebase remote database is set with security rules to allow only logged-in users to write data.</p>
+      <p class="text-justify">The like/dislike buttons are styled with glyphicons.</p>
+      <p class="text-justify">Comments are an array of objects nested in the movie object. This is easy with the NoSQL database but would be more work with an SQL database. The "number of comments display" hides and shows the comments when clicked. A tooltip informs users of this feature. The number of comments pluralizes.</p>
+    </div>
+
+    <img class="moviePoster center-block" ng-src="{{movie.poster}}" alt="{{movie.title}}">
+
+    <hr />
+
+    <div class="row">
+      <div class="likes col-xs-6 col-sm-6 col-md-6 col-lg-6">
+        <span>{{movie.likes}}</span>
+      </div>
+      <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+        <form ng-submit="upLike()">
+          <button type="submit" class="btn btn-success btn-lg">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+          </button>
+        </form>
+        <form ng-submit="downLike()">
+          <button type="submit" class="btn btn-danger btn-lg">
+            <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+          </button>
+        </form>
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="editPoster" class="col-lg-2 control-label">Poster: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editPoster" ng-model="movie.poster" ng-change="change('poster')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.posterSave && watch.posterChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editPlot" class="col-lg-2 control-label">Plot: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editPlot" ng-model="movie.plot" ng-change="change('plot')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.plotSave && watch.plotChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editTrivia" class="col-lg-2 control-label">Trivia: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editTrivia" ng-model="movie.movieTrivia" ng-change="change('trivia')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.triviaSave && watch.triviaChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editDirector" class="col-lg-2 control-label">Director: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editDirector" ng-model="movie.director" ng-change="change('director')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.directorSave && watch.directorChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editWriter" class="col-lg-2 control-label">Writer: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editWriter" ng-model="movie.writer" ng-change="change('writer')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.writerSave && watch.writerChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editActors" class="col-lg-2 control-label">Actors: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editActors" ng-model="movie.actors" ng-change="change('actors')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.actorsSave && watch.actorsChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editYear" class="col-lg-2 control-label">Year: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editYear" ng-model="movie.year" ng-change="change('year')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.yearSave && watch.yearChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editCountry" class="col-lg-2 control-label">Country: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editCountry" ng-model="movie.country" ng-change="change('country')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.countrySave && watch.countryChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editLanguage" class="col-lg-2 control-label">Language: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editLanguage" ng-model="movie.language" ng-change="change('language')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.languageSave && watch.languageChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editGenre" class="col-lg-2 control-label">Genre: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editGenre" ng-model="movie.genre" ng-change="change('genre')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.genreSave && watch.genreChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editRated" class="col-lg-2 control-label">Rated: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editRated" ng-model="movie.rated" ng-change="change('rated')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.ratedSave && watch.ratedChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editAwards" class="col-lg-2 control-label">Awards: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editAwards" ng-model="movie.awards" ng-change="change('awards')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.awardsSave && watch.awardsChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editIMDBRating" class="col-lg-2 control-label">IMDB Rating: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editIMDBRating" ng-model="movie.imdbRating" ng-change="change('imdbRating')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.imdbRatingSave && watch.imdbRatingChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editIMDBVotes" class="col-lg-2 control-label">IMDB Votes: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editIMDBVotes" ng-model="movie.imdbVotes" ng-change="change('imdbVotes')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.imdbVotesSave && watch.imdbVotesChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="editMetascore" class="col-lg-2 control-label">Metascore: </label>
-      <div class="col-lg-8">
-        <input type="text" class="form-control" name="editMetascore" ng-model="movie.metascore" ng-change="change('metascore')" tooltip-placement="top-left" uib-tooltip="You can type in this field"></label>
-      </div>
-      <div class="col-lg-2">
-        <p ng-show="watch.metascoreSave && watch.metascoreChange" class="saved">Saved!</p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="col-lg-2">
-        <p>&nbsp;</p>
-      </div>
-      <div class="col-sm-8">
-        <button type="button"
-        ng-click="deleteMovie()"
-        class="form-control btn btn-danger btn-block">Delete Movie</button>
-      </div>
-      <div class="col-lg-2">
-        <p>&nbsp;</p>
-      </div>
-    </div>
-
-  </form>
-
-  <div class="row">
-    <div class="likes col-xs-6 col-sm-6 col-md-6 col-lg-6">
-      <span>{{movie.likes}}</span>
-    </div>
-    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-      <form ng-submit="upLike()">
-        <button type="submit" class="btn btn-success btn-lg">
-          <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-        </button>
-      </form>
-      <form ng-submit="downLike()">
-        <button type="submit" class="btn btn-danger btn-lg">
-          <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Comments row -->
-  <div class="row">
-    <div class="col-sm-12 col-md-12 col-lg-12">
-      <span ng-click="showComments = !showComments"
-      class="showComments"
-      data-toggle="tooltip"
-      data-placement="top"
-      title="Click to show or hide comments.">
+    <!-- Comments row -->
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-lg-12">
+        <span ng-click="showComments = !showComments"
+        class="showComments"
+        data-toggle="tooltip"
+        data-placement="top"
+        title="Click to show or hide comments.">
         <ng-pluralize count="comments.length"
         when="{'0': '',
         'one': '1 Comment',
@@ -627,6 +703,8 @@ Your `show.html` should now look like this:
       </div>
     </div>
   </div>
+
+</div> <!-- end right column -->
 
 </div>
 ```
@@ -877,6 +955,7 @@ app.controller('ShowController', ['$scope', '$firebaseArray', '$firebaseObject',
   };
 
 }]);
+
 ```
 
 Your `style.css` should now look like this:
@@ -977,6 +1056,7 @@ h1 {
   75% { opacity: 1;}
   100% { opacity: 0;}
 }
+
 ```
 
 Deploy to Firebase:

@@ -106,7 +106,6 @@ Your `firebase.json` file should look something like this:
 
 ```js
 {
-  "firebase": "my-firebase",
   "public": "public",
   "ignore": [
     "firebase.json",
@@ -125,6 +124,16 @@ firebase deploy
 and refresh your browser to see your changes.
 
 > If your changes don't seem to take effect then your browser may be cacheing your web app or its data. [Clear Chrome's cache](https://support.google.com/chrome/answer/95582?hl=en) or use the Chrome browser's "Incognito" mode.
+
+### Firebase 3.0
+
+Firebase released version 3.0 just as I finished this tutorial. The differences seem to be:
+
+* Two scripts in your `index.html` file.
+* A `database.rules.json` file in your project root directory. The file can't be empty. If `firebase init` didn't create this file for you, then make it and copy the rules from your Firebase Dashboard (on a tab next to your data). The default rules are a single line: `{"rules":{".read":true,".write":true}}`.
+* In your `firebase.json` file, comment out the property `"firebase"`.
+
+I'll update this tutorial as I figure out more.
 
 ### GitHub Repository
 
